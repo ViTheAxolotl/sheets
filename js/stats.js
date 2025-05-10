@@ -7,7 +7,7 @@ import { toTitleCase, auth, database, setDoc, statFormat, skillDecrypt, reload, 
 let player;
 let wholeChar = {};
 let stats;
-let sheet;
+let sheet; 
 let firstRun = true;
 
 const charRef = ref(database, 'playerChar/');
