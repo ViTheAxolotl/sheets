@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name = "description" content = "List of Deities.">
+    <link rel="shortcut icon" href="images/favicon.png">
+
+    <!-- CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href = "css/Styles.css" rel = "stylesheet" />
+
+    <title>stat</title>
+  </head>
+  
+  <body>
+    <div id = "story" class = "bg-UP-purple color-UP-black center stats" style="margin: 0px; border: none; background: url(images/bigPaper.jpg) lightgray 100% 100%; min-width:1800px; background-size: 100% 100%;">
+      <table style="width: 100%;" class="topHalf statSheet">
+        <td style="width: 33%;"><p>Character Name:</p><h6 class = "stat" id="name"></h6></td>
+        <td style="width: 34%;"><p>Class, Race, and Lv:</p><input class = "stat" id="class"/><input class = "stat" id="race"/><select class="stat" id="lv"><option value = "1">1</option><option value = "2">2</option><option value = "3">3</option><option value = "4">4</option><option value = "5">5</option><option value = "6">6</option><option value = "7">7</option><option value = "8">8</option><option value = "9">9</option><option value = "10">10</option><option value = "11">11</option><option value = "12">12</option><option value = "13">13</option><option value = "14">14</option><option value = "15">15</option><option value = "16">16</option><option value = "17">17</option><option value = "18">18</option><option value = "19">19</option><option value = "20">20</option></select></td>
+        <td style="width: 33%;"><p>Background & Alignment:</p><input class = "stat" id="background"/><input class = "stat" id="alignment"/></td>
+      </table>
+
+      <table style="width: 100%;" class="statSheet">
+        <tbody>
+          <tr>
+            <td style="width: 33%;">
+              <table style="width: 100%;">
+                <tr>
+                  <td>
+                    <div style="display: inline-block; width: 28%;">
+                      <table style="width: 65%; transform: translate(0%, -2.5%);">
+                        <tr><td><p>Str:</p><input class = "stat base6" id="Strength-ext"><br><h6 class="stat" style="border: 2px solid;" id="Strength">+0</h6></td></tr>
+                        <tr><td><p>Dex:</p><input class = "stat base6" id="Dexterity-ext"><br><h6 class="stat" style="border: 2px solid;" id="Dexterity">+0</h6></td></tr>
+                        <tr><td><p>Con:</p><input class = "stat base6" id="Constitution-ext"><br><h6 class="stat" style="border: 2px solid;" id="Constitution">+0</h6></td></tr>
+                        <tr><td><p>Int:</p><input class = "stat base6" id="Intelligence-ext"><br><h6 class="stat" style="border: 2px solid;" id="Intelligence">+0</h6></td></tr>
+                        <tr><td><p>Wis:</p><input class = "stat base6" id="Wisdom-ext"><br><h6 class="stat" style="border: 2px solid;" id="Wisdom">+0</h6></td></tr>
+                        <tr><td><p>Char:</p><input class = "stat base6" id="Charisma-ext"><br><h6 class="stat" style="border: 2px solid;" id="Charisma">+0</h6></td></tr>
+                      </table>
+                    </div>
+            
+                    <div style="text-align: left; display: inline-block; width: 70%;">
+                      <table style="width: 90%;">
+                        <tr style="text-align: center;"><td><input class = "stat" id="inspiration"/><p style="display: inline;">  Inspiration</p></td></tr>
+                        <tr style="text-align: center;"><td><h6 class = "stat" id="proficiency" style="display: inline;"></h6><p style="display: inline;">  Proficiency</p></td></tr>
+                        <tr>
+                          <td>
+                            <input class = "stat" type="checkbox" id="StrengthSave-btn"><p id="StrengthSave" class = "stat expertise" style="display: inline;">Strength</p><br>
+                            <input class = "stat" type="checkbox" id="DexteritySave-btn"><p id="DexteritySave" class = "stat expertise" style="display: inline;">Dexterity</p><br>
+                            <input class = "stat" type="checkbox" id="ConstitutionSave-btn"><p id="ConstitutionSave" class = "stat expertise" style="display: inline;">Constitution</p><br>
+                            <input class = "stat" type="checkbox" id="IntelligenceSave-btn"><p id="IntelligenceSave" class = "stat expertise" style="display: inline;">Intelligence</p><br>
+                            <input class = "stat" type="checkbox" id="WisdomSave-btn"><p id="WisdomSave" class = "stat expertise" style="display: inline;">Wisdom</p><br>
+                            <input class = "stat" type="checkbox" id="CharismaSave-btn"><p id="CharismaSave" class = "stat expertise" style="display: inline;">Charisma</p><br>
+                            <h6 class="center">Saving Throws</h6> 
+                          </td>
+                        </tr>
+                        
+                        <tr>
+                          <td>
+                            <input class = "stat" type="checkbox" id="acrobatics-btn"><p class = "expertise" id="acrobatics" style="display: inline;">Acrobatics</p><br>
+                            <input class = "stat" type="checkbox" id="animalHandling-btn"><p class = "expertise" id="animalHandling" style="display: inline;">Animal Handling</p><br>
+                            <input class = "stat" type="checkbox" id="arcana-btn"><p class = "expertise" id="arcana" style="display: inline;">Arcana</p><br>
+                            <input class = "stat" type="checkbox" id="athletics-btn"><p class = "expertise" id="athletics" style="display: inline;">Athletics</p><br>
+                            <input class = "stat" type="checkbox" id="deception-btn"><p class = "expertise" id="deception" style="display: inline;">Deception</p><br>
+                            <input class = "stat" type="checkbox" id="history-btn"><p class = "expertise" id="history" style="display: inline;">History</p><br>
+                            <input class = "stat" type="checkbox" id="insight-btn"><p class = "expertise" id="insight" style="display: inline;">Insight</p><br>
+                            <input class = "stat" type="checkbox" id="intimidation-btn"><p class = "expertise" id="intimidation" style="display: inline;">Intimidation</p><br>
+                            <input class = "stat" type="checkbox" id="investigation-btn"><p class = "expertise" id="investigation" style="display: inline;">Investigation</p><br>
+                            <input class = "stat" type="checkbox" id="medicine-btn"><p class = "expertise" id="medicine" style="display: inline;">Medicine</p><br>
+                            <input class = "stat" type="checkbox" id="nature-btn"><p class = "expertise" id="nature" style="display: inline;">Nature</p><br>
+                            <input class = "stat" type="checkbox" id="perception-btn"><p class = "expertise" id="perception" style="display: inline;">Perception</p><br>
+                            <input class = "stat" type="checkbox" id="performance-btn"><p class = "expertise" id="performance" style="display: inline;">Performance</p><br>
+                            <input class = "stat" type="checkbox" id="persuasion-btn"><p class = "expertise" id="persuasion" style="display: inline;">Persuasion</p><br>
+                            <input class = "stat" type="checkbox" id="religion-btn"><p class = "expertise" id="religion" style="display: inline;">Religion</p><br>
+                            <input class = "stat" type="checkbox" id="slightOfHand-btn"><p class = "expertise" id="slightOfHand" style="display: inline;">Slight of Hand</p><br>
+                            <input class = "stat" type="checkbox" id="stealth-btn"><p class = "expertise" id="stealth" style="display: inline;">Stealth</p><br>
+                            <input class = "stat" type="checkbox" id="survival-btn"><p class = "expertise" id="survival" style="display: inline;">Survival</p><br>
+                            <h6 class="center">Skills<h6>
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <p style="display: inline;">Passive Perception:</p><input class = "stat" id="passivePerception"><br><br>
+                    <textarea class="stat" id="profAndLang" style="width: 80%; height: 204px;"></textarea>
+                    <h6 class="center">Proficiencies and Languages</h6>
+                  </td>
+                </tr>
+              </table>
+            </td>
+
+            <td style="width: 34%;">
+              <table style = "width: 100%;">
+                <tr>
+                  <td>
+                    <div style="width: 33%; display: inline;" class="center"><p style="display: inline;">AC: </p><input class = "stat" id="AC"/></div>
+                    <div style="width: 33%; display: inline;" class="center"><p style="display: inline;">Initiative: </p><input class = "stat" id="Initiative"/></div>
+                    <div style="width: 33%; display: inline;" class="center"><p style="display: inline;">Speed: </p><input class = "stat" id="Speed"/></div><br>
+    
+                    <div style="width: 33%; display: inline;" class="center"><p style="display: inline;">Hp: </p><input class = "stat" id="currentHp"/> / <input class = "stat" id="maxHp"></div>
+                    <div style="width: 33%; display: inline;" class="center"><p style="display: inline;">Temp Hp: </p><input class = "stat" id="tempHp"/></div><br>
+                  
+                    <table style="width: 100%;">
+                      <tr>
+                        <td>Hit Dice:</td>
+                        <td>Death Saves:</td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <p>Total:</p><select class="stat" id="totalHitDice"><option value = "d4">d4</option><option value = "d6">d6</option><option value = "d8">d8</option><option value = "d12">d12</option></select><br>
+                          <p>Current:</p><select class = "stat" id="currentHitDice"></select>
+                        </td>
+    
+                        <td>
+                          <p>Success:</p>
+                          <input class = "stat" type="checkbox" id="success1">-<input class = "stat" type="checkbox" id="success2">-<input class = "stat" type="checkbox" id="success3"><br>
+                          <p>Failures:</p>
+                          <input class = "stat" type="checkbox" id="fail1">-<input class = "stat" type="checkbox" id="fail2">-<input class = "stat" type="checkbox" id="fail3"> 
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+  
+                <tr>
+                  <td>
+                    <h6>Attacks & Spell Casting:</h6>
+                    
+                    <table style="width: 100%;">
+                      <tr>
+                        <td>Name</td>
+                        <td style="width: 20%;">Attack Bonus</td>
+                        <td>Damage</td>
+                      </tr>
+    
+                      <tr>
+                        <td><input class = "stat" id="actionName1"/></td>
+                        <td><input class = "stat" id="actionBonus1"/></td>
+                        <td><input class = "stat" id="actionDamage1"/></td>
+                      </tr>
+    
+                      <tr>
+                        <td><input class = "stat" id="actionName2"/></td>
+                        <td><input class = "stat" id="actionBonus2"/></td>
+                        <td><input class = "stat" id="actionDamage2"/></td>
+                      </tr>
+    
+                      <tr>
+                        <td><input class = "stat" id="actionName3"/></td>
+                        <td><input class = "stat" id="actionBonus3"/></td>
+                        <td><input class = "stat" id="actionDamage3"/></td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                
+                <tr>
+                  <td>
+                    <h6>Money:</h6>
+                    <table style="width: 100%;">
+                      <td><p>CP</p><input class="stat" id="copperP"></td>
+                      <td><p>SP</p><input class="stat" id="silverP"></td>
+                      <td><p>EP</p><input class="stat" id="electrumP"></td>
+                      <td><p>GP</p><input class="stat" id="goldP"></td>
+                      <td><p>PP</p><input class="stat" id="platinumP"></td>
+                    </table>
+
+                    <textarea class="stat" id="equipment" style="width: 80%; height: 392px;"></textarea>
+                    <h6>Equipment</h6>
+                  </td>
+                </tr>
+              </table>
+            </td>
+
+            <td style="width: 33%;">
+              <table style="width: 100%;">
+                <tr>
+                  <td>
+                    <table style="width: 100%;">
+                      <tr><td><input class="stat" id="personalityTraits"/><br><h6>Personality Traits</h6></td></tr>
+                      <tr><td><input class="stat" id="ideals"/><br><h6>Ideals</h6></td></tr>
+                      <tr><td><input class="stat" id="bonds"/><br><h6>Bonds</h6></td></tr>
+                      <tr><td><input class="stat" id="flaws"/><br><h6>Flaws</h6></td></tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>
+                    <textarea class="stat" id="feats" style="width: 100%; height: 726px;"></textarea>
+                    <h6>Features & Traits</h6>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table style="width:80%;">
+        <tr>
+          <td><p style="display: inline;">Spellcasting Class: <input class="stat" id="spellClass"/></p></td>
+          <td><p style="display: inline;">Spellcasting Ability:</p> <select class="stat" id="spellAbility"><option value = "Strength">Strength</option><option value = "Dexterity">Dexterity</option><option value = "Constitution">Constitution</option><option value = "Intelligence">Intelligence</option><option value = "Wisdom">Wisdom</option><option value = "Charisma">Charisma</option></select></td>
+          <td><p style="display: inline;">DC:</p><h6 style="display: inline;" class="stat" id="spellDC"></h6></td>
+          <td><p style="display: inline;">Spell Attack Bonus:</p><h6 style="display: inline;" class="stat" id="spellBonus"></h6></td>
+        </tr>
+      </table>
+      <h6>Infusion & Other:</h6>
+      <textarea class="stat" id="infusion" style="width: 70%; height: 1000px;"></textarea>
+    </div>
+
+     <!-- Bootstrap JavaScript Components-LOAD LAST -->
+     <script scr="js/bootstrap/scripts.js"></script>
+     <script src="js/bootstrap/bootstrap.bundle.min.js"></script>
+     <script src="js/stats.js" type = "module"></script>
+  </body>
+</html>
