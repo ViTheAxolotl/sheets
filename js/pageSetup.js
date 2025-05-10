@@ -55,7 +55,6 @@ onAuthStateChanged(auth, (user) => {
             </ul>`;
         
         isLoggedIn = true;
-        discordSetup();
     } 
     
     else 

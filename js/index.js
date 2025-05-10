@@ -34,14 +34,6 @@ onAuthStateChanged(auth, (user) =>
     {
         player = auth.currentUser.email.split("@");
         player = toTitleCase(player[0]);
-        setDoc(`playerChar/${player}/mode`, "waiting");
-        
-        modeRef = ref(database, `playerChar/${player}/mode`);
-        onValue(modeRef, (snapshot) => 
-        {
-            const data = snapshot.val();
-            mode = data;
-        });
     }
 });
 
