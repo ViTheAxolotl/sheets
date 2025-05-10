@@ -42,8 +42,9 @@ function loadSheets()
 {
     document.getElementById("sheets").innerHTML - "";
 
-    for(let sheet of Object.keys(wholeChar[player]["sheets"]))
+    for(let sheet of Object.keys(wholeChar[player]))
     {
+        if(sheet == "currentSheet"){continue;}
         let button = document.createElement("button");
         button.innerHTML = sheet; 
         button.onclick = handleShowSheet;
@@ -72,7 +73,7 @@ function handleCreateNewSheet()
 function createNewSheet()
 {
     let name = document.getElementById("name");
-    if(name.value != ""){setDoc(`playerChar/${player}/${name.value}`, {"name":name.value}); document.getElementById("createNew").innerHTML = "";}
+    if(name.value != ""){setDoc(`playerChar/${player}/${name.value}`, {"name":name.value}); document.getElementById("createNew").innerHTML = ""; reload(.5);}
     else{alert("Need to give a character name.");}
 }
 
