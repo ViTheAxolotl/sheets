@@ -54,6 +54,7 @@ function loadSheets()
 
     let deleteBtn = document.createElement("img");
     deleteBtn.src = "images/trashIcon.png";
+    deleteBtn.style.display = "block";
     deleteBtn.onclick = handleDeleteBtn;
     document.getElementById("sheets").appendChild(deleteBtn);
 }
