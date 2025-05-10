@@ -64,7 +64,7 @@ function init()
 
         else
         {
-            setDoc(`wholeChar/${player}/${sheet}/stats/${stat.id}`, "");
+            setDoc(`playerChar/${player}/${sheet}/stats/${stat.id}`, "");
             setStats(stat);
         }
 
