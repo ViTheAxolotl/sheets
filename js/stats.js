@@ -57,7 +57,7 @@ function init()
 
             else
             {
-                stat.checked = wholeChar[player][sheet]["stats"][stat.id];
+                stat.checked = wholeChar[player][sheet]["stats"][stat.id]; 
                 setStats(stat);
             }
         }
