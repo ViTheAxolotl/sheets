@@ -6,12 +6,14 @@ import { toTitleCase, auth, database, setDoc, reload, deleteDoc } from './viMeth
 let player;
 let wholeChar = {};
 let firstRun = true;
+let sheets;
 
 const charRef = ref(database, 'playerChar/');
 onValue(charRef, (snapshot) => 
 {
     const data = snapshot.val();
     wholeChar = data;
+    loadSheets();
 
     if(firstRun)
     {
@@ -42,3 +44,40 @@ onAuthStateChanged(auth, (user) =>
         });
     }
 });
+
+function loadSheets()
+{
+    document.getElementById("sheets").innerHTML - "";
+
+    for(let sheet of Object.keys(wholeChar[player]["sheets"]))
+    {
+        let button = document.createElement("button");
+        button.innerHTML = sheet; 
+        button.onclick = handleShowSheet;
+        button.classList = "gridButton";
+        document.getElementById("sheets").appendChild(button);
+    }
+}
+
+function init()
+{
+    document.getElementById("addButton").onclick = handleCreateNewSheet;
+}
+
+function handleCreateNewSheet()
+{
+    let display = document.getElementById("createNew");
+
+    display.innerHTML = 
+    `
+        <h6>Character's Name</h6><input id="name"/>
+        <button id="done">Create!</button>
+    `;
+    document.getElementById("done").onclick = createNewSheet;
+}
+
+function createNewSheet()
+{
+    let name = document.getElementById("name");
+    setDoc(`playerChar/${player}/sheets/${name}`, {"name":name});
+}

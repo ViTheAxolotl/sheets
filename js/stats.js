@@ -46,7 +46,6 @@ function init()
                 if(stat.id == "spellBonus"){let bonus = statFormat(parseInt(wholeChar[player]["stats"][wholeChar[player]["stats"]["spellAbility"]]) + parseInt(wholeChar[player]["stats"]["proficiency"])); stat.innerHTML = bonus; setDoc(`playerChar/${player}/stats/spellBonus`, bonus);}
                 else if(stat.id == "spellDC"){let dc = statFormat(parseInt(wholeChar[player]["stats"][wholeChar[player]["stats"]["spellAbility"]]) + parseInt(wholeChar[player]["stats"]["proficiency"]) + 8); stat.innerHTML = dc; setDoc(`playerChar/${player}/stats/spellDC`, dc);}
                 else if(stat.id == "proficiency"){let prof = statFormat(Math.ceil(parseInt(wholeChar[player]["stats"]["lv"])/4)+1); setDoc(`playerChar/${player}/stats/proficiency`, prof); stat.innerHTML = prof;}
-                else if(stat.id == "name"){stat.innerHTML = player;}
                 else if(stat.id == "totalHitDice"){for(let i = 0; i < stat.length; i++){stat[i].innerHTML = `${wholeChar[player]["stats"]["lv"]}${stat[i].value}`; stat.value = wholeChar[player]["stats"][stat.id];}}
                 else if(stat.id == "currentHitDice"){let max = wholeChar[player]["stats"]["totalHitDice"]; stat.innerHTML = ""; for(let i = parseInt(wholeChar[player]["stats"]["lv"]); i >= 0; i--){let option = document.createElement("option"); option.innerHTML = `${i}${max}`; option.value = `${i}`; stat.appendChild(option);} stat.value = wholeChar[player]["stats"][stat.id];}
                 else if(stat.id.includes("Save")){continue;}
