@@ -13,13 +13,14 @@ onValue(charRef, (snapshot) =>
 {
     const data = snapshot.val();
     wholeChar = data;
-    loadSheets();
 
     if(firstRun)
     {
         firstRun = false;
         init();
     }
+
+    loadSheets();
 });
 
 onAuthStateChanged(auth, (user) => 
