@@ -30,7 +30,7 @@ function handleLoginBtn()
         }
     }
 
-    login(`${toTitleCase(user)}@ForgottenRealms.com`, toTitleCase(pass));
+    login(`${toTitleCase(user)}@sheets.com`, toTitleCase(pass));
 }
 
 function login(email, password)

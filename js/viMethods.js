@@ -5,24 +5,28 @@ import { getAuth } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-auth
 
 const firebaseApp = initializeApp
 ({
-    apiKey: "AIzaSyArcsmJkXSeuIHMysYtIzRdjIDlKNQA25Y",
-    authDomain: "forgottenrealmsmap.firebaseapp.com",
-    projectId: "forgottenrealmsmap",
-    storageBucket: "forgottenrealmsmap.appspot.com",
-    messagingSenderId: "697902154695",
-    appId: "1:697902154695:web:ffa5c47817f3097c89cfe2",
-    measurementId: "G-Q2W494NRDT"
+    apiKey: "AIzaSyCbXEHrEWp-WEKriotvpeD7AQq2k-rCluE",
+    authDomain: "sheets-fd946.firebaseapp.com",
+    databaseURL: "https://sheets-fd946-default-rtdb.firebaseio.com",
+    projectId: "sheets-fd946",
+    storageBucket: "sheets-fd946.firebasestorage.app",
+    messagingSenderId: "1088842294165",
+    appId: "1:1088842294165:web:02ce4992c44d04ab378c9c",
+    measurementId: "G-FSL9K4SQ84"
 }); //Connects to database
 
 export let auth = getAuth(); //Logs into accounts
 export let database = getDatabase(); //Sets up connection
 export let quickAction = false;
+export let sheet;
 export let skillDecrypt = {"athletics" : "Strength", "acrobatics" : "Dexterity", "slightOfHand" : "Dexterity", "stealth" : "Dexterity", "arcana" : "Intelligence", "history" : "Intelligence", "investigation" : "Intelligence", "nature" : "Intelligence", "religion" : "Intelligence", "animalHandling" : "Wisdom", "insight" : "Wisdom", "medicine" : "Wisdom", "perception" : "Wisdom", "survival" : "Wisdom",  "deception" : "Charisma",  "intimidation" : "Charisma",  "performance" : "Charisma",  "persuasion" : "Charisma"};
 
 export function setQuickAction(bool)
 {
     quickAction = bool;
 }
+
+export function setSheet(setTo){sheet = setTo;}
 
 /**
  * Sets Map Values
