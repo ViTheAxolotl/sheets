@@ -63,7 +63,7 @@ function handleCreateNewSheet()
 
     display.innerHTML = 
     `
-        <h6>Character's Name</h6><input id="name"/>
+        <h6 style="display: inline;" class = "color-UP-yellow">Character's Name:</h6><input style="display: inline;" id="name"/>
         <button id="done">Create!</button>
     `;
     document.getElementById("done").onclick = createNewSheet;
@@ -72,5 +72,5 @@ function handleCreateNewSheet()
 function createNewSheet()
 {
     let name = document.getElementById("name");
-    setDoc(`playerChar/${player}/sheets/${name}`, {"name":name});
+    if(name.value != ""){setDoc(`playerChar/${player}/sheets/${name.value}`, {"name":name.value});}
 }
