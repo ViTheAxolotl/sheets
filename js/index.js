@@ -40,7 +40,7 @@ onAuthStateChanged(auth, (user) =>
 
 function loadSheets()
 {
-    document.getElementById("sheets").innerHTML - "";
+    document.getElementById("sheets").innerHTML = "";
 
     for(let sheet of Object.keys(wholeChar[player]))
     {
