@@ -40,7 +40,7 @@ function init()
 
     for(let stat of stats)
     {
-        if(wholeChar[player][sheet]["stats"][stat.id])
+        if(wholeChar[player][sheet]["stats"][stat.id] || wholeChar[player][sheet]["stats"][stat.id] == "")
         {
             if(typeof wholeChar[player][sheet]["stats"][stat.id] == "string")
             {
@@ -64,7 +64,7 @@ function init()
 
         else
         {
-            setDoc(`playerChar/${player}/${sheet}/stats/${stat.id}`, "\t"); 
+            setDoc(`playerChar/${player}/${sheet}/stats/${stat.id}`, ""); 
             setStats(stat);
         }
 
@@ -191,6 +191,5 @@ function updateStat()
         if(!["profAndLang", "infusion", "feats", "equipment"].includes(this.id)){this.style.minWidth = this.value.length + 2 + "ch";}
     }
 
-    if(setTo.includes("\t")){setTo = setTo.replace("\t", ""); this.innerHTML = this.innerHTML.replace("\t", "");}
     setDoc(`playerChar/${player}/${sheet}/stats/${this.id}`, setTo);
 }
