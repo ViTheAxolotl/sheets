@@ -80,12 +80,12 @@ function handleShowSheet()
 {
     let div = document.getElementById("controls");
     div.innerHTML = "";
+    setSheet(this.innerHTML);
+
     div.innerHTML = 
     `
     <div id = "sheet" style="display: none;" draggable="false">
         <iframe id="statSheet" src="stats.html?${this.innerHTML}" title="stats" style="height: 90vh; margin: 5px;" draggable="false"></iframe>
     </div>
-    `;
-
-    setSheet(this.innerHTML);
+    `; 
 }
