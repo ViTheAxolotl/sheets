@@ -80,7 +80,7 @@ function handleShowSheet()
 {
     let div = document.getElementById("controls");
     div.innerHTML = "";
-    setSheet(this.innerHTML);
+    setDoc(`playerChar/${player}/currentSheet`, this.innerHTML);
 
     div.innerHTML = 
     `

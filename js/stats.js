@@ -2,11 +2,12 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js';
 import { ref, onValue } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js';
-import { toTitleCase, auth, database, setDoc, statFormat, skillDecrypt, reload, deleteDoc, sheet } from './viMethods.js';
+import { toTitleCase, auth, database, setDoc, statFormat, skillDecrypt, reload, deleteDoc } from './viMethods.js';
 
 let player;
 let wholeChar = {};
 let stats;
+let sheet;
 let firstRun = true;
 
 const charRef = ref(database, 'playerChar/');
@@ -18,6 +19,7 @@ onValue(charRef, (snapshot) =>
     if(firstRun)
     {
         firstRun = false;
+        sheet = wholeChar[player]["currentSheet"];
         init();
     }
 });
