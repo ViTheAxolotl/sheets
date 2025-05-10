@@ -51,11 +51,43 @@ function loadSheets()
         button.classList = "gridButton";
         document.getElementById("sheets").appendChild(button);
     }
+
+    let deleteBtn = document.createElement("img");
+    deleteBtn.src = "images/trashIcon.png";
+    deleteBtn.onclick = handleDeleteBtn;
+    document.getElementById("sheets").appendChild(deleteBtn);
 }
 
 function init()
 {
     document.getElementById("addButton").onclick = handleCreateNewSheet;
+}
+
+function handleDeleteBtn()
+{
+    let display = document.getElementById("createNew");
+
+    display.innerHTML = 
+    `
+        <h3>Delete Who?</h3>
+    `;
+
+    for(let sheet of Object.keys(wholeChar[player]))
+    {
+        if(sheet == "currentSheet"){continue;}
+        let button = document.createElement("button");
+        button.innerHTML = sheet; 
+        button.onclick = deleteSheet;
+        button.classList = "gridButton";
+        display.appendChild(button);
+    }
+}
+
+function deleteSheet()
+{
+    deleteDoc(`playerChar/${player}/${currentSheet}`);
+    deleteDoc(`playerChar/${player}/${this.innerHTML}`);
+    reload(0.5);
 }
 
 function handleCreateNewSheet()
