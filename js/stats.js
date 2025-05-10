@@ -42,7 +42,6 @@ function init()
     {
         if(wholeChar[player][sheet]["stats"][stat.id])
         {
-            if(!wholeChar[player][sheet]["stats"][stat.id]){setDoc(`wholeChar/${player}/${sheet}/stats/${stat.id}`, "");}
             if(typeof wholeChar[player][sheet]["stats"][stat.id] == "string")
             {
                 if(stat.id == "spellBonus"){let bonus = statFormat(parseInt(wholeChar[player][sheet]["stats"][wholeChar[player][sheet]["stats"]["spellAbility"]]) + parseInt(wholeChar[player][sheet]["stats"]["proficiency"])); stat.innerHTML = bonus; setDoc(`playerChar/${player}/${sheet}/stats/spellBonus`, bonus);}
@@ -65,6 +64,7 @@ function init()
 
         else
         {
+            setDoc(`wholeChar/${player}/${sheet}/stats/${stat.id}`, "");
             setStats(stat);
         }
 
