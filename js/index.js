@@ -72,7 +72,7 @@ function handleCreateNewSheet()
 function createNewSheet()
 {
     let name = document.getElementById("name");
-    if(name.value != ""){setDoc(`playerChar/${player}/sheets/${name.value}`, {"name":name.value}); document.getElementById("createNew").innerHTML = "";}
+    if(name.value != ""){setDoc(`playerChar/${player}/${name.value}`, {"name":name.value}); document.getElementById("createNew").innerHTML = "";}
     else{alert("Need to give a character name.");}
 }
 
