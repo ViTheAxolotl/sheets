@@ -87,7 +87,7 @@ function handleDeleteBtn()
 
 function deleteSheet()
 {
-    deleteDoc(`playerChar/${player}/${currentSheet}`);
+    deleteDoc(`playerChar/${player}/currentSheet`);
     deleteDoc(`playerChar/${player}/${this.innerHTML}`);
     reload(0.5);
 }
