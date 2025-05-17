@@ -169,7 +169,7 @@ function updateStat()
 
         this.value = setTo;
         this.style.minWidth = this.value.length + 2 + "ch";
-        reload(1.5);
+        reload(1);
     }
 
     else if(this.classList.contains("base6"))
