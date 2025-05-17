@@ -130,6 +130,7 @@ function handleShowSheet()
 function handleButton()
 {
     let modifier = this.innerHTML;
+    let zoomLevel = 100;
 
     switch(this.name) //Checks case on the property of which name was clicked
     {
