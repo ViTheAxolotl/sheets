@@ -75,35 +75,12 @@ function init()
         }
 
         stat.onchange = updateStat;
-        let buttons = document.getElementsByClassName("inOrDe");
-        for(let button of buttons){button.onclick = handleButton;}
     }
 
     for(let stat of document.getElementsByClassName("expertise")){stat.onclick = handleExpertise;}
 }
 
-function handleButton()
-{
-    let modifier = this.innerHTML;
 
-    switch(this.name) //Checks case on the property of which name was clicked
-    {
-        case "zoomSheet":
-            if(modifier == "+") //If plus button is 
-            {
-                if(zoomLevel < 170){zoomLevel += 10;}
-            }
-
-            else //minus button is clicked
-            {
-                zoomLevel -= 10;
-                if (zoomLevel < 70){zoomLevel = 70;}
-            }
-
-            setDoc(`playerChar/${player}/zoomSheetLevel`, zoomLevel);
-            break;
-    }
-}
 
 function setStats(stat)
 {

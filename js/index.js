@@ -63,6 +63,8 @@ function loadSheets()
 function init()
 {
     document.getElementById("addButton").onclick = handleCreateNewSheet;
+    let buttons = document.getElementsByClassName("inOrDe");
+    for(let button of buttons){button.onclick = handleButton;}
 }
 
 function handleDeleteBtn()
@@ -123,4 +125,27 @@ function handleShowSheet()
         <iframe id="statSheet" src="stats.html?${this.innerHTML}" title="stats" style="height: 90vh; margin: 5px;" draggable="false"></iframe>
     </div>
     `; 
+}
+
+function handleButton()
+{
+    let modifier = this.innerHTML;
+
+    switch(this.name) //Checks case on the property of which name was clicked
+    {
+        case "zoomSheet":
+            if(modifier == "+") //If plus button is 
+            {
+                if(zoomLevel < 170){zoomLevel += 10;}
+            }
+
+            else //minus button is clicked
+            {
+                zoomLevel -= 10;
+                if (zoomLevel < 70){zoomLevel = 70;}
+            }
+
+            setDoc(`playerChar/${player}/zoomSheetLevel`, zoomLevel);
+            break;
+    }
 }
