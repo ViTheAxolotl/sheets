@@ -113,7 +113,7 @@ function createNewSheet()
 
 function handleShowSheet()
 {
-    let div = document.getElementById("controls");
+    let div = document.getElementById("sheet");
     div.innerHTML = "";
     setDoc(`playerChar/${player}/currentSheet`, this.innerHTML);
 
