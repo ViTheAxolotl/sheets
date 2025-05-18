@@ -26,7 +26,7 @@ onValue(charRef, (snapshot) =>
     if(wholeChar[player]["zoomSheetLevel"])
     {
         let sheet = document.getElementById("statSheet");
-        sheet.style.zoom = `${wholeChar[player]["zoomSheetLevel"]}%`;
+        sheet.style.zoom = `${wholeChar[player]["zoomSheetLevel"]}%`; 
     }
 });
 
