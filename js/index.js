@@ -144,6 +144,8 @@ function handleButton()
     let modifier = this.innerHTML;
     let zoomLevel = 100;
 
+    if(wholeChar[player]["zoomSheetLevel"]){zoomLevel = wholeChar[player]["zoomSheetLevel"];}
+    
     switch(this.name) //Checks case on the property of which name was clicked
     {
         case "zoomSheet":
