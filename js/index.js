@@ -131,6 +131,12 @@ function handleShowSheet()
         <iframe id="statSheet" src="stats.html?${this.innerHTML}" title="stats" style="height: 90vh; margin: 5px;" draggable="false"></iframe>
     </div>
     `; 
+
+    if(wholeChar[player]["zoomSheetLevel"])
+    {
+        let sheet = document.getElementById("sheet");
+        sheet.style.zoom = `${wholeChar[player]["zoomSheetLevel"]}%`; 
+    }
 }
 
 function handleButton()
