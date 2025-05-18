@@ -44,7 +44,7 @@ function loadSheets()
 
     for(let sheet of Object.keys(wholeChar[player]))
     {
-        if(sheet == "currentSheet"){continue;}
+        if(sheet == "currentSheet" || sheet == "zoomSheetLevel"){continue;}
         let button = document.createElement("button");
         button.innerHTML = sheet; 
         button.onclick = handleShowSheet;
