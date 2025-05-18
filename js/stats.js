@@ -25,7 +25,7 @@ onValue(charRef, (snapshot) =>
 
     if(wholeChar[player]["zoomSheetLevel"])
     {
-        document.getElementById("frame").style.zoom = `${wholeChar[player]["zoomSheetLevel"]}%`;
+        document.getElementById("sheet").style.zoom = `${wholeChar[player]["zoomSheetLevel"]}%`;
     }
 });
 
