@@ -19,6 +19,12 @@ onValue(charRef, (snapshot) =>
         firstRun = false;
         init();
     }
+    
+    if(wholeChar[player]["zoomSheetLevel"])
+    {
+        let sheet = document.getElementById("sheet");
+        sheet.style.zoom = `${wholeChar[player]["zoomSheetLevel"]}%`; 
+    }
 
     loadSheets();
 });

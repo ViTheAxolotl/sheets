@@ -22,12 +22,6 @@ onValue(charRef, (snapshot) =>
         sheet = wholeChar[player]["currentSheet"];
         init();
     }
-
-    if(wholeChar[player]["zoomSheetLevel"])
-    {
-        let sheet = document;
-        sheet.style.zoom = `${wholeChar[player]["zoomSheetLevel"]}%`; 
-    }
 });
 
 onAuthStateChanged(auth, (user) => 
