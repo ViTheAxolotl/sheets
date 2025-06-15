@@ -3,6 +3,8 @@ body
     background: url(../images/background.jpg) black;
 }
 
+body * { -webkit-text-size-adjust: none !important; }
+
 .bg-UP-purple
 {
     background-color: #510086;
