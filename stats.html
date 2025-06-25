@@ -16,14 +16,14 @@
   
   <body style="-webkit-text-size-adjust: none;">
     <div id = "story" class = "bg-UP-purple color-UP-black center stats" style="margin: 0px; border: none; background: url(images/bigPaper.jpg) lightgray 100% 100%; min-width:1800px; background-size: 100% 100%;">
-      <table style="width: 100%;" class="topHalf statSheet">
-        <td style="width: 33%;"><p>Character Name:</p><h6 class = "stat" id="name"></h6></td>
-        <td style="width: 34%;"><p>Class, Race, and Lv:</p><input class = "stat" id="class"/><input class = "stat" id="race"/><select class="stat" id="lv"><option value = "1">1</option><option value = "2">2</option><option value = "3">3</option><option value = "4">4</option><option value = "5">5</option><option value = "6">6</option><option value = "7">7</option><option value = "8">8</option><option value = "9">9</option><option value = "10">10</option><option value = "11">11</option><option value = "12">12</option><option value = "13">13</option><option value = "14">14</option><option value = "15">15</option><option value = "16">16</option><option value = "17">17</option><option value = "18">18</option><option value = "19">19</option><option value = "20">20</option></select></td>
-        <td style="width: 33%;"><p>Background & Alignment:</p><input class = "stat" id="background"/><input class = "stat" id="alignment"/></td>
-      </table>
-
-      <table style="width: 100%;" class="statSheet">
+      <table style="width: 100%; min-height: 1300px; margin-bottom: 10px;" class="statSheet paper">
         <tbody>
+          <tr>
+            <td style="width: 33%;"><p>Character Name:</p><h6 class = "stat" id="name"></h6></td>
+            <td style="width: 34%;"><p>Class, Race, and Lv:</p><input class = "stat" id="class"/><input class = "stat" id="race"/><select class="stat" id="lv"><option value = "1">1</option><option value = "2">2</option><option value = "3">3</option><option value = "4">4</option><option value = "5">5</option><option value = "6">6</option><option value = "7">7</option><option value = "8">8</option><option value = "9">9</option><option value = "10">10</option><option value = "11">11</option><option value = "12">12</option><option value = "13">13</option><option value = "14">14</option><option value = "15">15</option><option value = "16">16</option><option value = "17">17</option><option value = "18">18</option><option value = "19">19</option><option value = "20">20</option></select></td>
+            <td style="width: 33%;"><p>Background & Alignment:</p><input class = "stat" id="background"/><input class = "stat" id="alignment"/></td>
+          </tr>
+
           <tr>
             <td style="width: 33%;">
               <table style="width: 100%;">
@@ -200,6 +200,95 @@
           </tr>
         </tbody>
       </table>
+
+      <table class = "paper" style="width:100%; margin-top: 10px;">
+        <tbody>
+          <tr>
+            <td style="width: 50%;">
+              <table style="width: 100%; height: 100%;">
+                <tr><td style="height: 202px;">
+                  <textarea class="stat" id = "apperance" style="width: 100%; height: 202px;"></textarea>
+                  <h6>Character Apperance</h6>
+                </td></tr>
+
+                <tr><td style="height: 800px;">
+                  <textarea class="stat" id="characterBackstory" style="height: 800px; width: 100%;"></textarea>
+                  <h6>Character Backstory</h6>
+                </td></tr>
+              </table>
+            </td>
+
+            <td style="width: 49%;">
+              <table style="width: 100%;">
+              <tr><td>
+                <table style="width: 100%; height: 245px;">
+                  <tr>
+                    <td>
+                      <textarea class="stat" id="ally1" style="width: 100%; height: 245px;"></textarea>
+                    </td>
+
+                    <td>
+                      <h6>Name</h6>
+                      <textarea class="stat" id="ally2" style="width: 100%; height: 230px;"></textarea>
+                    </td>
+                  </tr>
+                </table>
+                <h6>Alliances & Organizations</h6></td>
+              </tr>
+              
+              <tr><td style="height: 334px;">
+                <textarea class="stat" id="additionalFeat&Traits" style="width: 100%; height: 334px;"></textarea>
+                <h6>Additional Features & Traits</h6>
+              </td></tr>
+
+              <tr><td style="height: 334px;">
+                <textarea class="stat" id="treasure" style="width: 100%; height: 334px;"></textarea>
+                <h6>Treasure</h6>
+              </td></tr>
+              </table> 
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table class ="paper" style="width:100%;margin-top: 10px;">
+        <tr><td><table>
+          <td><p style="display: inline;">Spellcasting Class: <input class="stat" id="spellClass"/></p></td>
+          <td><p style="display: inline;">Spellcasting Ability:</p> <select class="stat" id="spellAbility"><option value = "Strength">Strength</option><option value = "Dexterity">Dexterity</option><option value = "Constitution">Constitution</option><option value = "Intelligence">Intelligence</option><option value = "Wisdom">Wisdom</option><option value = "Charisma">Charisma</option></select></td>
+          <td><p style="display: inline;">DC:</p><h6 style="display: inline;" class="stat" id="spellDC"></h6></td>
+          <td><p style="display: inline;">Spell Attack Bonus:</p><h6 style="display: inline;" class="stat" id="spellBonus"></h6></td>
+        </table></td></tr>
+        
+        <tr>
+          <td>
+            <table>
+              <tr>
+                <td>
+
+                </td>
+
+                <td>
+
+                </td>
+
+                <td>
+                  
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+
+      <table style="width: 80%; margin-top: 10px;" class="paper"> 
+        <tr>
+          <td><h6>Waypoints:</h6><p>•  Penrith (Jason’s Lab)</p></td>
+        </tr>
+      </table>
+      <div class="paper">
+      <h6>Infusion & Other:</h6>
+      <textarea class="stat" id="infusion" style="width: 70%; height: 1000px;"></textarea>
+    </div></div>
 
       <table style="width:80%;">
         <tr>
