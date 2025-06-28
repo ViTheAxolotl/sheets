@@ -170,7 +170,6 @@ function updateStat()
         setTo = setTo.join("    ");
 
         this.value = setTo;
-        this.style.minWidth = this.value.length + 2 + "ch";
         reload(1);
     }
 
