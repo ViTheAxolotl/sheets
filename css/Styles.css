@@ -3,6 +3,11 @@ body
     background: url(../images/background.jpg) black;
 }
 
+.paper
+{
+    background: url(../images/bigPaper.jpg) lightgray 100% 100%;
+}
+
 body * { -webkit-text-size-adjust: none !important; }
 
 .bg-UP-purple
