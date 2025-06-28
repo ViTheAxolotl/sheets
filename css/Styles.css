@@ -20,6 +20,11 @@ body * { -webkit-text-size-adjust: none !important; }
     background-color: #00098C;
 }
 
+#story span
+{
+    text-align: left;
+}
+
 .bg-UP-yellow
 {
     background-color: #AD9622;
