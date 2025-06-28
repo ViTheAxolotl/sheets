@@ -128,16 +128,16 @@ function handleShowSheet()
     div.innerHTML = 
     `
     <div id="frame" draggable="false">
-        <iframe id="statSheet" src="stats.html?${this.innerHTML}" title="stats" style="height: 90vh; margin: 5px;" draggable="false"></iframe>
+        <iframe id="statSheet" src="stats.html?${this.innerHTML}" title="stats" style="-webkit-text-size-adjust: none; transform-origin:left top;" draggable="false"></iframe>
     </div>
     `; 
 
     if(wholeChar[player]["zoomSheetLevel"])
     {
-        document.getElementById("sheet").style.transform = `scale(${wholeChar[player]["zoomSheetLevel"]/100})`;
-        document.getElementById("sheet").style.width = `${100/(wholeChar[player]["zoomSheetLevel"]/100)}%`;
-        document.getElementById("sheet").style.marginBottom = `${((wholeChar[player]["zoomSheetLevel"]/100)-1)*70*9.4}px`;
-        document.getElementById("sheet").style.height = `${((100/wholeChar[player]["zoomSheetLevel"]))*50+40}vh`;
+        document.getElementById("statSheet").style.transform = `scale(${wholeChar[player]["zoomSheetLevel"]/100})`;
+        document.getElementById("statSheet").style.width = `${100/(wholeChar[player]["zoomSheetLevel"]/100)}%`;
+        document.getElementById("statSheet").style.marginBottom = `${((wholeChar[player]["zoomSheetLevel"]/100)-1)*70*9.4}px`;
+        document.getElementById("statSheet").style.height = `${((100/wholeChar[player]["zoomSheetLevel"]))*50+40}vh`;
     }
 }
 
