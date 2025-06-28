@@ -134,8 +134,10 @@ function handleShowSheet()
 
     if(wholeChar[player]["zoomSheetLevel"])
     {
-        let sheet = document.getElementById("sheet");
-        sheet.style.zoom = `${wholeChar[player]["zoomSheetLevel"]}%`; 
+        document.getElementById("sheet").style.transform = `scale(${wholeChar[player]["zoomSheetLevel"]/100})`;
+        document.getElementById("sheet").style.width = `${100/(wholeChar[player]["zoomSheetLevel"]/100)}%`;
+        document.getElementById("sheet").style.marginBottom = `${((wholeChar[player]["zoomSheetLevel"]/100)-1)*70*9.4}px`;
+        document.getElementById("sheet").style.height = `${((100/wholeChar[player]["zoomSheetLevel"]))*50+40}vh`;
     }
 }
 
@@ -151,13 +153,13 @@ function handleButton()
         case "zoomSheet":
             if(modifier == "+") //If plus button is 
             {
-                if(zoomLevel < 170){zoomLevel += 10;}
+                if(zoomLevel < 100){zoomLevel += 10;}
             }
 
             else //minus button is clicked
             {
                 zoomLevel -= 10;
-                if (zoomLevel < 70){zoomLevel = 70;}
+                if (zoomLevel < 30){zoomLevel = 30;}
             }
 
             setDoc(`playerChar/${player}/zoomSheetLevel`, zoomLevel);
