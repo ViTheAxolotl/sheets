@@ -51,7 +51,7 @@ function init()
                 else if(stat.id == "currentHitDice"){let max = wholeChar[player][sheet]["stats"]["totalHitDice"]; stat.innerHTML = ""; for(let i = parseInt(wholeChar[player][sheet]["stats"]["lv"]); i >= 0; i--){let option = document.createElement("option"); option.innerHTML = `${i}${max}`; option.value = `${i}`; stat.appendChild(option);} stat.value = wholeChar[player][sheet]["stats"][stat.id];}
                 else if(stat.id.includes("Save")){continue;}
                 else if(["spellAbility", "lv"].includes(stat.id)){stat.value = wholeChar[player][sheet]["stats"][stat.id];}
-                else if(stat.value == ""){stat.value = wholeChar[player][sheet]["stats"][stat.id]; if(!["profAndLang", "infusion", "feats", "equipment"].includes(stat.id)){stat.style.minWidth = stat.value.length + 2 + "ch";}}
+                else if(stat.value == ""){stat.value = wholeChar[player][sheet]["stats"][stat.id]; if(!["profAndLang", "infusion", "feats", "equipment", "apperance", "characterBackstory", "ally1", "ally2", "additionalFeat&Traits", "treasure"].includes(stat.id)){stat.style.minWidth = stat.value.length + 2 + "ch";}}
                 else{stat.innerHTML = wholeChar[player][sheet]["stats"][stat.id];}
             }
 
