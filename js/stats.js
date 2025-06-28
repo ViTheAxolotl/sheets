@@ -64,7 +64,7 @@ function init()
 
         else
         {
-            if(stat.id.includes("-btn")){setDoc(`playerChar/${player}/${sheet}/stats/${stat.id}`, false); }
+            if(stat.id.includes("-btn") && !stat.id.includes("lvl")){setDoc(`playerChar/${player}/${sheet}/stats/${stat.id}`, false); }
             else{setDoc(`playerChar/${player}/${sheet}/stats/${stat.id}`, "");}
             setStats(stat);
         }
@@ -79,7 +79,7 @@ function init()
 
 function setStats(stat)
 {
-    if(stat.id.includes("-btn"))
+    if(stat.id.includes("-btn") && !stat.id.includes("lvl"))
     {
         let display;
         let skill;
