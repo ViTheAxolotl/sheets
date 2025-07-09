@@ -9,12 +9,6 @@ let firstRun = true;
 let sheets;
 let htmlInfo = window.location.href;
 
-if(htmlInfo.includes("?"))
-{
-    htmlInfo = htmlInfo.split("?");
-    htmlInfo = htmlInfo[1];
-}
-
 const charRef = ref(database, 'playerChar/');
 onValue(charRef, (snapshot) => 
 {
@@ -78,6 +72,12 @@ function init()
     document.getElementById("addButton").onclick = handleCreateNewSheet;
     let buttons = document.getElementsByClassName("inOrDe");
     for(let button of buttons){button.onclick = handleButton;}
+}
+
+if(htmlInfo.includes("?"))
+{
+    htmlInfo = htmlInfo.split("?");
+    htmlInfo = htmlInfo[1];
 }
 
 function handleDeleteBtn()
