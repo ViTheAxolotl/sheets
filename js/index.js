@@ -7,6 +7,13 @@ let player;
 let wholeChar = {};
 let firstRun = true;
 let sheets;
+let htmlInfo = window.location.href;
+
+if(htmlInfo.includes("?"))
+{
+    htmlInfo = htmlInfo.split("?");
+    htmlInfo = htmlInfo[1];
+}
 
 const charRef = ref(database, 'playerChar/');
 onValue(charRef, (snapshot) => 
