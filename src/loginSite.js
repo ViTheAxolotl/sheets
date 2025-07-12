@@ -52,7 +52,7 @@ function handleLoginBtn()
         
         if(pass == conf)
         {
-            createUserWithEmailAndPassword(auth, clenseInput(user), toTitleCase(clenseInput(pass))).then((userCredential) => {alert("Success, please login with the new account"); reload(2);}).catch((error) => 
+            createUserWithEmailAndPassword(auth, clenseInput(user), toTitleCase(clenseInput(pass))).then((userCredential) => {alert("Success, please login with the new account"); reload(1);}).catch((error) => 
             {
                 const errorCode = error.code;
                 const errorMessage = error.message;
