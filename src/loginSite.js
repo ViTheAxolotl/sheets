@@ -40,6 +40,7 @@ function handleLoginBtn()
 
     else
     {
+        alert(document.getElementById("confirmPassword").value);
         if(pass == document.getElementById("confirmPassword").value)
         {
             createUserWithEmailAndPassword(auth, clenseInput(user), toTitleCase(clenseInput(pass))).then((userCredential) => {alert("Success, please login with the new account"); reload(2);}).catch((error) => 
