@@ -64,10 +64,11 @@ function handleCreateNew()
     let trRow = document.createElement("tr");
 
     document.getElementById("instructions").innerHTML = "Provide the Email & Password you would like to use:";
+    document.getElementById("createNew").remove();
     backBtn.onclick = function (){reload(.5);}
     
     confirm[0].innerHTML = "Confirm Password:";
-    confirm[1].type = "input";
+    confirm[1].type = "password";
     confirm[1].id = "confirmPassword";
     confirm[1].placeholder = "Confirm Password";
     tdHolders[0].style.padding = "0 50px 0 0";
