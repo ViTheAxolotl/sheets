@@ -40,7 +40,7 @@ function handleLoginBtn()
 
     else
     {
-        if(pass == document.getElementById("confirmPassword").innerHTML)
+        if(pass == document.getElementById("confirmPassword").value)
         {
             createUserWithEmailAndPassword(auth, clenseInput(user), toTitleCase(clenseInput(pass))).then((userCredential) => {alert("Success, please login with the new account"); reload(2);}).catch((error) => 
             {
@@ -69,6 +69,7 @@ function handleCreateNew()
     mode = "create";
     
     confirm[0].innerHTML = "Confirm Password:";
+    confirm[0].style.textAlign = "left";
     confirm[1].type = "password";
     confirm[1].id = "confirmPassword";
     confirm[1].placeholder = "Confirm Password";
