@@ -35,7 +35,7 @@ function handleLoginBtn()
 
     if(mode == "login")
     {
-        login(clenseInput(user), toTitleCase(clenseInput(pass)));
+        login(toTitleCase(clenseInput(user)), toTitleCase(clenseInput(pass)));
     }
 
     else
@@ -52,7 +52,7 @@ function handleLoginBtn()
         
         if(pass == conf)
         {
-            createUserWithEmailAndPassword(auth, clenseInput(user), toTitleCase(clenseInput(pass))).then((userCredential) => {alert("Success!"); handleBackBtn();}).catch((error) => 
+            createUserWithEmailAndPassword(auth, toTitleCase(clenseInput(user)), toTitleCase(clenseInput(pass))).then((userCredential) => {alert("Success!"); handleBackBtn();}).catch((error) => 
             {
                 const errorCode = error.code;
                 const errorMessage = error.message;
