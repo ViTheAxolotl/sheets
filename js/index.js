@@ -7,7 +7,8 @@ let player;
 let wholeChar = {};
 let firstRun = true;
 let sheets;
-
+let playerName;
+let htmlInfo = window.location.href;
 const charRef = ref(database, 'playerChar/');
 onValue(charRef, (snapshot) => 
 {
@@ -73,6 +74,22 @@ function init()
     for(let button of buttons){button.onclick = handleButton;}
 }
 
+if(htmlInfo.includes("?"))
+{
+    let button, name;
+    htmlInfo = htmlInfo.split("?");
+    htmlInfo = htmlInfo[1];
+    htmlInfo = htmlInfo.split("-");
+    name = htmlInfo[0];
+    playerName = htmlInfo[1];
+
+    setDoc(`playerChar/${player}/shared`, true);
+    button = document.createElement("button");
+    button.onclick = handleShowSheet;
+    button.innerHTML = name;
+    button.click();
+}
+
 function handleDeleteBtn()
 {
     let display = document.getElementById("createNew");
@@ -128,7 +145,7 @@ function handleShowSheet()
     div.innerHTML = 
     `
     <div id="frame" draggable="false">
-        <iframe id="statSheet" src="stats.html?${this.innerHTML}" title="stats" style="-webkit-text-size-adjust: none; transform-origin:left top;" draggable="false"></iframe>
+        <iframe id="statSheet" src="stats.html?${this.innerHTML}-${playerName}" title="stats" style="-webkit-text-size-adjust: none; transform-origin:left top;" draggable="false"></iframe>
     </div>
     `; 
 
