@@ -25,16 +25,16 @@ function handleLoginBtn()
     let user = username.value;
     let pass = password.value;
 
+    if(pass.length < 6)
+    {
+        for(let i = pass.length; i < 6; i++)
+        {
+            pass = pass + ".";
+        }
+    }
+
     if(mode == "login")
     {
-        if(pass.length < 6)
-        {
-            for(let i = pass.length; i < 6; i++)
-            {
-                pass = pass + ".";
-            }
-        }
-
         login(clenseInput(user), toTitleCase(clenseInput(pass)));
     }
 
