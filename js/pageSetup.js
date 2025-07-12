@@ -1,7 +1,7 @@
 "use strict";
 import { ref, onValue } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js';
 import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js';
-import { toTitleCase, auth, database, setDoc } from './viMethods.js';
+import { toTitleCase, auth, database } from './viMethods.js';
 
 let log;
 let isLoggedIn = false;
@@ -86,7 +86,7 @@ function navBarSetup()
                 ${log}
     </div>`;
 
-    if(isLoggedIn){document.getElementById("logout").onclick = function(){setDoc("playerChar/Swiftasariver", wholeChars["Okami"])};}
+    if(isLoggedIn){document.getElementById("logout").onclick = logout;}
 }
 
 function logout()
