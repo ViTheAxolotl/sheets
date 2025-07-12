@@ -228,7 +228,7 @@ export function returnHpImage(maxHp, tempHp, currentHp)
  */
 export function clenseInput(toClense)
 {
-    let badChars = ["<", ">", ";", "@", "(", ")"];
+    let badChars = ["<", ">", ";", "(", ")"];
     let isOk = true;
 
     toClense = toClense.replaceAll(" ", "");

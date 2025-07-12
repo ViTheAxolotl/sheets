@@ -1,10 +1,11 @@
 "use strict";
-import { signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js';
-import { toTitleCase, auth, database } from '../js/viMethods.js';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js';
+import { toTitleCase, auth, database, reload } from '../js/viMethods.js';
 
 let url = window.location.href.split("/");
 let player;
 let username, password, backBtn, loginBtn;
+let mode = "login";
 
 function init()
 {
@@ -15,6 +16,8 @@ function init()
     backBtn.onclick = handleBackBtn;
     loginBtn = document.getElementById("submit");
     loginBtn.onclick = handleLoginBtn;
+
+    document.getElementById("createNew").onclick = handleCreateNew;
 }
 
 function handleLoginBtn()
@@ -22,15 +25,58 @@ function handleLoginBtn()
     let user = username.value;
     let pass = password.value;
 
-    if(pass.length < 6)
+    if(mode == "login")
     {
-        for(let i = pass.length; i < 6; i++)
+        if(pass.length < 6)
         {
-            pass = pass + ".";
+            for(let i = pass.length; i < 6; i++)
+            {
+                pass = pass + ".";
+            }
         }
+
+        login(clenseInput(user), toTitleCase(clenseInput(pass)));
     }
 
-    login(`${toTitleCase(user)}@sheets.com`, toTitleCase(pass));
+    else
+    {
+        if(pass == document.getElementById("confirmPassword").innerHTML)
+        {
+            createUserWithEmailAndPassword(auth, clenseInput(user), toTitleCase(clenseInput(pass))).then((userCredential) => {alert("Success, please login with the new account"); reload(2);}).catch((error) => 
+            {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                alert(`Account creation failed. Given Error ${errorCode}: ${errorMessage}..`);
+            });
+        }
+        
+        else
+        {
+            alert("Password and Confirm Password are not the same. Please retype carefully");
+        }
+    }
+}
+
+function handleCreateNew()
+{
+    let confirm = [document.createElement("h5"), document.createElement("input")];
+    let tdHolders = [document.createElement("td"), document.createElement("td")];
+    let trRow = document.createElement("tr");
+
+    document.getElementById("instructions").innerHTML = "Provide the Email & Password you would like to use:";
+    backBtn.onclick = function (){reload(.5);}
+    
+    confirm[0].innerHTML = "Confirm Password:";
+    confirm[1].type = "input";
+    confirm[1].id = "confirmPassword";
+    confirm[1].placeholder = "Confirm Password";
+    tdHolders[0].style.padding = "0 50px 0 0";
+
+    tdHolders[0].appendChild(confirm[0]);
+    tdHolders[1].appendChild(confirm[1]);
+    trRow.appendChild(tdHolders[0]);
+    trRow.appendChild(tdHolders[1]);
+    document.getElementById("loginTable").appendChild(trRow);
 }
 
 function login(email, password)
