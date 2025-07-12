@@ -66,6 +66,7 @@ function handleCreateNew()
     document.getElementById("instructions").innerHTML = "Provide the Email & Password you would like to use:";
     document.getElementById("createNew").remove();
     backBtn.onclick = function (){reload(.5);}
+    mode = "create";
     
     confirm[0].innerHTML = "Confirm Password:";
     confirm[1].type = "password";
