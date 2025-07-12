@@ -41,6 +41,14 @@ function handleLoginBtn()
     else
     {
         let conf = document.getElementById("confirmPassword").value;
+
+        if(conf.length < 6)
+        {
+            for(let i = conf.length; i < 6; i++)
+            {
+                conf = conf + ".";
+            }
+        }
         
         if(pass == conf)
         {
