@@ -37,6 +37,12 @@ function init()
 {
     let display = document.getElementById("story");
     let stats = document.getElementsByClassName("stat");
+    let viewButtons = document.getElementsByClassName("viewSpell");
+
+    for(let viewButton of viewButtons)
+    {
+        viewButton.onclick = showSpell;
+    }
 
     for(let stat of stats)
     {
@@ -195,4 +201,11 @@ function updateStat()
     }
 
     setDoc(`playerChar/${player}/${sheet}/stats/${this.id}`, setTo);
+}
+
+
+function showSpell()
+{
+    let spellName = document.getElementById(this.id.slice(0, this.id.length - 4)).value;
+    alert(spellName);
 }
