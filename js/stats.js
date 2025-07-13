@@ -44,7 +44,7 @@ function init()
     for(let viewButton of viewButtons)
     {
         viewButton.onclick = showSpell;
-        if(document.getElementById(this.id.slice(0, this.id.length - 4)).value == "")
+        if(document.getElementById(viewButton.id.slice(0, viewButton.id.length - 4)).value == "")
         {
             viewButton.classList.add("hidden");
         }
