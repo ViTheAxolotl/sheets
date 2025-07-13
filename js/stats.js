@@ -205,7 +205,6 @@ function updateStat()
     setDoc(`playerChar/${player}/${sheet}/stats/${this.id}`, setTo);
 }
 
-
 function showSpell()
 {
     let spellName = toTitleCase(document.getElementById(this.id.slice(0, this.id.length - 4)).value);
