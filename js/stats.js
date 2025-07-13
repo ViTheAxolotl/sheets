@@ -210,7 +210,15 @@ function updateStat()
 
     if(this.id.includes("lvl") || this.id.includes("can"))
     {
-        document.getElementById(this.id + "-See").classList.remove("invisible");
+        if(setTo != "")
+        {
+            document.getElementById(this.id + "-See").classList.remove("invisible");
+        }
+
+        else
+        {
+            document.getElementById(this.id + "-See").classList.add("invisible");
+        }
     }
 }
 
