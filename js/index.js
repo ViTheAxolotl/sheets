@@ -23,8 +23,11 @@ onValue(charRef, (snapshot) =>
     
     if(wholeChar[player]["zoomSheetLevel"])
     {
-        let sheet = document.getElementById("sheet");
-        sheet.style.zoom = `${wholeChar[player]["zoomSheetLevel"]}%`; 
+        //document.getElementById("statSheet").style.zoom = `${wholeChar[player]["zoomSheetLevel"]}%`;
+        document.getElementById("statSheet").style.transform = `scale(${wholeChar[player]["zoomSheetLevel"]/100})`;
+        document.getElementById("statSheet").style.width = `${100/(wholeChar[player]["zoomSheetLevel"]/100)}%`;
+        document.getElementById("statSheet").style.marginBottom = `${((wholeChar[player]["zoomSheetLevel"]/100)-1)*70*9.4}px`;
+        document.getElementById("statSheet").style.height = `${((100/wholeChar[player]["zoomSheetLevel"]))*50+40}vh`;
     }
 
     loadSheets();
@@ -168,18 +171,19 @@ function handleButton()
     switch(this.name) //Checks case on the property of which name was clicked
     {
         case "zoomSheet":
+            let zoomSheetLevel = 100; if(wholeChar[player]["zoomSheetLevel"]){zoomSheetLevel = wholeChar[player]["zoomSheetLevel"];}
             if(modifier == "+") //If plus button is 
             {
-                if(zoomLevel < 100){zoomLevel += 10;}
+                if(zoomSheetLevel < 100){zoomSheetLevel += 10;}
             }
 
             else //minus button is clicked
             {
-                zoomLevel -= 10;
-                if (zoomLevel < 30){zoomLevel = 30;}
+                zoomSheetLevel -= 10;
+                if (zoomSheetLevel < 30){zoomSheetLevel = 30;}
             }
 
-            setDoc(`playerChar/${player}/zoomSheetLevel`, zoomLevel);
+            setDoc(`playerChar/${player}/zoomSheetLevel`, zoomSheetLevel);
             break;
     }
 }
