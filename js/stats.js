@@ -214,7 +214,7 @@ function showSpell()
     if(spellName != "")
     {
         spellName.replaceAll(" ", "%20");
-        link = `https://roll20.net/compendium/dnd5e/${spellName}#content`;
+        link = `https://roll20.net/compendium/dnd5e/${spellName}`;
         document.getElementById("spellLookup").src = link;
         document.getElementById("spellFrame").classList.remove("invisible");
     }
