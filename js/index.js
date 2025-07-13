@@ -20,15 +20,6 @@ onValue(charRef, (snapshot) =>
         firstRun = false;
         init();
     }
-    
-    if(wholeChar[player]["zoomSheetLevel"])
-    {
-        //document.getElementById("statSheet").style.zoom = `${wholeChar[player]["zoomSheetLevel"]}%`;
-        document.getElementById("statSheet").style.transform = `scale(${wholeChar[player]["zoomSheetLevel"]/100})`;
-        document.getElementById("statSheet").style.width = `${100/(wholeChar[player]["zoomSheetLevel"]/100)}%`;
-        document.getElementById("statSheet").style.marginBottom = `${((wholeChar[player]["zoomSheetLevel"]/100)-1)*70*9.4}px`;
-        document.getElementById("statSheet").style.height = `${((100/wholeChar[player]["zoomSheetLevel"]))*50+40}vh`;
-    }
 
     loadSheets();
 });
