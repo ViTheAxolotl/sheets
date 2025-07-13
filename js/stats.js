@@ -41,15 +41,6 @@ function init()
     let exitBtn = document.getElementById("exitIframe");
     exitBtn.onclick = handleExit;
 
-    for(let viewButton of viewButtons)
-    {
-        viewButton.onclick = showSpell;
-        if(document.getElementById(viewButton.id.slice(0, viewButton.id.length - 4)).value == "")
-        {
-            viewButton.classList.add("invisible");
-        }
-    }
-
     for(let stat of stats)
     {
         if(wholeChar[player][sheet]["stats"][stat.id] || wholeChar[player][sheet]["stats"][stat.id] == "")
@@ -82,6 +73,15 @@ function init()
         }
 
         stat.onchange = updateStat;
+    }
+
+    for(let viewButton of viewButtons)
+    {
+        viewButton.onclick = showSpell;
+        if(document.getElementById(viewButton.id.slice(0, viewButton.id.length - 4)).value == "")
+        {
+            viewButton.classList.add("invisible");
+        }
     }
 
     for(let stat of document.getElementsByClassName("expertise")){stat.onclick = handleExpertise;}
