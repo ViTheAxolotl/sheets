@@ -44,6 +44,10 @@ function init()
     for(let viewButton of viewButtons)
     {
         viewButton.onclick = showSpell;
+        if(document.getElementById(this.id.slice(0, this.id.length - 4)).value == "")
+        {
+            viewButton.classList.add("hidden");
+        }
     }
 
     for(let stat of stats)
@@ -203,6 +207,11 @@ function updateStat()
     }
 
     setDoc(`playerChar/${player}/${sheet}/stats/${this.id}`, setTo);
+
+    if(this.id.includes("lvl") || this.id.includes("can"))
+    {
+        document.getElementById(this.id + "-See").classList.remove("hidden");
+    }
 }
 
 function showSpell()
