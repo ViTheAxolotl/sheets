@@ -46,7 +46,7 @@ function init()
         viewButton.onclick = showSpell;
         if(document.getElementById(viewButton.id.slice(0, viewButton.id.length - 4)).value == "")
         {
-            viewButton.classList.add("hidden");
+            viewButton.classList.add("invisible");
         }
     }
 
@@ -210,7 +210,7 @@ function updateStat()
 
     if(this.id.includes("lvl") || this.id.includes("can"))
     {
-        document.getElementById(this.id + "-See").classList.remove("hidden");
+        document.getElementById(this.id + "-See").classList.remove("invisible");
     }
 }
 
