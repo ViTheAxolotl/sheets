@@ -73,7 +73,7 @@ body * { -webkit-text-size-adjust: none !important; }
     color: #510086;
 }
 
-.spellFrame
+#spellFrame
 {
     background-color: grey; 
     opacity: .95; 
