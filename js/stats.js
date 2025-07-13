@@ -213,8 +213,8 @@ function showSpell()
 
     if(spellName != "")
     {
-        spellName.replaceAll(" ", "%20");
-        link = `https://roll20.net/compendium/dnd5e/${spellName}`;
+        spellName.replaceAll(" ", "-");
+        link = `https://dnd5e.wikidot.com/spell:${spellName}`;
         document.getElementById("spellLookup").src = link;
         document.getElementById("spellFrame").classList.remove("invisible");
     }
