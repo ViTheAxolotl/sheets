@@ -7,7 +7,7 @@ let player;
 let wholeChar = {};
 let firstRun = true;
 let sheets;
-let playerName;
+let playerName, name;
 let htmlInfo = window.location.href;
 const charRef = ref(database, 'playerChar/');
 onValue(charRef, (snapshot) => 
@@ -81,7 +81,7 @@ function init()
 
 if(htmlInfo.includes("?"))
 {
-    let button, name;
+    let button;
     htmlInfo = htmlInfo.split("?");
     htmlInfo = htmlInfo[1];
     htmlInfo = htmlInfo.split("-");
@@ -145,7 +145,7 @@ function handleShowSheet()
 {
     let div = document.getElementById("sheet");
     div.innerHTML = "";
-    setDoc(`playerChar/${player}/currentSheet`, this.innerHTML);
+    setDoc(`playerChar/${player}/currentSheet`, `${playerName}-${name}`);
 
     div.innerHTML = 
     `

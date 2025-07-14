@@ -19,7 +19,7 @@ onValue(charRef, (snapshot) =>
     if(firstRun)
     {
         firstRun = false;
-        sheet = wholeChar[player]["currentSheet"];
+        sheet = wholeChar[player]["currentSheet"].split("-");
         init();
     }
 });
@@ -43,24 +43,24 @@ function init()
 
     for(let stat of stats)
     {
-        if(wholeChar[player][sheet]["stats"][stat.id] || wholeChar[player][sheet]["stats"][stat.id] == "")
+        if(wholeChar[sheet[0]][sheet[1]]["stats"][stat.id] || wholeChar[sheet[0]][sheet[1]]["stats"][stat.id] == "")
         {
-            if(typeof wholeChar[player][sheet]["stats"][stat.id] == "string")
+            if(typeof wholeChar[sheet[0]][sheet[1]]["stats"][stat.id] == "string")
             {
-                if(stat.id == "spellBonus"){let bonus = statFormat(parseInt(wholeChar[player][sheet]["stats"][wholeChar[player][sheet]["stats"]["spellAbility"]]) + parseInt(wholeChar[player][sheet]["stats"]["proficiency"])); stat.innerHTML = bonus; setDoc(`playerChar/${player}/${sheet}/stats/spellBonus`, bonus);}
-                else if(stat.id == "spellDC"){let dc = statFormat(parseInt(wholeChar[player][sheet]["stats"][wholeChar[player][sheet]["stats"]["spellAbility"]]) + parseInt(wholeChar[player][sheet]["stats"]["proficiency"]) + 8); stat.innerHTML = dc; setDoc(`playerChar/${player}/${sheet}/stats/spellDC`, dc);}
-                else if(stat.id == "proficiency"){let prof = statFormat(Math.ceil(parseInt(wholeChar[player][sheet]["stats"]["lv"])/4)+1); setDoc(`playerChar/${player}/${sheet}/stats/proficiency`, prof); stat.innerHTML = prof;}
-                else if(stat.id == "totalHitDice"){for(let i = 0; i < stat.length; i++){stat[i].innerHTML = `${wholeChar[player][sheet]["stats"]["lv"]}${stat[i].value}`; stat.value = wholeChar[player][sheet]["stats"][stat.id];}}
-                else if(stat.id == "currentHitDice"){let max = wholeChar[player][sheet]["stats"]["totalHitDice"]; stat.innerHTML = ""; for(let i = parseInt(wholeChar[player][sheet]["stats"]["lv"]); i >= 0; i--){let option = document.createElement("option"); option.innerHTML = `${i}${max}`; option.value = `${i}`; stat.appendChild(option);} stat.value = wholeChar[player][sheet]["stats"][stat.id];}
+                if(stat.id == "spellBonus"){let bonus = statFormat(parseInt(wholeChar[sheet[0]][sheet[1]]["stats"][wholeChar[sheet[0]][sheet[1]]["stats"]["spellAbility"]]) + parseInt(wholeChar[sheet[0]][sheet[1]]["stats"]["proficiency"])); stat.innerHTML = bonus; setDoc(`playerChar/${player}/${sheet}/stats/spellBonus`, bonus);}
+                else if(stat.id == "spellDC"){let dc = statFormat(parseInt(wholeChar[sheet[0]][sheet[1]]["stats"][wholeChar[sheet[0]][sheet[1]]["stats"]["spellAbility"]]) + parseInt(wholeChar[sheet[0]][sheet[1]]["stats"]["proficiency"]) + 8); stat.innerHTML = dc; setDoc(`playerChar/${player}/${sheet}/stats/spellDC`, dc);}
+                else if(stat.id == "proficiency"){let prof = statFormat(Math.ceil(parseInt(wholeChar[sheet[0]][sheet[1]]["stats"]["lv"])/4)+1); setDoc(`playerChar/${player}/${sheet}/stats/proficiency`, prof); stat.innerHTML = prof;}
+                else if(stat.id == "totalHitDice"){for(let i = 0; i < stat.length; i++){stat[i].innerHTML = `${wholeChar[sheet[0]][sheet[1]]["stats"]["lv"]}${stat[i].value}`; stat.value = wholeChar[sheet[0]][sheet[1]]["stats"][stat.id];}}
+                else if(stat.id == "currentHitDice"){let max = wholeChar[sheet[0]][sheet[1]]["stats"]["totalHitDice"]; stat.innerHTML = ""; for(let i = parseInt(wholeChar[sheet[0]][sheet[1]]["stats"]["lv"]); i >= 0; i--){let option = document.createElement("option"); option.innerHTML = `${i}${max}`; option.value = `${i}`; stat.appendChild(option);} stat.value = wholeChar[sheet[0]][sheet[1]]["stats"][stat.id];}
                 else if(stat.id.includes("Save")){continue;}
-                else if(["spellAbility", "lv"].includes(stat.id)){stat.value = wholeChar[player][sheet]["stats"][stat.id];}
-                else if(stat.value == ""){stat.value = wholeChar[player][sheet]["stats"][stat.id]; if(!["profAndLang", "infusion", "feats", "equipment", "apperance", "characterBackstory", "ally1", "ally2", "additionalFeat&Traits", "treasure"].includes(stat.id)){stat.style.minWidth = stat.value.length + 2 + "ch";}}
-                else{stat.innerHTML = wholeChar[player][sheet]["stats"][stat.id];}
+                else if(["spellAbility", "lv"].includes(stat.id)){stat.value = wholeChar[sheet[0]][sheet[1]]["stats"][stat.id];}
+                else if(stat.value == ""){stat.value = wholeChar[sheet[0]][sheet[1]]["stats"][stat.id]; if(!["profAndLang", "infusion", "feats", "equipment", "apperance", "characterBackstory", "ally1", "ally2", "additionalFeat&Traits", "treasure"].includes(stat.id)){stat.style.minWidth = stat.value.length + 2 + "ch";}}
+                else{stat.innerHTML = wholeChar[sheet[0]][sheet[1]]["stats"][stat.id];}
             }
 
             else
             {
-                stat.checked = wholeChar[player][sheet]["stats"][stat.id];
+                stat.checked = wholeChar[sheet[0]][sheet[1]]["stats"][stat.id];
                 setStats(stat);
             }
         }
@@ -101,7 +101,7 @@ function setStats(stat)
         if(stat.id.includes("Save-btn"))
         {
             skill = stat.id.slice(0, stat.id.length-8);
-            modifier = wholeChar[player][sheet]["stats"][skill];
+            modifier = wholeChar[sheet[0]][sheet[1]]["stats"][skill];
             display = document.getElementById(skill + "Save");
             exper = skill + "Save";
         }
@@ -110,22 +110,22 @@ function setStats(stat)
         {
             skill = stat.id.slice(0, stat.id.length-4);
             let base6 = skillDecrypt[skill];
-            modifier = wholeChar[player][sheet]["stats"][base6];
+            modifier = wholeChar[sheet[0]][sheet[1]]["stats"][base6];
             display = document.getElementById(skill);
             exper = skill;
         }
 
         if(stat.checked)
         {
-            modifier = parseInt(modifier) + parseInt(wholeChar[player][sheet]["stats"]["proficiency"]);
+            modifier = parseInt(modifier) + parseInt(wholeChar[sheet[0]][sheet[1]]["stats"]["proficiency"]);
 
-            if(wholeChar[player][sheet]["stats"][`${exper}-expertise`]){modifier += parseInt(wholeChar[player][sheet]["stats"]["proficiency"]);}
+            if(wholeChar[sheet[0]][sheet[1]]["stats"][`${exper}-expertise`]){modifier += parseInt(wholeChar[sheet[0]][sheet[1]]["stats"]["proficiency"]);}
         } 
 
         modifier = statFormat(modifier);
         setDoc(`playerChar/${player}/${sheet}/stats/${stat.id.slice(0, stat.id.length-4)}`, modifier);
         display.innerHTML = toTitleCase(skill + ": " + modifier);
-        if(wholeChar[player][sheet]["stats"][`${exper}-expertise`]){display.innerHTML += " <strong>(Expertise)</strong>"}
+        if(wholeChar[sheet[0]][sheet[1]]["stats"][`${exper}-expertise`]){display.innerHTML += " <strong>(Expertise)</strong>"}
     }
 }
 
@@ -136,7 +136,7 @@ function handleExpertise()
 
     if(button.checked)
     {
-        if(wholeChar[player][sheet]["stats"][`${stat}-expertise`])
+        if(wholeChar[sheet[0]][sheet[1]]["stats"][`${stat}-expertise`])
         {
             deleteDoc(`playerChar/${player}/${sheet}/stats/${stat}-expertise`);
         }
