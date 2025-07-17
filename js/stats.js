@@ -49,9 +49,9 @@ function init()
         {
             if(typeof wholeChar[sheet[0]][sheet[1]]["stats"][stat.id] == "string")
             {
-                if(stat.id == "spellBonus"){let bonus = statFormat(parseInt(wholeChar[sheet[0]][sheet[1]]["stats"][wholeChar[sheet[0]][sheet[1]]["stats"]["spellAbility"]]) + parseInt(wholeChar[sheet[0]][sheet[1]]["stats"]["proficiency"])); stat.innerHTML = bonus; setDoc(`playerChar/${player}/${sheet}/stats/spellBonus`, bonus);}
-                else if(stat.id == "spellDC"){let dc = statFormat(parseInt(wholeChar[sheet[0]][sheet[1]]["stats"][wholeChar[sheet[0]][sheet[1]]["stats"]["spellAbility"]]) + parseInt(wholeChar[sheet[0]][sheet[1]]["stats"]["proficiency"]) + 8); stat.innerHTML = dc; setDoc(`playerChar/${player}/${sheet}/stats/spellDC`, dc);}
-                else if(stat.id == "proficiency"){let prof = statFormat(Math.ceil(parseInt(wholeChar[sheet[0]][sheet[1]]["stats"]["lv"])/4)+1); setDoc(`playerChar/${player}/${sheet}/stats/proficiency`, prof); stat.innerHTML = prof;}
+                if(stat.id == "spellBonus"){let bonus = statFormat(parseInt(wholeChar[sheet[0]][sheet[1]]["stats"][wholeChar[sheet[0]][sheet[1]]["stats"]["spellAbility"]]) + parseInt(wholeChar[sheet[0]][sheet[1]]["stats"]["proficiency"])); stat.innerHTML = bonus; setDoc(`playerChar/${sheet[0]}/${sheet[1]}/stats/spellBonus`, bonus);}
+                else if(stat.id == "spellDC"){let dc = statFormat(parseInt(wholeChar[sheet[0]][sheet[1]]["stats"][wholeChar[sheet[0]][sheet[1]]["stats"]["spellAbility"]]) + parseInt(wholeChar[sheet[0]][sheet[1]]["stats"]["proficiency"]) + 8); stat.innerHTML = dc; setDoc(`playerChar/${sheet[0]}/${sheet[1]}/stats/spellDC`, dc);}
+                else if(stat.id == "proficiency"){let prof = statFormat(Math.ceil(parseInt(wholeChar[sheet[0]][sheet[1]]["stats"]["lv"])/4)+1); setDoc(`playerChar/${sheet[0]}/${sheet[1]}/stats/proficiency`, prof); stat.innerHTML = prof;}
                 else if(stat.id == "totalHitDice"){for(let i = 0; i < stat.length; i++){stat[i].innerHTML = `${wholeChar[sheet[0]][sheet[1]]["stats"]["lv"]}${stat[i].value}`; stat.value = wholeChar[sheet[0]][sheet[1]]["stats"][stat.id];}}
                 else if(stat.id == "currentHitDice"){let max = wholeChar[sheet[0]][sheet[1]]["stats"]["totalHitDice"]; stat.innerHTML = ""; for(let i = parseInt(wholeChar[sheet[0]][sheet[1]]["stats"]["lv"]); i >= 0; i--){let option = document.createElement("option"); option.innerHTML = `${i}${max}`; option.value = `${i}`; stat.appendChild(option);} stat.value = wholeChar[sheet[0]][sheet[1]]["stats"][stat.id];}
                 else if(stat.id.includes("Save")){continue;}
@@ -69,8 +69,8 @@ function init()
 
         else
         {
-            if(stat.id.includes("-btn") && !stat.id.includes("lvl")){setDoc(`playerChar/${player}/${sheet}/stats/${stat.id}`, false); }
-            else{setDoc(`playerChar/${player}/${sheet}/stats/${stat.id}`, "");}
+            if(stat.id.includes("-btn") && !stat.id.includes("lvl")){setDoc(`playerChar/${sheet[0]}/${sheet[1]}/stats/${stat.id}`, false); }
+            else{setDoc(`playerChar/${sheet[0]}/${sheet[1]}/stats/${stat.id}`, "");}
             setStats(stat);
         }
 
@@ -125,7 +125,7 @@ function setStats(stat)
         } 
 
         modifier = statFormat(modifier);
-        setDoc(`playerChar/${player}/${sheet}/stats/${stat.id.slice(0, stat.id.length-4)}`, modifier);
+        setDoc(`playerChar/${sheet[0]}/${sheet[1]}/stats/${stat.id.slice(0, stat.id.length-4)}`, modifier);
         display.innerHTML = toTitleCase(skill + ": " + modifier);
         if(wholeChar[sheet[0]][sheet[1]]["stats"][`${exper}-expertise`]){display.innerHTML += " <strong>(Expertise)</strong>"}
     }
@@ -140,12 +140,12 @@ function handleExpertise()
     {
         if(wholeChar[sheet[0]][sheet[1]]["stats"][`${stat}-expertise`])
         {
-            deleteDoc(`playerChar/${player}/${sheet}/stats/${stat}-expertise`);
+            deleteDoc(`playerChar/${sheet[0]}/${sheet[1]}/stats/${stat}-expertise`);
         }
 
         else
         {
-            setDoc(`playerChar/${player}/${sheet}/stats/${stat}-expertise`, true);
+            setDoc(`playerChar/${sheet[0]}/${sheet[1]}/stats/${stat}-expertise`, true);
         }
 
         setTimeout(init, 1000);
@@ -197,7 +197,7 @@ function updateStat()
         smaller = (full - 10) / 2;
         smaller = statFormat(Math.floor(smaller));
         ref.innerHTML = smaller;
-        setDoc(`playerChar/${player}/${sheet}/stats/${this.id.slice(0, this.id.length-4)}`, smaller);
+        setDoc(`playerChar/${sheet[0]}/${sheet[1]}/stats/${this.id.slice(0, this.id.length-4)}`, smaller);
         setTimeout(init, 1000);
     }
 
@@ -208,7 +208,7 @@ function updateStat()
         if(!["profAndLang", "infusion", "feats", "equipment", "apperance", "characterBackstory", "ally1", "ally2", "additionalFeat&Traits", "treasure"].includes(this.id)){this.style.minWidth = this.value.length + 2 + "ch";}
     }
 
-    setDoc(`playerChar/${player}/${sheet}/stats/${this.id}`, setTo);
+    setDoc(`playerChar/${sheet[0]}/${sheet[1]}/stats/${this.id}`, setTo);
 
     if(this.id.includes("lvl") || this.id.includes("can"))
     {
