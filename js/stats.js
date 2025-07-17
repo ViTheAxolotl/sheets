@@ -20,6 +20,8 @@ onValue(charRef, (snapshot) =>
     {
         firstRun = false;
         sheet = wholeChar[player]["currentSheet"].split("-");
+        sheet[0] = toTitleCase(sheet[0]);
+        sheet[1] = toTitleCase(sheet[1]);
         init();
     }
 });
