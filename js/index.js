@@ -143,6 +143,12 @@ function createNewSheet()
 
 function handleShowSheet()
 {
+    if(!wholeChar[player]["shared"])
+    {
+        playerName = player;
+        name = this.innerHTML;
+    }
+
     let div = document.getElementById("sheet");
     div.innerHTML = "";
     setDoc(`playerChar/${player}/currentSheet`, `${playerName}-${name}`);
