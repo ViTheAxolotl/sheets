@@ -68,10 +68,10 @@ function loadSheets()
             for(let sharedSheet of Object.keys(wholeChar[player]["sharedSheets"]))
             {
                 let button = document.createElement("button");
-                button.innerHTML = sharedSheet; 
+                button.innerHTML = toTitleCase(sharedSheet); 
                 button.onclick = function() {setDoc(`playerChar/${player}/shared`, false); handleShowSheet(this.title, this.innerHTML);};
                 button.classList = "gridButton";
-                button.title = wholeChar[player]["sharedSheets"][sharedSheet]["playerName"];
+                button.title = toTitleCase(wholeChar[player]["sharedSheets"][sharedSheet]["playerName"]);
                 sharedDiv.appendChild(button);
             }
         }
@@ -83,7 +83,7 @@ function loadSheets()
             button.onclick = function() {setDoc(`playerChar/${player}/shared`, false); handleShowSheet(this.title, this.innerHTML);};
             button.classList = "gridButton";
             button.title = player;
-            document.getElementById("sharedSheets").appendChild(button);
+            document.getElementById("sheets").appendChild(button);
         }
     }
 
@@ -92,7 +92,7 @@ function loadSheets()
     deleteBtn.style.display = "block";
     deleteBtn.style.margin = "10px auto";
     deleteBtn.onclick = handleDeleteBtn;
-    document.getElementById("sheets").appendChild(deleteBtn);
+    document.getElementById("sharedSheets").appendChild(deleteBtn);
 }
 
 function init()
