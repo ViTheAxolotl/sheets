@@ -59,7 +59,7 @@ function loadSheets()
         if(["currentSheet", "zoomSheetLevel", "shared"].includes(sheet)){continue;}
         let button = document.createElement("button");
         button.innerHTML = sheet; 
-        button.onclick = function() {setDoc(`playerChar/${player}/shared`, false); handleShowSheet();};
+        button.onclick = function() {setDoc(`playerChar/${player}/shared`, false); handleShowSheet(this.title, this.innerHTML);};
         button.classList = "gridButton";
         button.title = player;
         document.getElementById("sheets").appendChild(button);
@@ -81,7 +81,6 @@ function init()
 
     if(htmlInfo.includes("?"))
     {
-        let button;
         htmlInfo = htmlInfo.split("?");
         htmlInfo = htmlInfo[1];
         htmlInfo = htmlInfo.split("-");
@@ -89,10 +88,7 @@ function init()
         playerName = htmlInfo[0];
 
         setDoc(`playerChar/${player}/shared`, true);
-        button = document.createElement("button");
-        button.onclick = handleShowSheet;
-        button.innerHTML = name;
-        button.click();
+        handleShowSheet(playerName, name);
     }
 }
 
@@ -142,14 +138,8 @@ function createNewSheet()
     else{alert("Need to give a character name.");}
 }
 
-function handleShowSheet()
+function handleShowSheet(playerName, name)
 {
-    if(!wholeChar[player]["shared"])
-    {
-        playerName = player;
-        name = this.innerHTML;
-    }
-
     let div = document.getElementById("sheet");
     div.innerHTML = "";
     setDoc(`playerChar/${player}/currentSheet`, `${playerName}-${name}`);
