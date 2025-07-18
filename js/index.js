@@ -77,22 +77,22 @@ function init()
     document.getElementById("addButton").onclick = handleCreateNewSheet;
     let buttons = document.getElementsByClassName("inOrDe");
     for(let button of buttons){button.onclick = handleButton;}
-}
 
-if(htmlInfo.includes("?"))
-{
-    let button;
-    htmlInfo = htmlInfo.split("?");
-    htmlInfo = htmlInfo[1];
-    htmlInfo = htmlInfo.split("-");
-    name = htmlInfo[0];
-    playerName = htmlInfo[1];
+    if(htmlInfo.includes("?"))
+    {
+        let button;
+        htmlInfo = htmlInfo.split("?");
+        htmlInfo = htmlInfo[1];
+        htmlInfo = htmlInfo.split("-");
+        name = htmlInfo[0];
+        playerName = htmlInfo[1];
 
-    setDoc(`playerChar/${player}/shared`, true);
-    button = document.createElement("button");
-    button.onclick = handleShowSheet;
-    button.innerHTML = name;
-    button.click();
+        setDoc(`playerChar/${player}/shared`, true);
+        button = document.createElement("button");
+        button.onclick = handleShowSheet;
+        button.innerHTML = name;
+        button.click();
+    }
 }
 
 function handleDeleteBtn()
