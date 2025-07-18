@@ -147,7 +147,7 @@ function handleShowSheet(playerName, name)
     div.innerHTML = 
     `
     <div id="frame" draggable="false">
-        <iframe id="statSheet" src="stats.html?${this.innerHTML}-${playerName}" title="stats" style="-webkit-text-size-adjust: none; transform-origin:left top;" draggable="false"></iframe>
+        <iframe id="statSheet" src="stats.html?${name}-${playerName}" title="stats" style="-webkit-text-size-adjust: none; transform-origin:left top;" draggable="false"></iframe>
     </div>
     `; 
 
