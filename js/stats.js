@@ -88,7 +88,7 @@ function init()
 
     for(let stat of document.getElementsByClassName("expertise")){stat.onclick = handleExpertise;}
 
-    document.getElementById("shareButton").onclick = function() {alert(`Copy this link and give it out. Anyone with link can edit your sheet. \n https://vitheaxolotl.github.io/sheets/index.html?${sheet[0]}-${sheet[1]}`);};
+    document.getElementById("shareButton").onclick = function() {prompt(`Copy this link and give it out. Anyone with link can edit your sheet.`, `https://vitheaxolotl.github.io/sheets/index.html?${sheet[0]}-${sheet[1]}`);};
 }
 
 
