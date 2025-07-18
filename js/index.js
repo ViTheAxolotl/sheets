@@ -56,7 +56,7 @@ function loadSheets()
 
     for(let sheet of Object.keys(wholeChar[player]))
     {
-        if(["currentSheet", "zoomSheetLevel", "shared"]){continue;}
+        if(["currentSheet", "zoomSheetLevel", "shared"].includes(sheet)){continue;}
         let button = document.createElement("button");
         button.innerHTML = sheet; 
         button.onclick = handleShowSheet;
