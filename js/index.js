@@ -60,7 +60,7 @@ function loadSheets()
         
         else if("sharedSheets" == sheet)
         {
-            let sharedDiv = getElementById("sharedSheets");
+            let sharedDiv = document.getElementById("sharedSheets");
             let h3 = document.createElement("h3");
             h3.innerHTML = "Shared Sheets";
             sharedDiv.appendChild(h3);
