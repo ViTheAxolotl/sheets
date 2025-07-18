@@ -56,7 +56,7 @@ function loadSheets()
 
     for(let sheet of Object.keys(wholeChar[player]))
     {
-        if(sheet == "currentSheet" || sheet == "zoomSheetLevel"){continue;}
+        if(["currentSheet", "zoomSheetLevel", "shared"]){continue;}
         let button = document.createElement("button");
         button.innerHTML = sheet; 
         button.onclick = handleShowSheet;
@@ -84,8 +84,8 @@ function init()
         htmlInfo = htmlInfo.split("?");
         htmlInfo = htmlInfo[1];
         htmlInfo = htmlInfo.split("-");
-        name = htmlInfo[0];
-        playerName = htmlInfo[1];
+        name = htmlInfo[1];
+        playerName = htmlInfo[0];
 
         setDoc(`playerChar/${player}/shared`, true);
         button = document.createElement("button");
