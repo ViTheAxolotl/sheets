@@ -59,8 +59,9 @@ function loadSheets()
         if(["currentSheet", "zoomSheetLevel", "shared"].includes(sheet)){continue;}
         let button = document.createElement("button");
         button.innerHTML = sheet; 
-        button.onclick = handleShowSheet;
+        button.onclick = function() {setDoc(`playerChar/${player}/shared`, false); handleShowSheet();};
         button.classList = "gridButton";
+        button.title = player;
         document.getElementById("sheets").appendChild(button);
     }
 
