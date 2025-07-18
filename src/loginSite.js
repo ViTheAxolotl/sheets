@@ -112,7 +112,7 @@ function login(email, password)
 
 function handleBackBtn()
 {
-    let url = window.location.href.split("?");
+    let url = window.location.href.split("?|");
     window.location.href= url[1];
 }
 

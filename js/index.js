@@ -40,7 +40,7 @@ onAuthStateChanged(auth, (user) =>
     if (!user) 
     {
         alert("You need to login before using this resource. Click Ok and be redirected");
-        window.location.href = "loginPage.html?index.html"; 
+        window.location.href = `loginPage.html?|${htmlInfo}`; 
     } 
 
     else
@@ -57,12 +57,34 @@ function loadSheets()
     for(let sheet of Object.keys(wholeChar[player]))
     {
         if(["currentSheet", "zoomSheetLevel", "shared"].includes(sheet)){continue;}
-        let button = document.createElement("button");
-        button.innerHTML = sheet; 
-        button.onclick = function() {setDoc(`playerChar/${player}/shared`, false); handleShowSheet(this.title, this.innerHTML);};
-        button.classList = "gridButton";
-        button.title = player;
-        document.getElementById("sheets").appendChild(button);
+        
+        else if("sharedSheets" == sheet)
+        {
+            let sharedDiv = getElementById("sharedSheets");
+            let h3 = document.createElement("h3");
+            h3.innerHTML = "Shared Sheets";
+            sharedDiv.appendChild(h3);
+
+            for(let sharedSheet of Object.keys(wholeChar[player]["sharedSheets"]))
+            {
+                let button = document.createElement("button");
+                button.innerHTML = sharedSheet; 
+                button.onclick = function() {setDoc(`playerChar/${player}/shared`, false); handleShowSheet(this.title, this.innerHTML);};
+                button.classList = "gridButton";
+                button.title = wholeChar[player]["sharedSheets"][sharedSheet]["playerName"];
+                sharedDiv.appendChild(button);
+            }
+        }
+
+        else
+        {
+            let button = document.createElement("button");
+            button.innerHTML = sheet; 
+            button.onclick = function() {setDoc(`playerChar/${player}/shared`, false); handleShowSheet(this.title, this.innerHTML);};
+            button.classList = "gridButton";
+            button.title = player;
+            document.getElementById("sharedSheets").appendChild(button);
+        }
     }
 
     let deleteBtn = document.createElement("img");
@@ -88,6 +110,7 @@ function init()
         playerName = htmlInfo[0];
 
         setDoc(`playerChar/${player}/shared`, true);
+        setDoc(`playerChar/${player}/sharedSheets/${name}`, {"name" : name, "playerName" : playerName});
         handleShowSheet(playerName, name);
     }
 }
