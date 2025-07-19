@@ -56,12 +56,11 @@ function loadSheets()
 
     generateSheets("sheets", "sharedSheets", "load");
 
-    let deleteBtn = document.createElement("img");
+    let deleteBtn = document.getElementById("trashcan");
     deleteBtn.src = "images/trashIcon.png";
     deleteBtn.style.display = "block";
     deleteBtn.style.margin = "10px auto";
     deleteBtn.onclick = handleDeleteBtn;
-    document.getElementById("sharedSheets").appendChild(deleteBtn);
 }
 
 function generateSheets(sheetLocation, sharedLocation, mode)
