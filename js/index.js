@@ -113,8 +113,8 @@ function init()
         htmlInfo = htmlInfo.split("?");
         htmlInfo = htmlInfo[1];
         htmlInfo = htmlInfo.split("-");
-        name = htmlInfo[1];
-        playerName = htmlInfo[0];
+        name = toTitleCase(htmlInfo[1]);
+        playerName = toTitleCase(htmlInfo[0]);
 
         setDoc(`playerChar/${player}/shared`, true);
         setDoc(`playerChar/${player}/sharedSheets/${name}`, {"name" : name, "playerName" : playerName});
