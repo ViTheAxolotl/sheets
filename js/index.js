@@ -54,13 +54,25 @@ function loadSheets()
 {
     document.getElementById("sheets").innerHTML = "";
 
+    generateSheets("sheets", "sharedSheets", "load");
+
+    let deleteBtn = document.createElement("img");
+    deleteBtn.src = "images/trashIcon.png";
+    deleteBtn.style.display = "block";
+    deleteBtn.style.margin = "10px auto";
+    deleteBtn.onclick = handleDeleteBtn;
+    document.getElementById("sharedSheets").appendChild(deleteBtn);
+}
+
+function generateSheets(sheetLocation, sharedLocation, mode)
+{
     for(let sheet of Object.keys(wholeChar[player]))
     {
         if(["currentSheet", "zoomSheetLevel", "shared"].includes(sheet)){continue;}
         
         else if("sharedSheets" == sheet)
         {
-            let sharedDiv = document.getElementById("sharedSheets");
+            let sharedDiv = document.getElementById(sharedLocation);
             let h3 = document.createElement("h3");
             h3.innerHTML = "Shared Sheets";
             sharedDiv.appendChild(h3);
@@ -70,6 +82,7 @@ function loadSheets()
                 let button = document.createElement("button");
                 button.innerHTML = toTitleCase(sharedSheet); 
                 button.onclick = function() {setDoc(`playerChar/${player}/shared`, false); handleShowSheet(this.title, this.innerHTML);};
+                if(mode == "delete"){button.onclick = function() {deleteSheet("shared", button.innerHTML);}}
                 button.classList = "gridButton";
                 button.title = toTitleCase(wholeChar[player]["sharedSheets"][sharedSheet]["playerName"]);
                 sharedDiv.appendChild(button);
@@ -81,18 +94,12 @@ function loadSheets()
             let button = document.createElement("button");
             button.innerHTML = sheet; 
             button.onclick = function() {setDoc(`playerChar/${player}/shared`, false); handleShowSheet(this.title, this.innerHTML);};
+            if(mode == "delete"){button.onclick = function() {deleteSheet("owned", button.innerHTML);}}
             button.classList = "gridButton";
             button.title = player;
-            document.getElementById("sheets").appendChild(button);
+            document.getElementById(sheetLocation).appendChild(button);
         }
     }
-
-    let deleteBtn = document.createElement("img");
-    deleteBtn.src = "images/trashIcon.png";
-    deleteBtn.style.display = "block";
-    deleteBtn.style.margin = "10px auto";
-    deleteBtn.onclick = handleDeleteBtn;
-    document.getElementById("sharedSheets").appendChild(deleteBtn);
 }
 
 function init()
@@ -118,27 +125,32 @@ function init()
 function handleDeleteBtn()
 {
     let display = document.getElementById("createNew");
+    let shared = document.createElement("div");
+
 
     display.innerHTML = 
     `
         <h3>Delete Who?</h3>
     `;
 
-    for(let sheet of Object.keys(wholeChar[player]))
-    {
-        if(sheet == "currentSheet"){continue;}
-        let button = document.createElement("button");
-        button.innerHTML = sheet; 
-        button.onclick = deleteSheet;
-        button.classList = "gridButton";
-        display.appendChild(button);
-    }
+    generateSheets(display, shared, "delete");
+    display.parentElement.appendChild(shared);
 }
 
-function deleteSheet()
+function deleteSheet(relation, charName)
 {
+    switch(relation)
+    {
+        case "shared":
+            deleteDoc(`playerChar/${player}/sharedSheets/${charName}`);
+            break;
+
+        case "owned":
+            deleteDoc(`playerChar/${player}/${charName}`);
+            break;
+    }
+
     deleteDoc(`playerChar/${player}/currentSheet`);
-    deleteDoc(`playerChar/${player}/${this.innerHTML}`);
     reload(0.5);
 }
 
