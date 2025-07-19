@@ -127,14 +127,11 @@ function handleDeleteBtn()
     let display = document.getElementById("createNew");
     let shared = document.createElement("div");
 
-
-    display.innerHTML = 
-    `
-        <h3>Delete Who?</h3>
-    `;
-
-    generateSheets(display, shared, "delete");
+    shared.id = "sharedDelete";
+    display.innerHTML = `<h3>Delete Who?</h3>`;
     display.parentElement.appendChild(shared);
+
+    generateSheets("createNew", "sharedDelete", "delete");
 }
 
 function deleteSheet(relation, charName)
