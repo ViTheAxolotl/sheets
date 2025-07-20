@@ -170,7 +170,7 @@ function updateStat()
 
         for(let i = 0; i < setTo.length; i++)
         {
-            if(setTo[i][0] != "•" && setTo[0] != " "){setTo[i] = "•   " + setTo[i];} 
+            if(setTo[i][0] != "•" && setTo[0] != " " && setTo[i][0] != " "){setTo[i] = "•   " + setTo[i];} 
             if(setTo[i] == "•   "){setTo[i] = "";}
         }
 
