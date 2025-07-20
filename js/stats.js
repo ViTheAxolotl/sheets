@@ -177,7 +177,6 @@ function updateStat()
         setTo = setTo.join("\n");
 
         this.value = setTo;
-        reload(1);
     }
 
     else if(this.classList.contains("base6"))
