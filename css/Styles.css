@@ -12,27 +12,22 @@ body * { -webkit-text-size-adjust: none !important; }
 
 .bg-UP-purple
 {
-    background-color: #510086;
+    background-color: #2A6E8F !important;
 }
 
 .bg-UP-blue
 {
-    background-color: #00098C;
-}
-
-#story span
-{
-    text-align: left;
+    background-color: #5AADE6 !important;
 }
 
 .bg-UP-yellow
 {
-    background-color: #AD9622;
+    background-color: #411759 !important;
 }
 
 .bg-UP-grey
 {
-    background-color: rgb(70, 70, 70);
+    background-color: rgb(70, 70, 70) !important;
 }
 
 .bg-UP-white
@@ -42,17 +37,17 @@ body * { -webkit-text-size-adjust: none !important; }
 
 .color-UP-purple
 {
-    color: #510086;
+    color: #2A6E8F;
 }
 
 .color-UP-blue
 {
-    color: #00098C;
+    color: #5AADE6;
 }
 
 .color-UP-yellow
 {
-    color: #AD9622;
+    color: #88008B;
 }
 
 .color-UP-black
