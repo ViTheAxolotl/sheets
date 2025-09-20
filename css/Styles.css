@@ -64,8 +64,7 @@ body * { -webkit-text-size-adjust: none !important; }
 {
     text-align: center;
     margin-top: 20px;
-    background-color: #AD9622;
-    color: #510086;
+    background-color: #2A6E8F;
 }
 
 #spellFrame
@@ -84,8 +83,7 @@ body * { -webkit-text-size-adjust: none !important; }
     text-align: center;
     padding-bottom: 10px;
     margin: 20px 0px;
-    background-color: #AD9622;
-    color: #510086;
+    background-color: #2A6E8F;
 }
 
 #hometown, #info, #quests, #notes
@@ -149,8 +147,8 @@ button
     width: 100%;
     padding: 5px;
     margin: 5px 0px;
-    background-color: #510086;
-    color: #AD9622;
+    background-color: #411759;
+    color: #5AADE6;
 }
 
 table, .itemSearch, #itemImg, #charImg
