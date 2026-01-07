@@ -54,7 +54,8 @@ function init()
                 else if(stat.id == "proficiency"){let prof = statFormat(Math.ceil(parseInt(wholeChar[sheet[0]][sheet[1]]["stats"]["lv"])/4)+1); setDoc(`playerChar/${sheet[0]}/${sheet[1]}/stats/proficiency`, prof); stat.innerHTML = prof;}
                 else if(stat.id == "totalHitDice"){for(let i = 0; i < stat.length; i++){stat[i].innerHTML = `${wholeChar[sheet[0]][sheet[1]]["stats"]["lv"]}${stat[i].value}`; stat.value = wholeChar[sheet[0]][sheet[1]]["stats"][stat.id];}}
                 else if(stat.id == "currentHitDice"){let max = wholeChar[sheet[0]][sheet[1]]["stats"]["totalHitDice"]; stat.innerHTML = ""; for(let i = parseInt(wholeChar[sheet[0]][sheet[1]]["stats"]["lv"]); i >= 0; i--){let option = document.createElement("option"); option.innerHTML = `${i}${max}`; option.value = `${i}`; stat.appendChild(option);} stat.value = wholeChar[sheet[0]][sheet[1]]["stats"][stat.id];}
-                else if(stat.id.includes("Save")){continue;}
+                else if(stat.id.includes("-btn") && !stat.id.includes("lvl")){stat.checked = false; setStats(stat);} //Stats not clicked
+                else if(stat.id.includes("Save")){stat.checked = false; setStats(stat);} //Stats not clicked
                 else if(["spellAbility", "lv"].includes(stat.id)){stat.value = wholeChar[sheet[0]][sheet[1]]["stats"][stat.id];}
                 else if(stat.value == ""){stat.value = wholeChar[sheet[0]][sheet[1]]["stats"][stat.id]; if(!["profAndLang", "infusion", "feats", "equipment", "apperance", "characterBackstory", "ally1", "ally2", "additionalFeat&Traits", "treasure"].includes(stat.id)){stat.style.minWidth = stat.value.length + 2 + "ch";}}
                 else{stat.innerHTML = wholeChar[sheet[0]][sheet[1]]["stats"][stat.id];}
@@ -87,6 +88,8 @@ function init()
     }
 
     for(let stat of document.getElementsByClassName("expertise")){stat.onclick = handleExpertise;}
+    document.getElementById("Initiative").oncontextmenu = function(e) {e.preventDefault(); handleRightClickRoll(e, "init");};
+    document.getElementById("initLabel").oncontextmenu = function(e) {e.preventDefault(); handleRightClickRoll(e, "init");};
 
     document.getElementById("shareButton").onclick = function() {prompt(`Copy this link and give it out. Anyone with link can edit your sheet.`, `https://vitheaxolotl.github.io/sheets/index.html?${sheet[0]}-${sheet[1]}`);};
 }
@@ -233,4 +236,38 @@ function showSpell()
 function handleExit()
 {
     document.getElementById("spellFrame").classList.add("invisible");
+}
+
+function handleRightClickRoll(e, type)
+{
+    let clicked = e.currentTarget.id
+    let modifier;
+    let mod;
+
+    switch(type)
+    {
+        case "stat": 
+            if(e.currentTarget.innerHTML.includes("+"))
+            {
+                modifier = e.currentTarget.innerHTML.slice(e.currentTarget.innerHTML.indexOf("+"));
+            }
+            
+            else
+            {
+                modifier = e.currentTarget.innerHTML.slice(e.currentTarget.innerHTML.indexOf("-"));
+            }
+            break;
+
+        case "init":
+            modifier = document.getElementById("Initiative").value;
+            clicked = "Initiative";
+            break;
+    }
+
+    mod = parseInt(modifier);
+    let random = Math.random();
+    let roll = Math.floor(random * (20)) + mod; //Gives random roll
+
+    alert(`Rolled (${roll-mod})${modifier} = **${roll}** for ${toTitleCase(clicked)}.`);
+    return false;
 }
