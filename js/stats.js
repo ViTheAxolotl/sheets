@@ -9,6 +9,9 @@ let wholeChar = {};
 let stats;
 let sheet; 
 let firstRun = true;
+let wholeSpells;
+
+fetch('https://vitheaxolotl.github.io/Infused/src/spells.json').then(res => res.json()).then((json) => wholeSpells = json);
 
 const charRef = ref(database, 'playerChar/');
 onValue(charRef, (snapshot) => 
@@ -224,9 +227,6 @@ function showSpell()
     let spellName = toTitleCase(document.getElementById(this.id.slice(0, this.id.length - 4)).value);
     let link;
     let spellLevel = this.id;
-    let wholeSpells;
-
-    fetch('https://vitheaxolotl.github.io/Infused/src/spells.json').then(res => res.json()).then((json) => wholeSpells = json);
 
     if(spellLevel.includes("can")){spellLevel = "0";}
     else{spellLevel = spellLevel.slice(3, 4);}
