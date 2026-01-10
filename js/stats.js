@@ -223,12 +223,42 @@ function showSpell()
 {
     let spellName = toTitleCase(document.getElementById(this.id.slice(0, this.id.length - 4)).value);
     let link;
+    let spellLevel = this.id;
+    let wholeSpells;
+
+    fetch('https://vitheaxolotl.github.io/Infused/src/spells.json').then(res => res.json()).then((json) => wholeSpells = json);
+
+    if(spellLevel.includes("can")){spellLevel = "0";}
+    else{spellLevel = spellLevel.slice(3, 4);}
 
     if(spellName != "")
     {
-        spellName.replaceAll(" ", "%20");
-        link = `https://roll20.net/compendium/dnd5e/${spellName}`;
-        document.getElementById("spellLookup").src = link;
+        if(wholeSpells[spellLevel][spellName])
+        {
+            let spell = wholeSpells[spellLevel][spellName];
+            document.getElementById("spellTitle").innerHTML = spell["name"];
+            document.getElementById("CT").innerHTML = `Cast Time: ${spell["castTime"]}`;
+            document.getElementById("R").innerHTML = `Range: ${spell["range"]}`;
+            document.getElementById("C").innerHTML = `Components: ${spell["components"]}`;
+            document.getElementById("D").innerHTML = `Duration: ${spell["duration"]}`;
+            if(spell["concentration"] == "true"){document.getElementById("concentration").style.display = "block";}
+            else{document.getElementById("concentration").style.display = "none";}
+            document.getElementById("spellText").innerHTML = spell["description"];
+
+            document.getElementById("frame").style.display = "none";
+            document.getElementById("spellCard").style.display = "flex";
+        }
+
+        else
+        {
+            spellName.replaceAll(" ", "%20");
+            link = `https://roll20.net/compendium/dnd5e/${spellName}`;
+            document.getElementById("spellLookup").src = link;
+
+            document.getElementById("spellCard").style.display = "none";
+            document.getElementById("frame").style.display = "block";
+        }
+        
         document.getElementById("spellFrame").classList.remove("invisible");
     }
 }
