@@ -9,6 +9,10 @@ let firstRun = true;
 let sheets;
 let playerName, name;
 let htmlInfo = window.location.href;
+let wholeRolls = {};
+fetch('https://vitheaxolotl.github.io/sheets/src/rolls.json').then(res => res.json()).then((json) => wholeRolls = json);
+
+
 const charRef = ref(database, 'playerChar/');
 onValue(charRef, (snapshot) => 
 {
@@ -61,6 +65,69 @@ function loadSheets()
     deleteBtn.style.display = "block";
     deleteBtn.style.margin = "10px auto";
     deleteBtn.onclick = handleDeleteBtn;
+}
+
+function handleDiceSelect()
+{
+    let selects = document.getElementsByClassName("diceSelect");
+    let display = document.getElementById("diceRoller");
+
+    for(let select of selects){select.classList = "gridButton diceSelect";}
+    this.classList = "gridButton diceSelect selected-dice";
+
+    display.innerHTML = "";
+
+    switch(this.innerHTML)
+    {
+        case "Basic":
+            let numOfDice = document.createElement("input");
+            numOfDice.id = "diceToRoll"; numOfDice.placeholder = "1"; display.appendChild(numOfDice);
+            display.innerHTML += '<p>d</p>';
+            
+            let sides = document.createElement("input");
+            sides.id = "sides"; sides.placeholder = "20"; display.appendChild(sides);
+            display.innerHTML += '<p>+/-</p>';
+            
+            let modifier = document.createElement("input");
+            modifier.id = "modifier"; modifier.placeholder = "0"; display.appendChild(modifier);
+            
+            for(let elm of display.childNodes){elm.style.display = "inline"; elm.style.margin = "5px"; if(elm.placeholder != ""){elm.value = elm.placeholder;}}
+            break;
+        
+        case "Checks":
+        case "Saves":
+        case "Misc":
+            let select = document.createElement("select");
+            select.id = "statChoice";
+            select.innerHTML = `<option value="none">${this.innerHTML}</option>`;
+            select.onchange = updateStat;
+            select.style.margin = "10px";
+            select.style.display = "inline";
+
+            for(let roll of wholeRolls["rolls"][this.innerHTML])
+            {
+                select.innerHTML += `<option value="${roll}">${toTitleCase(roll)}</option>`;
+            }
+
+            let mod = document.createElement("h6");
+            mod.id = "diceMod";
+            mod.style.display = "inline";
+            mod.innerHTML = "+0";
+            mod.style.margin = "10px";
+
+            display.appendChild(select);
+            display.appendChild(mod);
+            break;
+    }
+}
+
+function updateStat()
+{
+    let diceMod = document.getElementById("diceMod");
+    let stat = document.getElementById("statChoice").value;
+    
+    if(!["deathSave", "Misc", "Saves", "Checks", "Basic"].includes(stat)){if(wholeChar[playerName][name]){diceMod.innerHTML = `${toTitleCase(stat)}: ${wholeChar[playerName][name]["stats"][stat]}`;} else {alert("Need to select Character first before rolling.");}}
+    else{diceMod.innerHTML = `${toTitleCase(stat)}: +0`;}
 }
 
 function generateSheets(sheetLocation, sharedLocation, mode)
@@ -119,6 +186,119 @@ function init()
         setDoc(`playerChar/${player}/sharedSheets/${name}`, {"name" : name, "playerName" : playerName});
         handleShowSheet(playerName, name);
     }
+
+    for(let diceSelect of document.getElementsByClassName("diceSelect")){diceSelect.onclick = handleDiceSelect;}
+    rollDiceBtn = document.getElementById("rollDice").onclick = handleDiceRoll;
+}
+
+/**
+ * Once the roll dice button is clicked
+ */
+function handleDiceRoll()
+{
+    let modifier = document.getElementById("diceMod").innerHTML;
+    modifier = modifier.split(": ");
+
+    switch(document.getElementsByClassName("selected-dice")[0].innerHTML)
+    {
+        case "Basic":
+            let amount = parseInt(document.getElementById("diceToRoll").value);
+            let dice = parseInt(document.getElementById("sides").value);
+            modifier = parseInt(document.getElementById("modifier").value);
+        
+            if(!Number.isNaN(amount) && !Number.isNaN(dice) && !Number.isNaN(modifier)) //If all three values are given
+            {
+                sendDiscordMessage(diceRoller(amount, dice, modifier, "discord") + "."); //Rolls the dice given and send the result to discord
+            }
+
+            else{alert("Need input in all 3 inputs.");} //If one or more of the values are missed
+        break;
+
+        case "Saves":
+            if(modifier[0] == "InfusedRate")
+            {
+                let dc = parseInt(modifier[1]);
+                let roll = diceRoller("1", "100", "0");
+                roll = roll.slice(roll.indexOf("**") + 2);
+                roll = roll.slice(0, roll.indexOf("**"));
+                alert(roll);
+                roll = parseInt(roll);
+
+                if(roll <= dc)
+                {
+                    sendDiscordMessage(`${name} has failed their infusion save, with a roll of ${roll}, needed at least ${dc}.`);
+                }
+
+                else
+                {
+                    sendDiscordMessage(`${name} has succeeded their infusion save, with a roll of ${roll}, got above ${dc}.`);
+                }
+                break;
+            }
+    
+        default:
+            alert(`${diceRoller("1", "20", modifier[1], "discord")} on their ${modifier[0]}.`);
+            break;
+    }
+}
+
+/**
+ * Rolls number of base dice with no modifier
+ * @param {*} amount 
+ * @param {*} dice 
+ * @returns 
+ */
+function basicRoll(amount, dice)
+{
+    let rolls = [];
+
+    for(let i = 0; i < amount; i++) //Rolls for each dice needed
+    {
+        let random = Math.random();
+        let roll = Math.floor(random * (parseInt(dice))) + 1; //Gives random roll
+        rolls.push(roll);
+    }
+
+    return rolls; //Returns all rolls
+}
+
+/**
+ * Rolls the amount of dice * d(dice) + modifier. If description is needed ifName is true
+ * @param {*} amount 
+ * @param {*} dice 
+ * @param {*} modifier 
+ * @param {*} ifName 
+ * @returns 
+ */
+function diceRoller(amount, dice, modifier, ifName)
+{
+    let rolls = basicRoll(amount, dice); //rolls each die
+    let sum = 0;
+    let inspo = false;
+    let viewMod = `${modifier}`;
+    if(modifier >= 0 && !viewMod.includes("+")){viewMod = "+" + modifier;} //Adds the + if the modifier is positive
+    let message = ""; 
+    if(ifName == "discord"){message = `${name} rolled `;} //Creates the message for discord
+    message += ` *${amount}d${dice}${viewMod}* : *(`;
+    
+    for(let roll of rolls) //For each die that was rolled
+    {
+        sum += roll; //Adds the result to the sum
+        message += `${roll}+`; //Adds the number to the message
+    }
+
+    if(message[message.length-1] == "+") //If the last thing in the message is +
+    {
+        message = message.slice(0, message.length - 1); //Removes the +
+    }
+    
+    let finalResult = sum + parseInt(modifier); //Adds the sum and modifier
+
+    message += `)${viewMod}=* **${finalResult}** `;
+
+    if(ifName == "finalResult"){message = `${finalResult}`;}
+
+    return message;
 }
 
 function handleDeleteBtn()
