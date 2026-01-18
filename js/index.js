@@ -7,6 +7,7 @@ let player;
 let wholeChar = {};
 let firstRun = true;
 let sheets;
+let wholeStat;
 let playerName, name;
 let htmlInfo = window.location.href;
 let wholeRolls = {};
@@ -127,7 +128,7 @@ function updateStat()
     let diceMod = document.getElementById("diceMod");
     let stat = document.getElementById("statChoice").value;
     
-    if(!["deathSave", "Misc", "Saves", "Checks", "Basic"].includes(stat)){if(wholeChar[playerName][name]){diceMod.innerHTML = `${toTitleCase(stat)}: ${wholeChar[playerName][name]["stats"][stat]}`;} else {alert("Need to select Character first before rolling.");}}
+    if(!["deathSave", "Misc", "Saves", "Checks", "Basic"].includes(stat)){if(wholeStat){diceMod.innerHTML = `${toTitleCase(stat)}: ${wholeStat["stats"][stat]}`;} else {alert("Need to select Character first before rolling.");}}
     else{diceMod.innerHTML = `${toTitleCase(stat)}: +0`;}
 }
 
@@ -151,7 +152,7 @@ function generateSheets(sheetLocation, sharedLocation, mode)
                 button.onclick = function() {setDoc(`playerChar/${player}/shared`, false); handleShowSheet(this.title, this.innerHTML);};
                 if(mode == "delete"){button.onclick = function() {deleteSheet("shared", button.innerHTML);}}
                 button.classList = "gridButton";
-                button.title = toTitleCase(wholeChar[player]["sharedSheets"][sharedSheet]["playerName"]);
+                button.title = toTitleCase(wholeChar[player]["sharedSheets"][sharedSheet]["player"]);
                 sharedDiv.appendChild(button);
             }
         }
@@ -372,6 +373,8 @@ function handleShowSheet(playerName, name)
         document.getElementById("statSheet").style.marginBottom = `${((wholeChar[player]["zoomSheetLevel"]/100)-1)*70*9.4}px`;
         document.getElementById("statSheet").style.height = `${((100/wholeChar[player]["zoomSheetLevel"]))*125}vh`;
     }
+
+    wholeStat = wholeChar[playerName][name];
 }
 
 function handleButton()
