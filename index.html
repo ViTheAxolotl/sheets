@@ -46,7 +46,7 @@
 		      <button name="zoomSheet" class = "gridButton inOrDe" style="color: white; height: 50px;">-</button>
         </div>
 
-        <div id = "hometown" class = "bg-UP-purple color-UP-black col-md-12 col-sm-12 center">
+        <div id = "controls" class = "bg-UP-purple color-UP-black col-md-12 col-sm-12 center">
           <div class="center">
             <h3>Roll Dice:</h3>
             <button class="gridButton diceSelect selected-dice">Basic</button>
@@ -54,6 +54,16 @@
             <button class="gridButton diceSelect">Saves</button>
             <button class="gridButton diceSelect">Preset</button>
           </div>
+          
+          <div class="center" id="diceRoller" style="margin-top: 10px; margin-bottom: 10px;">
+            <input id="diceToRoll" style="display: inline;" value="1" placeholder="1"/>
+            <p style="display: inline;">d</p>
+            <input id="sides" style="display: inline;" value="20" placeholder="20"/>
+            <p style="display: inline;">+/-</p>
+            <input id = "modifier" style="display: inline;" value="0" placeholder="0"/>
+          </div>
+
+          <button id = "rollDice">Roll</button>
         </div>
 
         <div id = "footer" class = "col-12 color-UP-black">
