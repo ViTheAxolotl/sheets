@@ -10,6 +10,7 @@ let sheets;
 let playerName, name;
 let htmlInfo = window.location.href;
 let wholeRolls = {};
+let rollDiceBtn;
 fetch('https://vitheaxolotl.github.io/sheets/src/rolls.json').then(res => res.json()).then((json) => wholeRolls = json);
 
 
