@@ -182,6 +182,8 @@ function handleShowSheet(playerName, name)
     </div>
     `; 
 
+    document.title = `${name}'s Sheet`;
+
     if(wholeChar[player]["zoomSheetLevel"])
     {
         document.getElementById("statSheet").style.transform = `scale(${wholeChar[player]["zoomSheetLevel"]/100})`;
