@@ -198,8 +198,13 @@ function init()
  */
 function handleDiceRoll()
 {
-    let modifier = document.getElementById("diceMod").innerHTML;
-    modifier = modifier.split(": ");
+    let modifier;
+
+    if(document.getElementById("diceMod"))
+    {
+        modifier = document.getElementById("diceMod").innerHTML;
+        modifier = modifier.split(": ");
+    }
 
     switch(document.getElementsByClassName("selected-dice")[0].innerHTML)
     {
@@ -210,33 +215,11 @@ function handleDiceRoll()
         
             if(!Number.isNaN(amount) && !Number.isNaN(dice) && !Number.isNaN(modifier)) //If all three values are given
             {
-                sendDiscordMessage(diceRoller(amount, dice, modifier, "discord") + "."); //Rolls the dice given and send the result to discord
+                alert(diceRoller(amount, dice, modifier, "discord") + "."); //Rolls the dice given and send the result to discord
             }
 
             else{alert("Need input in all 3 inputs.");} //If one or more of the values are missed
         break;
-
-        case "Saves":
-            if(modifier[0] == "InfusedRate")
-            {
-                let dc = parseInt(modifier[1]);
-                let roll = diceRoller("1", "100", "0");
-                roll = roll.slice(roll.indexOf("**") + 2);
-                roll = roll.slice(0, roll.indexOf("**"));
-                alert(roll);
-                roll = parseInt(roll);
-
-                if(roll <= dc)
-                {
-                    sendDiscordMessage(`${name} has failed their infusion save, with a roll of ${roll}, needed at least ${dc}.`);
-                }
-
-                else
-                {
-                    sendDiscordMessage(`${name} has succeeded their infusion save, with a roll of ${roll}, got above ${dc}.`);
-                }
-                break;
-            }
     
         default:
             alert(`${diceRoller("1", "20", modifier[1], "discord")} on their ${modifier[0]}.`);
