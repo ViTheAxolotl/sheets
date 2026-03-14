@@ -279,7 +279,7 @@ function diceRoller(amount, dice, modifier, ifName)
     
     let finalResult = sum + parseInt(modifier); //Adds the sum and modifier
 
-    message += `)${viewMod}= ${finalResult} `;
+    message += `)${viewMod}= ${finalResult}`;
 
     if(ifName == "finalResult"){message = `${finalResult}`;}
 
