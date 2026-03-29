@@ -215,14 +215,54 @@ function handleDiceRoll()
         
             if(!Number.isNaN(amount) && !Number.isNaN(dice) && !Number.isNaN(modifier)) //If all three values are given
             {
-                alert(diceRoller(amount, dice, modifier, "discord") + "."); //Rolls the dice given and send the result to discord
+                if(document.getElementById("adv").value != "Advantage/Disadvantage") 
+                { 
+                    let take = parseInt(diceRoller(`${amount}`, `${dice}`, `${modifier}`, "finalResult"));
+                    let take2 = parseInt(diceRoller(`${amount}`, `${dice}`, `${modifier}`, "finalResult"));
+                    let usersRoll;
+
+                    switch(document.getElementById("adv").value)
+                    {
+                        case "Advantage":
+                            if(take > take2){usersRoll = take;} else {usersRoll = take2;}
+                            break;
+
+                        case "Disadvantage":
+                            if(take < take2){usersRoll = take;} else {usersRoll = take2;}
+                            break;
+                    }
+
+                    alert(`${window.player} rolled ${amount}d${dice}+${modifier}: (${parseInt(usersRoll)-modifier})+${modifier}= ${usersRoll}. First Roll: ${take}, Second Roll: ${take2}.`);
+                }
+
+                else{alert(diceRoller(amount, dice, modifier, "discord"));}
             }
 
             else{alert("Need input in all 3 inputs.");} //If one or more of the values are missed
         break;
     
         default:
-            alert(`${diceRoller("1", "20", modifier[1], "discord")} on their ${modifier[0]}.`);
+            if(document.getElementById("adv").value != "Advantage/Disadvantage") 
+            { 
+                let take = parseInt(diceRoller(`1`, `20`, `${modifier[1]}`, "finalResult"));
+                let take2 = parseInt(diceRoller(`1`, `20`, `${modifier[1]}`, "finalResult"));
+                let usersRoll;
+
+                switch(document.getElementById("adv").value)
+                {
+                    case "Advantage":
+                        if(take > take2){usersRoll = take;} else {usersRoll = take2;}
+                        break;
+
+                    case "Disadvantage":
+                        if(take < take2){usersRoll = take;} else {usersRoll = take2;}
+                        break;
+                }
+
+                alert(`${window.player} rolled 1d20+${modifier[1]}: (${parseInt(usersRoll)-modifier[1]})+${modifier[1]}= ${usersRoll} on their ${modifier[0]}. First Roll: ${take}, Second Roll: ${take2}.`);
+            }
+
+            else{alert(`${diceRoller("1", "20", modifier[1], "discord")} on their ${modifier[0]}.`);}
             break;
     }
 }
