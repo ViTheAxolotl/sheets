@@ -232,7 +232,7 @@ function handleDiceRoll()
                             break;
                     }
 
-                    alert(`${window.player} rolled ${amount}d${dice}+${modifier}: (${parseInt(usersRoll)-modifier})+${modifier}= ${usersRoll}. First Roll: ${take}, Second Roll: ${take2}.`);
+                    alert(`${window.name} rolled ${amount}d${dice}+${modifier}: (${parseInt(usersRoll)-modifier})+${modifier}= ${usersRoll}. First Roll: ${take}, Second Roll: ${take2}.`);
                 }
 
                 else{alert(diceRoller(amount, dice, modifier, "discord"));}
@@ -259,7 +259,7 @@ function handleDiceRoll()
                         break;
                 }
 
-                alert(`${window.player} rolled 1d20+${modifier[1]}: (${parseInt(usersRoll)-modifier[1]})+${modifier[1]}= ${usersRoll} on their ${modifier[0]}. First Roll: ${take}, Second Roll: ${take2}.`);
+                alert(`${window.name} rolled 1d20+${modifier[1]}: (${parseInt(usersRoll)-modifier[1]})+${modifier[1]}= ${usersRoll} on their ${modifier[0]}. First Roll: ${take}, Second Roll: ${take2}.`);
             }
 
             else{alert(`${diceRoller("1", "20", modifier[1], "discord")} on their ${modifier[0]}.`);}
@@ -380,6 +380,7 @@ function handleShowSheet(playerName, name)
     div.innerHTML = "";
     setDoc(`playerChar/${player}/currentSheet`, `${playerName}-${name}`);
 
+    window.name = name;
     div.innerHTML = 
     `
     <div id="frame" draggable="false">
