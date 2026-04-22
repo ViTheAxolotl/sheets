@@ -379,10 +379,7 @@ function createNewSheet()
 function uploadFile(event)
 {
     let structure = `Bucket/${player}/${charName}-img`;
-    let newURL = handleImageUpload(event, structure);
-    setDoc(`playerChar/${player}/${charName}/image`, newURL);
-    document.getElementById("portrait").src = newURL;
-    document.getElementById("portrait").style.display = "block";
+    handleImageUpload(event, structure, player, charName);
 }
 
 window.uploadFile = uploadFile;

@@ -23,7 +23,7 @@ export let storage = getStorage(firebaseApp);
 export let quickAction = false;
 export let skillDecrypt = {"athletics" : "Strength", "acrobatics" : "Dexterity", "slightOfHand" : "Dexterity", "stealth" : "Dexterity", "arcana" : "Intelligence", "history" : "Intelligence", "investigation" : "Intelligence", "nature" : "Intelligence", "religion" : "Intelligence", "animalHandling" : "Wisdom", "insight" : "Wisdom", "medicine" : "Wisdom", "perception" : "Wisdom", "survival" : "Wisdom",  "deception" : "Charisma",  "intimidation" : "Charisma",  "performance" : "Charisma",  "persuasion" : "Charisma"};
 
-export async function handleImageUpload(event, structure) 
+export async function handleImageUpload(event, structure, player, charName)
 {
     if(event.target.files)
     {
@@ -50,7 +50,9 @@ export async function handleImageUpload(event, structure)
             
             // --- STEP 4: UPDATE FIREBASE REALTIME DB ---
             // This ensures the "Source of Truth" is updated for everyone
-            return downloadURL;
+            setDoc(`playerChar/${player}/${charName}/image`, downloadURL);
+            document.getElementById("portrait").src = downloadURL;
+            document.getElementById("portrait").style.display = "block";
         } 
         
         catch (error) 
