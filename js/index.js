@@ -380,6 +380,8 @@ function handleShowSheet(playerName, name)
     div.innerHTML = "";
     setDoc(`playerChar/${player}/currentSheet`, `${playerName}-${name}`);
 
+    document.getElementById("uploadBTN").style.display = "inline";
+
     if(!wholeChar[player][name]["image"])
     {
         setDoc(`playerChar/${player}/${name}/image`, `None`);
