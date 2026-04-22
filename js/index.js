@@ -379,6 +379,7 @@ function createNewSheet()
 function uploadFile(event)
 {
     let structure = `Bucket/${player}/${charName}-img`;
+    alert("Images take a moment to upload, please don't refresh, the page will update on it's own.")
     handleImageUpload(event, structure, "portrait", player, charName);
 }
 
