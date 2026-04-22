@@ -11,7 +11,7 @@ let sheet;
 let firstRun = true;
 let wholeSpells;
 
-fetch('https://vitheaxolotl.github.io/Infused/src/spells.json').then(res => res.json()).then((json) => wholeSpells = json);
+fetch('https://infused.axol-apps.com/src/spells.json').then(res => res.json()).then((json) => wholeSpells = json);
 
 const charRef = ref(database, 'playerChar/');
 onValue(charRef, (snapshot) => 
