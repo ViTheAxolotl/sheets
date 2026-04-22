@@ -380,6 +380,19 @@ function handleShowSheet(playerName, name)
     div.innerHTML = "";
     setDoc(`playerChar/${player}/currentSheet`, `${playerName}-${name}`);
 
+    if(!playerChar[player][name]["image"])
+    {
+        setDoc(`playerChar/${player}/${name}/image`, `None`);
+    }
+
+    else //Update portrait to match
+    {
+        if(playerChar[player][name]["image"] != "None")
+        {
+            document.getElementById("portrait").src = playerChar[player][name]["image"];
+        }
+    }
+
     window.name = name;
     div.innerHTML = 
     `
