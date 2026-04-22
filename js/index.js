@@ -13,7 +13,7 @@ let htmlInfo = window.location.href;
 let wholeRolls = {};
 let rollDiceBtn;
 
-fetch('https://vitheaxolotl.github.io/sheets/src/rolls.json').then(res => res.json()).then((json) => wholeRolls = json);
+fetch('https://sheets.axol-apps.com/src/rolls.json').then(res => res.json()).then((json) => wholeRolls = json);
 
 
 const charRef = ref(database, 'playerChar/');
@@ -383,6 +383,8 @@ function uploadFile(event)
     document.getElementById("portrait").src = newURL;
     document.getElementById("portrait").style.display = "block";
 }
+
+window.uploadFile = uploadFile;
 
 function handleShowSheet(playerName, name)
 {
