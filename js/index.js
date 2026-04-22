@@ -381,6 +381,7 @@ function uploadFile(event)
     let newURL = handleImageUpload(event, structure);
     setDoc(`playerChar/${player}/${name}/image`, newURL);
     document.getElementById("portrait").src = newURL;
+    document.getElementById("portrait").style.display = "block";
 }
 
 function handleShowSheet(playerName, name)
