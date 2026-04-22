@@ -7,6 +7,7 @@ let player;
 let wholeChar = {};
 let firstRun = true;
 let sheets;
+let charName;
 let wholeStat;
 let playerName, name;
 let htmlInfo = window.location.href;
@@ -377,9 +378,9 @@ function createNewSheet()
 
 function uploadFile(event)
 {
-    let structure = `Bucket/${playerName}/${name}-img`;
+    let structure = `Bucket/${player}/${charName}-img`;
     let newURL = handleImageUpload(event, structure);
-    setDoc(`playerChar/${player}/${name}/image`, newURL);
+    setDoc(`playerChar/${player}/${charName}/image`, newURL);
     document.getElementById("portrait").src = newURL;
     document.getElementById("portrait").style.display = "block";
 }
@@ -391,6 +392,8 @@ function handleShowSheet(playerName, name)
     let div = document.getElementById("sheet");
     div.innerHTML = "";
     setDoc(`playerChar/${player}/currentSheet`, `${playerName}-${name}`);
+
+    charName = name;
 
     document.getElementById("uploadLabel").style.display = "inline";
     document.getElementById("uploadBTN").style.display = "inline";
