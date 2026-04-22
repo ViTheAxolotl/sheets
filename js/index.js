@@ -404,7 +404,7 @@ function handleShowSheet(playerName, name)
     {
         if(wholeChar[player][name]["image"] != "None")
         {
-            document.getElementById("portrait").src = playerChar[player][name]["image"];
+            document.getElementById("portrait").src = wholeChar[player][name]["image"];
             document.getElementById("portrait").style.display = "block";
         }
     }
