@@ -1,7 +1,7 @@
 "use strict";
 import { ref, onValue } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js';
-import { toTitleCase, auth, database, setDoc, reload, deleteDoc } from './viMethods.js';
+import { toTitleCase, auth, database, setDoc, reload, deleteDoc, handleImageUpload } from './viMethods.js';
 
 let player;
 let wholeChar = {};
@@ -12,6 +12,7 @@ let playerName, name;
 let htmlInfo = window.location.href;
 let wholeRolls = {};
 let rollDiceBtn;
+
 fetch('https://vitheaxolotl.github.io/sheets/src/rolls.json').then(res => res.json()).then((json) => wholeRolls = json);
 
 
@@ -372,6 +373,14 @@ function createNewSheet()
     let name = document.getElementById("name");
     if(name.value != ""){setDoc(`playerChar/${player}/${name.value}/stats`, {"name":name.value}); document.getElementById("createNew").innerHTML = "";}
     else{alert("Need to give a character name.");}
+}
+
+function uploadFile(event)
+{
+    let structure = `Bucket/${playerName}/${name}-img`;
+    let newURL = handleImageUpload(event, structure);
+    setDoc(`playerChar/${player}/${name}/image`, newURL);
+    document.getElementById("portrait").src = newURL;
 }
 
 function handleShowSheet(playerName, name)

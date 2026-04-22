@@ -2,6 +2,7 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js';
 import { getDatabase, ref, set } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js';
 import { getAuth } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js';
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-storage.js";
 
 const firebaseApp = initializeApp
 ({
@@ -12,13 +13,52 @@ const firebaseApp = initializeApp
     storageBucket: "sheets-fd946.firebasestorage.app",
     messagingSenderId: "1088842294165",
     appId: "1:1088842294165:web:02ce4992c44d04ab378c9c",
-    measurementId: "G-FSL9K4SQ84"
+    measurementId: "G-FSL9K4SQ84",
+    storageBucket: "gs://sheets-fd946.firebasestorage.app"
 }); //Connects to database
 
 export let auth = getAuth(); //Logs into accounts
 export let database = getDatabase(); //Sets up connection
+export let storage = getStorage(firebaseApp);
 export let quickAction = false;
 export let skillDecrypt = {"athletics" : "Strength", "acrobatics" : "Dexterity", "slightOfHand" : "Dexterity", "stealth" : "Dexterity", "arcana" : "Intelligence", "history" : "Intelligence", "investigation" : "Intelligence", "nature" : "Intelligence", "religion" : "Intelligence", "animalHandling" : "Wisdom", "insight" : "Wisdom", "medicine" : "Wisdom", "perception" : "Wisdom", "survival" : "Wisdom",  "deception" : "Charisma",  "intimidation" : "Charisma",  "performance" : "Charisma",  "persuasion" : "Charisma"};
+
+export async function handleImageUpload(event, structure) 
+{
+    if(event.target.files)
+    {
+        let imageFile = event.target.files[0];
+        
+        const options = {
+            maxSizeMB: 0.4,          // Max size 200KB (Perfect for tokens/sheets)
+            maxWidthOrHeight: 1024, // Keeps it crisp but not massive
+            useWebWorker: true
+        };
+
+        try {
+            console.log("Compressing...");
+            const compressedFile = await imageCompression(imageFile, options);
+            
+            // --- STEP 2: UPLOAD TO STORAGE ---
+            // Saving it as the player's name ensures they only ever have ONE file (saves space)
+            const storageRef = ref(storage, structure);
+            
+            const snapshot = await uploadBytes(storageRef, compressedFile);
+            
+            // --- STEP 3: GET THE PERMANENT URL ---
+            const downloadURL = await getDownloadURL(snapshot.ref);
+            
+            // --- STEP 4: UPDATE FIREBASE REALTIME DB ---
+            // This ensures the "Source of Truth" is updated for everyone
+            return downloadURL;
+        } 
+        
+        catch (error) 
+        {
+            alert("Upload failed:", error);
+        }
+    }
+}
 
 export function setQuickAction(bool)
 {
