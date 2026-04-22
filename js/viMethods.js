@@ -2,7 +2,7 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js';
 import { getDatabase, ref, set } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js';
 import { getAuth } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js';
-import { getStorage, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-storage.js";
+import { getStorage, uploadBytes, getDownloadURL, ref as sRef } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-storage.js";
 
 const firebaseApp = initializeApp
 ({
@@ -41,7 +41,7 @@ export async function handleImageUpload(event, structure)
             
             // --- STEP 2: UPLOAD TO STORAGE ---
             // Saving it as the player's name ensures they only ever have ONE file (saves space)
-            const storageRef = ref(storage, structure);
+            const storageRef = sRef(storage, structure);
             
             const snapshot = await uploadBytes(storageRef, compressedFile);
             
