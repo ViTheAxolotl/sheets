@@ -1,6 +1,6 @@
 "use strict";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js';
-import { toTitleCase, auth, clenseInput, reload } from '../js/viMethods.js';
+import { toTitleCase, auth, clenseInput, reload, passwordReset } from '../js/viMethods.js';
 
 let url = window.location.href.split("/");
 let player;
@@ -18,6 +18,19 @@ function init()
     loginBtn.onclick = handleLoginBtn;
 
     document.getElementById("createNew").onclick = handleCreateNew;
+    document.getElementById("resetPassword").onclick = handlePasswordReset;
+}
+
+async function handlePasswordReset()
+{
+    let email = prompt("Please provide your email address to send the reset to:");
+
+    while(!email.includes("@"))
+    {
+        email = prompt("Enter a valid email address:")
+    }
+
+    passwordReset(email);
 }
 
 function handleLoginBtn()

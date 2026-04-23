@@ -1,7 +1,7 @@
 "use strict";
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js';
 import { getDatabase, ref, set } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js';
-import { getAuth } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js';
+import { getAuth, sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js';
 import { getStorage, uploadBytes, getDownloadURL, ref as sRef } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-storage.js";
 
 const firebaseApp = initializeApp
@@ -64,6 +64,20 @@ export async function handleImageUpload(event, structure, type, player, charName
         {
             alert("Upload failed:", error);
         }
+    }
+}
+
+export async function passwordReset(email)
+{
+    try 
+    {
+        await sendPasswordResetEmail(email);
+        alert("Email sent successfully, Check inbox for next steps!");
+    } 
+    
+    catch (error) 
+    {
+        alert(`Error: ${error.message}`);
     }
 }
 
