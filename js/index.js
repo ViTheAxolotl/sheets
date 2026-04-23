@@ -396,16 +396,16 @@ function handleShowSheet(playerName, name)
     document.getElementById("uploadLabel").style.display = "inline";
     document.getElementById("uploadBTN").style.display = "inline";
 
-    if(!wholeChar[player][name]["image"])
+    if(!wholeChar[playerName][name]["image"])
     {
-        setDoc(`playerChar/${player}/${name}/image`, `None`);
+        setDoc(`playerChar/${playerName}/${name}/image`, `None`);
     }
 
     else //Update portrait to match
     {
         if(wholeChar[player][name]["image"] != "None")
         {
-            document.getElementById("portrait").src = wholeChar[player][name]["image"];
+            document.getElementById("portrait").src = wholeChar[playerName][name]["image"];
             document.getElementById("portrait").style.display = "block";
         }
     }
