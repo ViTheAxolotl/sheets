@@ -31,7 +31,7 @@ onValue(charRef, (snapshot) =>
 
     else
     {
-        if(wholeChar[player]["zoomSheetLevel"])
+        if(wholeChar[player]["zoomSheetLevel"] && document.getElementById("statSheet"))
         {
             document.getElementById("statSheet").style.transform = `scale(${wholeChar[player]["zoomSheetLevel"]/100})`;
             document.getElementById("statSheet").style.width = `${100/(wholeChar[player]["zoomSheetLevel"]/100)}%`;
