@@ -72,7 +72,7 @@ export async function passwordReset(email)
     try 
     {
         await sendPasswordResetEmail(auth, email);
-        alert("Email sent successfully, Check inbox for next steps!");
+        alert("Email sent successfully, Check inbox & Spam for next steps!");
     } 
     
     catch (error) 
