@@ -71,7 +71,7 @@ export async function passwordReset(email)
 {
     try 
     {
-        await sendPasswordResetEmail(email);
+        await sendPasswordResetEmail(auth, email);
         alert("Email sent successfully, Check inbox for next steps!");
     } 
     
