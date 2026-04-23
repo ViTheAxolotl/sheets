@@ -154,7 +154,7 @@ function generateSheets(sheetLocation, sharedLocation, mode)
                 button.onclick = function() {setDoc(`playerChar/${player}/shared`, false); handleShowSheet(this.title, this.innerHTML);};
                 if(mode == "delete"){button.onclick = function() {deleteSheet("shared", button.innerHTML);}}
                 button.classList = "gridButton";
-                button.title = button.innerHTML;
+                button.title = toTitleCase(wholeChar[player]["sharedSheets"][sharedSheet]["playerName"]);
                 sharedDiv.appendChild(button);
             }
         }
