@@ -403,7 +403,7 @@ function handleShowSheet(playerName, name)
 
     else //Update portrait to match
     {
-        if(wholeChar[player][name]["image"] != "None")
+        if(wholeChar[playerName][name]["image"] != "None")
         {
             document.getElementById("portrait").src = wholeChar[playerName][name]["image"];
             document.getElementById("portrait").style.display = "block";
