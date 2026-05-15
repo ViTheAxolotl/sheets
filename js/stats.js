@@ -130,7 +130,7 @@ function updateCheckboxes(level)
             setDoc(`playerChar/${sheet[0]}/${sheet[1]}/stats/${id}`, false);
         }
 
-        box.onchange = function(){setDoc(`playerChar/${parent.player}/stats/${id}`, box.checked);};
+        box.onchange = function(){setDoc(`playerChar/${sheet[0]}/${sheet[1]}/stats/${id}`, box.checked);};
 
         let label = document.createElement('label');
         label.setAttribute("for", id);
