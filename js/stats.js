@@ -120,6 +120,18 @@ function updateCheckboxes(level)
         box.style.display = "none";
         box.className = "spell-check-hidden";
 
+        if(wholeChar[sheet[0]][sheet[1]]["stats"][id] == true || wholeChar[sheet[0]][sheet[1]]["stats"][id] == false)
+        {
+            box.checked = wholeChar[sheet[0]][sheet[1]]["stats"][id];
+        }
+
+        else
+        {
+            setDoc(`playerChar/${sheet[0]}/${sheet[1]}/stats/${id}`, false);
+        }
+
+        box.onchange = function(){setDoc(`playerChar/${parent.player}/stats/${id}`, box.checked);};
+
         let label = document.createElement('label');
         label.setAttribute("for", id);
         label.className = 'spell-slot-label';
