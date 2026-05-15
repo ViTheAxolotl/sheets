@@ -670,6 +670,33 @@ table, .itemSearch, #itemImg
     display: inline;
 }
 
+/* The default 'Unchecked' state */
+.spell-slot-label 
+{
+    display: inline-block; 
+    width: 50px; 
+    height: 50px;          
+    background-image: url('../images/spellSlot.png'); 
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    margin: 2px;
+}
+
+/* Hover effect so players know it's clickable */
+.spell-slot-label:hover 
+{
+    transform: scale(1.1);
+}
+
+/* The 'Checked' (Used) state */
+/* The '+' selector looks for the label immediately following a checked input */
+.spell-check-hidden:checked + .spell-slot-label 
+{
+    background-image: url('../images/usedSpellSlot.png');
+}
+
 @media (max-width: 1399px) {
     .col-md-6
     {

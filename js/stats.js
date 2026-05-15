@@ -78,6 +78,8 @@ function init()
             setStats(stat);
         }
 
+        if(stat.id.includes("slot")){updateCheckboxes(stat.id.split("level")[1].charAt(0));}
+
         stat.onchange = updateStat;
     }
 
@@ -98,7 +100,34 @@ function init()
     document.getElementById("shareButton").onclick = function() {prompt(`Copy this link and give it out. Anyone with link can edit your sheet.`, `https://sheets.axol-apps.com/index.html?${sheet[0]}-${sheet[1]}`);};
 }
 
+function updateCheckboxes(level)
+{
+    let input = document.getElementById(`level${level}-slot`);
+    let display = document.getElementById(`level${level}-slot-display`);
 
+    if(!input || !display){return;}
+
+    let count = parseInt(input.value) || 0;
+    display.innerHTML = "";
+
+    for(let i = 0; i < count; i++)
+    {
+        let id = `level${level}-cb-${i}`;
+        
+        let box = document.createElement('input');
+        box.type = 'checkbox';
+        box.id = id;
+        box.style.display = "none";
+        box.className = "spell-check-hidden";
+
+        let label = document.createElement('label');
+        label.setAttribute("for", id);
+        label.className = 'spell-slot-label';
+        
+        display.appendChild(box);
+        display.appendChild(label);
+    }
+}
 
 function setStats(stat)
 {
@@ -220,6 +249,11 @@ function updateStat()
         {
             document.getElementById(this.id + "-See").classList.add("invisible");
         }
+    }
+
+    if(this.id.includes("slot"))
+    {
+        updateCheckboxes(this.id.split("level")[1].charAt(0));
     }
 }
 
