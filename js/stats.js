@@ -343,7 +343,7 @@ function handleRightClickRoll(e, type)
 
     mod = parseInt(modifier);
     let random = Math.random();
-    let roll = Math.floor(random * (20)) + mod; //Gives random roll
+    let roll = Math.floor(random * (20) + 1) + mod; //Gives random roll
 
     alert(`Rolled (${roll-mod})${modifier} = ${roll} for ${toTitleCase(clicked)}.`);
     return false;
