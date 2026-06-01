@@ -191,7 +191,7 @@ function renderPresetsMenu(display)
                 deleteBtn.src = "../images/trashIcon.png";
                 deleteBtn.style.cursor = "pointer";
                 deleteBtn.title = "Delete Preset";
-                deleteBtn.onclick = () => deletePreset(presetKey);
+                deleteBtn.onclick = () => deletePreset(display, presetKey);
                 iconControls.appendChild(deleteBtn);
 
                 presetRow.appendChild(iconControls);
@@ -403,7 +403,7 @@ function savePreset(display, presetName = null)
     renderPresetsMenu(display);
 }
 
-function deletePreset(title)
+function deletePreset(display, title)
 {
     if(!confirm("Are you sure you want to delete this preset?")){return;}
     deleteDoc(`playerChar/${player}/${charName}/presets/${title}`);
