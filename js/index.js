@@ -157,46 +157,47 @@ function renderPresetsMenu(display)
     {
         Object.keys(presets).forEach(presetKey => 
         {
-            if(presetKey == "hold"){continue;}
+            if(presetKey != "hold")
+            {
+                let presetData = presets[presetKey];
 
-            let presetData = presets[presetKey];
+                let presetRow = document.createElement("div");
+                presetRow.className = "preset-view-row";
+                presetRow.style.cssText = "display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.3); padding: 8px 15px; margin: 5px 0; border-radius: 4px;";
 
-            let presetRow = document.createElement("div");
-            presetRow.className = "preset-view-row";
-            presetRow.style.cssText = "display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.3); padding: 8px 15px; margin: 5px 0; border-radius: 4px;";
+                let nameSpan = document.createElement("span");
+                nameSpan.innerHTML = presetData.name;
+                nameSpan.style.cssText = "font-weight: bold; flex-grow: 1; text-align: left;";
+                presetRow.appendChild(nameSpan);
 
-            let nameSpan = document.createElement("span");
-            nameSpan.innerHTML = presetData.name;
-            nameSpan.style.cssText = "font-weight: bold; color: white; flex-grow: 1; text-align: left;";
-            presetRow.appendChild(nameSpan);
+                let iconControls = document.createElement("div");
+                iconControls.style.cssText = "display: flex; gap: 15px;";
 
-            let iconControls = document.createElement("div");
-            iconControls.style.cssText = "display: flex; gap: 15px;";
+                let rollBtn = document.createElement("img");
+                rollBtn.src = "../images/diceIcon.png";
+                rollBtn.style.cursor = "pointer";
+                rollBtn.title = "Roll Preset";
+                rollBtn.onclick = () => rollPreset(presetData);
+                iconControls.appendChild(rollBtn);
 
-            let rollBtn = document.createElement("img");
-            rollBtn.src = "../images/diceIcon.png";
-            rollBtn.style.cursor = "pointer";
-            rollBtn.title = "Roll Preset";
-            rollBtn.onclick = () => rollPreset(presetData);
-            iconControls.appendChild(rollBtn);
+                let editBtn = document.createElement("img");
+                editBtn.src = "../images/editIcon.png";
+                editBtn.style.cursor = "pointer";
+                editBtn.title = "Edit Preset";
+                editBtn.onclick = () => createPreset(display, presetKey, presetData);
+                iconControls.appendChild(editBtn);
 
-            let editBtn = document.createElement("img");
-            editBtn.src = "../images/editIcon.png";
-            editBtn.style.cursor = "pointer";
-            editBtn.title = "Edit Preset";
-            editBtn.onclick = () => createPreset(display, presetKey, presetData);
-            iconControls.appendChild(editBtn);
+                let deleteBtn = document.createElement("img");
+                deleteBtn.src = "../images/trashIcon.png";
+                deleteBtn.style.cursor = "pointer";
+                deleteBtn.title = "Delete Preset";
+                deleteBtn.onclick = () => deletePreset(presetKey);
+                iconControls.appendChild(deleteBtn);
 
-            let deleteBtn = document.createElement("img");
-            deleteBtn.src = "../images/trashIcon.png";
-            deleteBtn.style.cursor = "pointer";
-            deleteBtn.title = "Delete Preset";
-            deleteBtn.onclick = () => deletePreset(presetKey);
-            iconControls.appendChild(deleteBtn);
-
-            presetRow.appendChild(iconControls);
-            listWrapper.appendChild(presetRow);
-        })
+                presetRow.appendChild(iconControls);
+                listWrapper.appendChild(presetRow);
+            } 
+        });
     }
 
     let createNew = document.createElement("button");
@@ -414,7 +415,7 @@ function deletePreset(title)
 
 function rollPreset(data)
 {
-    
+
 }
 
 function updateStat()
