@@ -137,7 +137,7 @@ function handleDiceSelect()
 
 function renderPresetsMenu(display)
 {
-    display.innerHTML = "<h3 class = 'color-UP-yellow'>Custom Roll Presets</h3>";
+    display.innerHTML = "<h3>Custom Roll Presets</h3>";
 
     let listWrapper = document.createElement("div");
     listWrapper.id = "presetsList";
@@ -171,21 +171,21 @@ function renderPresetsMenu(display)
             let iconControls = document.createElement("div");
             iconControls.style.cssText = "display: flex; gap: 15px;";
 
-            let rollBtn = document.createElement(img);
+            let rollBtn = document.createElement("img");
             rollBtn.src = "../images/diceIcon.png";
             rollBtn.style.cursor = "pointer";
             rollBtn.title = "Roll Preset";
             rollBtn.onclick = () => rollPreset(presetData);
             iconControls.appendChild(rollBtn);
 
-            let editBtn = document.createElement(img);
+            let editBtn = document.createElement("img");
             editBtn.src = "../images/editIcon.png";
             editBtn.style.cursor = "pointer";
             editBtn.title = "Edit Preset";
             editBtn.onclick = () => editPreset(presetData);
             iconControls.appendChild(editBtn);
 
-            let deleteBtn = document.createElement(img);
+            let deleteBtn = document.createElement("img");
             deleteBtn.src = "../images/trashIcon.png";
             deleteBtn.style.cursor = "pointer";
             deleteBtn.title = "Delete Preset";
