@@ -230,7 +230,6 @@ function createPreset(display, existingKey = null, data = null)
     accLabel.innerHTML = "Accuracy Modifier (1d20 + X):";
     accLabel.style.cssText = "display: block; color: white; margin-bottom: 4px;";
     const accInput = document.createElement("input");
-    accInput.type = "number";
     accInput.id = "presetAccuracyField";
     accInput.placeholder = "Use a number +/-, or use $Strength$ to get a stat. It understands basic math.";
     accInput.value = data ? data.accuracyBonus : "";
