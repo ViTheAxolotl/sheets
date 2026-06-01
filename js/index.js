@@ -124,14 +124,14 @@ function handleDiceSelect()
             break;
 
         case "Preset":
-            if(wholeChar[playerName][name]["presets"])
+            if(wholeChar[player][charName]["presets"])
             {
 
             }
 
             else
             {
-                setDoc(`playerChar/${player}/${name}/presets`, {"hold":"hold"});
+                setDoc(`playerChar/${player}/${charName}/presets`, {"hold":"hold"});
             }
     }
 }
