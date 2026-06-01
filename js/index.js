@@ -203,7 +203,7 @@ function renderPresetsMenu(display)
     let createNew = document.createElement("button");
     createNew.classList = "gridButton";
     createNew.innerHTML = "Create New Preset";
-    createNew.onclick = () => createNewPreset(display);
+    createNew.onclick = () => createPreset(display);
     display.appendChild(createNew);
 }
 
