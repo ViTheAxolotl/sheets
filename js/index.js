@@ -267,7 +267,6 @@ function createPreset(display, existingKey = null, data = null)
     const cancelBtn = document.createElement("button");
     cancelBtn.className = "gridButton";
     cancelBtn.innerHTML = "Cancel";
-    cancelBtn.style.background = "#d32f2f";
     cancelBtn.onclick = function(){display.innerHTML = ""; renderPresetsMenu(display);};
 
     footerControls.appendChild(saveBtn);
