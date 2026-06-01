@@ -231,7 +231,7 @@ function createPreset(display, existingKey = null, data = null)
     accLabel.style.cssText = "display: block; color: white; margin-bottom: 4px;";
     const accInput = document.createElement("input");
     accInput.id = "presetAccuracyField";
-    accInput.placeholder = "Use a number +/-, or use $Strength$ to get a stat. It understands basic math.";
+    accInput.placeholder = "Use a number +/-, or use $Strength$ or $proficiency$ to get a stat. It understands basic math.";
     accInput.value = data ? data.accuracyBonus : "";
     accInput.style.cssText = "width: 100%; margin-bottom: 15px; padding: 6px; background: #222; color: white; border: 1px solid #444;";
     form.appendChild(accLabel);
@@ -315,7 +315,6 @@ function appendDiceRow(parentWrapper, existingRollData = null)
     diceSelect.style.cssText = "width: 20%; padding: 4px; background: #222; color: white; border: 1px solid #444;";
 
     const modInput = document.createElement("input");
-    modInput.type = "number";
     modInput.className = "row-mod";
     modInput.placeholder = "Use a number +/-, or use $Strength$ to get a stat. It understands basic math.";
     modInput.value = existingRollData ? existingRollData.modifier : "+0";
