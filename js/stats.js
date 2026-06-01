@@ -97,7 +97,7 @@ function init()
     document.getElementById("Initiative").oncontextmenu = function(e) {e.preventDefault(); handleRightClickRoll(e, "init");};
     document.getElementById("initLabel").oncontextmenu = function(e) {e.preventDefault(); handleRightClickRoll(e, "init");};
 
-    document.getElementById("shareButton").onclick = function() {prompt(`Copy this link and give it out. Anyone with link can edit your sheet.`, `https://sheets.axol-apps.com/index.html?${sheet[0]}-${sheet[1]}`);};
+    document.getElementById("shareButton").onclick = function() {prompt(`Copy this link and give it out. Anyone with link can edit your sheet.`, `https://sheets.axol-apps.com/index.html?${sheet[0]}-${sheet[1].replaceAll(" ", "%20")}`);};
 }
 
 function updateCheckboxes(level)
