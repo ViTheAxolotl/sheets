@@ -149,8 +149,14 @@ function generateSheets(sheetLocation, sharedLocation, mode)
 
             for(let sharedSheet of Object.keys(wholeChar[player]["sharedSheets"]))
             {
+                if(document.getElementById(sharedSheet))
+                {
+                    continue;
+                }
+                
                 let button = document.createElement("button");
-                button.innerHTML = toTitleCase(sharedSheet); 
+                button.innerHTML = toTitleCase(sharedSheet);
+                button.id = sharedSheet; 
                 button.onclick = function() {setDoc(`playerChar/${player}/shared`, false); handleShowSheet(this.title, this.innerHTML);};
                 if(mode == "delete"){button.onclick = function() {deleteSheet("shared", button.innerHTML);}}
                 button.classList = "gridButton";
