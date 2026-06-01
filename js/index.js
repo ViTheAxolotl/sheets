@@ -378,12 +378,14 @@ function savePreset(display, presetName = null)
     const compiledRows = [];
     const UIInputMatrixRows = document.querySelectorAll(".dice-input-matrix-row");
 
-    UIInputMatrixRows.forEach(row => {
+    UIInputMatrixRows.forEach(row => 
+    {
         const qty = parseInt(row.querySelector(".row-qty").value) || 1;
         const type = row.querySelector(".row-dice-type").value;
-        const modifier = clenseInput(document.getElementById("presetAccuracyField").value || "+0");
+        const modifier = parseInt(row.querySelector(".row-mod").value) || 0;
         const damageType = row.querySelector(".row-dmg-type").value;
 
+        // Push the uniquely scoped data from THIS row into your database payload array
         compiledRows.push({ qty, type, modifier, damageType });
     });
 
