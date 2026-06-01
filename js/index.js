@@ -1,7 +1,7 @@
 "use strict";
 import { ref, onValue } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js';
-import { toTitleCase, auth, database, setDoc, reload, deleteDoc, handleImageUpload } from './viMethods.js';
+import { toTitleCase, auth, database, setDoc, reload, deleteDoc, handleImageUpload, clenseInput } from './viMethods.js';
 
 let player;
 let wholeChar = {};
@@ -157,6 +157,8 @@ function renderPresetsMenu(display)
     {
         Object.keys(presets).forEach(presetKey => 
         {
+            if(presetKey == "hold"){continue;}
+
             let presetData = presets[presetKey];
 
             let presetRow = document.createElement("div");
@@ -182,35 +184,237 @@ function renderPresetsMenu(display)
             editBtn.src = "../images/editIcon.png";
             editBtn.style.cursor = "pointer";
             editBtn.title = "Edit Preset";
-            editBtn.onclick = () => editPreset(presetData);
+            editBtn.onclick = () => createPreset(display, presetKey, presetData);
             iconControls.appendChild(editBtn);
 
             let deleteBtn = document.createElement("img");
             deleteBtn.src = "../images/trashIcon.png";
             deleteBtn.style.cursor = "pointer";
             deleteBtn.title = "Delete Preset";
-            deleteBtn.onclick = () => deletePreset(presetData);
+            deleteBtn.onclick = () => deletePreset(presetKey);
             iconControls.appendChild(deleteBtn);
 
             presetRow.appendChild(iconControls);
             listWrapper.appendChild(presetRow);
         })
     }
+
+    let createNew = document.createElement("button");
+    createNew.classList = "gridButton";
+    createNew.innerHTML = "Create New Preset";
+    createNew.onclick = () => createNewPreset(display);
+    display.appendChild(createNew);
 }
 
-function deletePreset(data)
+function createPreset(display, existingKey = null, data = null)
 {
+    display.innerHTML = `<h3>${existingKey ? 'Edit' : 'Create'} Preset</h3>`;
 
+    let form = document.createElement("div");
+    form.id = "presetFormContainer";
+    form.style.cssText = "text-align: left; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 6px; margin-top: 10px;";
+
+    const titleLabel = document.createElement("label");
+    titleLabel.innerHTML = "Preset Name:";
+    titleLabel.style.cssText = "display: block; color: white; margin-bottom: 4px;";
+    const titleInput = document.createElement("input");
+    titleInput.type = "text";
+    titleInput.id = "presetTitleField";
+    titleInput.value = data ? data.name : "";
+    titleInput.style.cssText = "width: 100%; margin-bottom: 15px; padding: 6px; background: #222; color: white; border: 1px solid #444;";
+    form.appendChild(titleLabel);
+    form.appendChild(titleInput);
+
+    const accLabel = document.createElement("label");
+    accLabel.innerHTML = "Accuracy Modifier (1d20 + X):";
+    accLabel.style.cssText = "display: block; color: white; margin-bottom: 4px;";
+    const accInput = document.createElement("input");
+    accInput.type = "number";
+    accInput.id = "presetAccuracyField";
+    accInput.placeholder = "Use a number +/-, or use $Strength$ to get a stat. It understands basic math.";
+    accInput.value = data ? data.accuracyBonus : "";
+    accInput.style.cssText = "width: 100%; margin-bottom: 15px; padding: 6px; background: #222; color: white; border: 1px solid #444;";
+    form.appendChild(accLabel);
+    form.appendChild(accInput);
+
+    const matrixLabel = document.createElement("label");
+    matrixLabel.innerHTML = "Damage Dice Configuration Pools:";
+    matrixLabel.style.cssText = "display: block; color: #ffca28; font-weight: bold; margin-bottom: 8px; border-bottom: 1px solid #555; padding-bottom: 4px;";
+    form.appendChild(matrixLabel);
+
+    const rowsContainer = document.createElement("div");
+    rowsContainer.id = "presetDiceRowsContainer";
+    form.appendChild(rowsContainer);
+
+    // Multi-Row Addition Call Controller
+    const addRowBtn = document.createElement("button");
+    addRowBtn.type = "button";
+    addRowBtn.className = "gridButton";
+    addRowBtn.innerHTML = "➕ Add Another Dice Roll";
+    addRowBtn.style.cssText = "margin: 10px 0; background: #388e3c; color: white; border: none; width: auto;";
+    addRowBtn.onclick = () => appendDiceRow(rowsContainer);
+    form.appendChild(addRowBtn);
+
+    // Footer Control Block Elements
+    const footerControls = document.createElement("div");
+    footerControls.style.cssText = "display: flex; gap: 10px; margin-top: 15px;";
+
+    const saveBtn = document.createElement("button");
+    saveBtn.className = "gridButton";
+    saveBtn.innerHTML = "Save Preset";
+    saveBtn.onclick = () => savePreset(display, existingKey);
+    
+    const cancelBtn = document.createElement("button");
+    cancelBtn.className = "gridButton";
+    cancelBtn.innerHTML = "Cancel";
+    cancelBtn.style.background = "#d32f2f";
+    cancelBtn.onclick = function(){display.innerHTML = ""; renderPresetsMenu(display);};
+
+    footerControls.appendChild(saveBtn);
+    footerControls.appendChild(cancelBtn);
+    form.appendChild(footerControls);
+
+    display.appendChild(form);
+
+    if (data && data.rolls) 
+    {
+        data.rolls.forEach(rollInstance => appendDiceRow(rowsContainer, rollInstance));
+    } 
+    
+    else 
+    {
+        appendDiceRow(rowsContainer);
+    }
 }
 
-function editPreset(data)
+function appendDiceRow(parentWrapper, existingRollData = null) 
 {
+    const rowWrapper = document.createElement("div");
+    rowWrapper.className = "dice-input-matrix-row";
+    rowWrapper.style.cssText = "display: flex; gap: 6px; align-items: center; margin-bottom: 8px; background: rgba(0,0,0,0.15); padding: 6px; border-radius: 4px;";
 
+    const qtyInput = document.createElement("input");
+    qtyInput.type = "number";
+    qtyInput.className = "row-qty";
+    qtyInput.placeholder = "Qty";
+    qtyInput.min = "1";
+    qtyInput.value = existingRollData ? existingRollData.qty : "1";
+    qtyInput.style.cssText = "width: 15%; padding: 4px; background: #222; color: white; border: 1px solid #444; text-align: center;";
+
+    // Dice Face Selector Box
+    const diceSelect = document.createElement("select");
+    diceSelect.className = "row-dice-type";
+    const values = ["4", "6", "8", "10", "12", "20", "100"];
+    values.forEach(val => 
+    {
+        const opt = document.createElement("option");
+        opt.value = `d${val}`;
+        opt.innerHTML = `d${val}`;
+        diceSelect.appendChild(opt);
+    });
+    diceSelect.value = existingRollData ? existingRollData.type : "d6";
+    diceSelect.style.cssText = "width: 20%; padding: 4px; background: #222; color: white; border: 1px solid #444;";
+
+    const modInput = document.createElement("input");
+    modInput.type = "number";
+    modInput.className = "row-mod";
+    modInput.placeholder = "Use a number +/-, or use $Strength$ to get a stat. It understands basic math.";
+    modInput.value = existingRollData ? existingRollData.modifier : "0";
+    modInput.style.cssText = "width: 20%; padding: 4px; background: #222; color: white; border: 1px solid #444; text-align: center;";
+
+    // Damage Element Select List Box
+    const dmgSelect = document.createElement("select");
+    dmgSelect.className = "row-dmg-type";
+    const elementalCategories = 
+    [
+        "Acid", "Bludgeoning", "Cold", "Fire", "Force", "Lightning", 
+        "Necrotic", "Piercing", "Poison", "Psychic", "Radiant", "Slashing", "Thunder"
+    ];
+    elementalCategories.forEach(type => 
+    {
+        const opt = document.createElement("option");
+        opt.value = type;
+        opt.innerHTML = type;
+        dmgSelect.appendChild(opt);
+    });
+    dmgSelect.value = existingRollData ? existingRollData.damageType : "Bludgeoning";
+    dmgSelect.style.cssText = "width: 35%; padding: 4px; background: #222; color: white; border: 1px solid #444;";
+
+    // Inline Sub-Delete Tracker Button
+    const deleteRowItem = document.createElement("span");
+    deleteRowItem.innerHTML = "❌";
+    deleteRowItem.style.cssText = "cursor: pointer; font-size: 12px; padding: 0 4px;";
+    deleteRowItem.onclick = () => 
+    {
+        if (parentWrapper.children.length > 1) 
+        {
+            rowWrapper.remove();
+        } 
+        
+        else 
+        {
+            alert("Your preset string needs at least one dice component formula!");
+        }
+    };
+
+    rowWrapper.appendChild(qtyInput);
+    rowWrapper.appendChild(diceSelect);
+    rowWrapper.appendChild(modInput);
+    rowWrapper.appendChild(dmgSelect);
+    rowWrapper.appendChild(deleteRowItem);
+
+    parentWrapper.appendChild(rowWrapper);
+}   
+
+function savePreset(display, presetName = null)
+{
+    let title = clenseInput(document.getElementById("presetTitleField").value.trim());
+    let accuracy = clenseInput(document.getElementById("presetAccuracyField").value || "+0");
+
+    if(title == "")
+    {
+        alert("Title for Preset is required!");
+        return;
+    }
+
+    const compiledRows = [];
+    const UIInputMatrixRows = document.querySelectorAll(".dice-input-matrix-row");
+
+    UIInputMatrixRows.forEach(row => {
+        const qty = parseInt(row.querySelector(".row-qty").value) || 1;
+        const type = row.querySelector(".row-dice-type").value;
+        const modifier = clenseInput(document.getElementById("presetAccuracyField").value || "+0");
+        const damageType = row.querySelector(".row-dmg-type").value;
+
+        compiledRows.push({ qty, type, modifier, damageType });
+    });
+
+    let data = 
+    {
+        name: title,
+        accuracyBonus: accuracy,
+        rolls: compiledRows
+    };
+
+    setDoc(`playerChar/${player}/${charName}/presets/${title}`, data);
+    alert("Preset Saved.");
+
+    display.innerHTML = ""; 
+    renderPresetsMenu(display);
+}
+
+function deletePreset(title)
+{
+    if(!confirm("Are you sure you want to delete this preset?")){return;}
+    deleteDoc(`playerChar/${player}/${charName}/presets/${title}`);
+
+    display.innerHTML = ""; 
+    renderPresetsMenu(display);
 }
 
 function rollPreset(data)
 {
-
+    
 }
 
 function updateStat()
