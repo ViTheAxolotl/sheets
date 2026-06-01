@@ -319,7 +319,7 @@ function appendDiceRow(parentWrapper, existingRollData = null)
     modInput.type = "number";
     modInput.className = "row-mod";
     modInput.placeholder = "Use a number +/-, or use $Strength$ to get a stat. It understands basic math.";
-    modInput.value = existingRollData ? existingRollData.modifier : "0";
+    modInput.value = existingRollData ? existingRollData.modifier : "+0";
     modInput.style.cssText = "width: 20%; padding: 4px; background: #222; color: white; border: 1px solid #444; text-align: center;";
 
     // Damage Element Select List Box
