@@ -183,7 +183,7 @@ function init()
         htmlInfo = htmlInfo.split("?");
         htmlInfo = htmlInfo[1];
         htmlInfo = htmlInfo.split("-");
-        name = toTitleCase(htmlInfo[1]);
+        name = toTitleCase(htmlInfo[1].replaceAll("%20", " "));
         playerName = toTitleCase(htmlInfo[0]);
 
         setDoc(`playerChar/${player}/shared`, true);
