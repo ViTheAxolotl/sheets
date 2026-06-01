@@ -124,16 +124,93 @@ function handleDiceSelect()
             break;
 
         case "Preset":
-            if(wholeChar[player][charName]["presets"])
-            {
-
-            }
-
-            else
+            if(!wholeChar[player][charName]["presets"])
             {
                 setDoc(`playerChar/${player}/${charName}/presets`, {"hold":"hold"});
             }
+
+            renderPresetsMenu(display);
+
+            break;
     }
+}
+
+function renderPresetsMenu(display)
+{
+    display.innerHTML = "<h3 class = 'color-UP-yellow'>Custom Roll Presets</h3>";
+
+    let listWrapper = document.createElement("div");
+    listWrapper.id = "presetsList";
+    listWrapper.style.margin = "15px 0";
+    display.appendChild(listWrapper);
+
+    let presets = wholeChar[player][charName]["presets"];
+    
+    if(presets.length == 1)
+    {
+        let message = document.createElement("p");
+        message.innerHTML = "No presets found, Create one below.";
+        listWrapper.appendChild(message);
+    }
+
+    else
+    {
+        Object.keys(presets).forEach(presetKey => 
+        {
+            let presetData = presets[presetKey];
+
+            let presetRow = document.createElement("div");
+            presetRow.className = "preset-view-row";
+            presetRow.style.cssText = "display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.3); padding: 8px 15px; margin: 5px 0; border-radius: 4px;";
+
+            let nameSpan = document.createElement("span");
+            nameSpan.innerHTML = presetData.name;
+            nameSpan.style.cssText = "font-weight: bold; color: white; flex-grow: 1; text-align: left;";
+            presetRow.appendChild(nameSpan);
+
+            let iconControls = document.createElement("div");
+            iconControls.style.cssText = "display: flex; gap: 15px;";
+
+            let rollBtn = document.createElement(img);
+            rollBtn.src = "../images/diceIcon.png";
+            rollBtn.style.cursor = "pointer";
+            rollBtn.title = "Roll Preset";
+            rollBtn.onclick = () => rollPreset(presetData);
+            iconControls.appendChild(rollBtn);
+
+            let editBtn = document.createElement(img);
+            editBtn.src = "../images/editIcon.png";
+            editBtn.style.cursor = "pointer";
+            editBtn.title = "Edit Preset";
+            editBtn.onclick = () => editPreset(presetData);
+            iconControls.appendChild(editBtn);
+
+            let deleteBtn = document.createElement(img);
+            deleteBtn.src = "../images/trashIcon.png";
+            deleteBtn.style.cursor = "pointer";
+            deleteBtn.title = "Delete Preset";
+            deleteBtn.onclick = () => deletePreset(presetData);
+            iconControls.appendChild(deleteBtn);
+
+            presetRow.appendChild(iconControls);
+            listWrapper.appendChild(presetRow);
+        })
+    }
+}
+
+function deletePreset(data)
+{
+
+}
+
+function editPreset(data)
+{
+
+}
+
+function rollPreset(data)
+{
+
 }
 
 function updateStat()
