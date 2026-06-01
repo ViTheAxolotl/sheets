@@ -122,6 +122,17 @@ function handleDiceSelect()
             display.appendChild(select);
             display.appendChild(mod);
             break;
+
+        case "Preset":
+            if(wholeChar[playerName][name]["presets"])
+            {
+
+            }
+
+            else
+            {
+                setDoc(`playerChar/${player}/${name}/presets`, {"hold":"hold"});
+            }
     }
 }
 
@@ -153,7 +164,7 @@ function generateSheets(sheetLocation, sharedLocation, mode)
                 {
                     continue;
                 }
-                
+
                 let button = document.createElement("button");
                 button.innerHTML = toTitleCase(sharedSheet);
                 button.id = sharedSheet; 
@@ -398,6 +409,7 @@ function handleShowSheet(playerName, name)
     setDoc(`playerChar/${player}/currentSheet`, `${playerName}-${name}`);
 
     charName = name;
+    document.getElementsByClassName("dice")[0].style.display = "block";
 
     document.getElementById("uploadLabel").style.display = "inline";
     document.getElementById("uploadBTN").style.display = "inline";
