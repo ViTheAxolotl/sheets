@@ -258,12 +258,15 @@ function createPreset(display, existingKey = null, data = null)
     {
         skipCheck.checked = true;
         accInput.disabled = true;
+        accInput.style.opacity = "0.4";
         accInput.value = "";
     } 
     
     else 
     {
         accInput.value = data ? data.accuracyBonus : "";
+        accInput.disabled = false;
+        accInput.style.opacity = "1";
     }
 
     // Toggle behavior when box is checked/unchecked
