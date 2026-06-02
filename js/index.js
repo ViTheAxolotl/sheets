@@ -343,7 +343,6 @@ function appendDiceRow(parentWrapper, existingRollData = null)
     rowWrapper.style.cssText = "display: flex; gap: 6px; align-items: center; margin-bottom: 8px; background: rgba(0,0,0,0.15); padding: 6px; border-radius: 4px;";
 
     const qtyInput = document.createElement("input");
-    qtyInput.type = "number";
     qtyInput.className = "row-qty";
     qtyInput.placeholder = "Qty";
     qtyInput.min = "1";
