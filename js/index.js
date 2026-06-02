@@ -291,7 +291,7 @@ function createPreset(display, existingKey = null, data = null)
     form.appendChild(accContainer);
 
     const matrixLabel = document.createElement("label");
-    matrixLabel.innerHTML = "Damage Dice Configuration Pools:";
+    matrixLabel.innerHTML = "Damage Dice Rolls:";
     matrixLabel.style.cssText = "display: block; color: #ffca28; font-weight: bold; margin-bottom: 8px; border-bottom: 1px solid #555; padding-bottom: 4px;";
     form.appendChild(matrixLabel);
 
@@ -304,7 +304,7 @@ function createPreset(display, existingKey = null, data = null)
     addRowBtn.type = "button";
     addRowBtn.className = "gridButton";
     addRowBtn.innerHTML = "➕ Add Another Dice Roll";
-    addRowBtn.style.cssText = "margin: 10px 0; background: #388e3c; color: white; border: none; width: auto;";
+    addRowBtn.style.cssText = "margin: 10px 0; background: #388e3c; border: none; width: auto;";
     addRowBtn.onclick = () => appendDiceRow(rowsContainer);
     form.appendChild(addRowBtn);
 
