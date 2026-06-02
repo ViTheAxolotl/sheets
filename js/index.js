@@ -474,35 +474,7 @@ function rollPreset(data)
 
         if(accModifier.length > 1)
         {
-            let total = 0;
-
-            for(let i = 0; i < accModifier.length; i++)
-            {
-                let segment = accModifier[i];
-                if(segment == "+" || segment == ""){continue;}
-
-                try
-                {
-                    if(isNaN(parseInt(segment)))
-                    {
-                        segment = parseInt(wholeChar[player][charName]["stats"][segment]);
-                        if(isNaN(segment)){alert(`Variable miss inputted, please check spelling or capitalization. Ask Vi for help, if none of the above. Variable is ${segment}.`); break;}
-                        total += segment;
-                    }
-
-                    else
-                    {
-                        total += parseInt(segment);
-                    }
-                }
-                
-                catch (error)
-                {
-                    alert(`Variable miss inputted, please check spelling or capitalization. Ask Vi for help, if none of the above. Variable is ${segment}.`);
-                }
-            }
-
-            accModifier = total;
+            accModifier = toDecode(accModifier);
         }
 
         if(document.getElementById("adv").value != "Advantage/Disadvantage") //If needs to roll twice
@@ -537,7 +509,69 @@ function rollPreset(data)
         if(!hit){return;}
     }
 
-    
+    display = `${charName} does `;
+
+    for(let roll of data.rolls)
+    {
+        let damageType = data.rolls[roll]["damageType"];
+        let quantity = data.rolls[roll]["qty"];
+        let modifier = data.rolls[roll]["modifier"];
+        let type = data.rolls[roll]["type"];
+
+        type = type.slice(1);
+
+        quantity = quantity.split("$");
+        if(quantity.length > 1)
+        {
+            quantity = toDecode(quantity);
+        }
+
+        modifier = quantity.split("$");
+        if(modifier.length > 1)
+        {
+            modifier = toDecode(quantity);
+        }
+
+        let userRoll = parseInt(diceRoller(`${quantity}`, `${type}`, `${modifier}`, "finalResult"));
+
+        display += `${userRoll} (${userRoll-modifier}+${modifier}) ${damageType} damage, `;
+    }
+
+    display += `to the target.`;
+    alert(display);
+}
+
+function decodeVariable(toDecode)
+{
+    let total = 0;
+
+    for(let i = 0; i < toDecode.length; i++)
+    {
+        let segment = toDecode[i];
+        if(segment == "+" || segment == ""){continue;}
+
+        try
+        {
+            if(isNaN(parseInt(segment)))
+            {
+                segment = parseInt(wholeChar[player][charName]["stats"][segment]);
+                if(isNaN(segment)){alert(`Variable miss inputted, please check spelling or capitalization. Ask Vi for help, if none of the above. Variable is ${segment}.`); break;}
+                total += segment;
+            }
+
+            else
+            {
+                total += parseInt(segment);
+            }
+        }
+        
+        catch (error)
+        {
+            alert(`Variable miss inputted, please check spelling or capitalization. Ask Vi for help, if none of the above. Variable is ${segment}.`);
+        }
+    }
+
+    return total;
 }
 
 function updateStat()
