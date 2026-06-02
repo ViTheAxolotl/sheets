@@ -529,7 +529,7 @@ function rollPreset(data)
         modifier = quantity.split("$");
         if(modifier.length > 1)
         {
-            modifier = decodeVariable(quantity);
+            modifier = decodeVariable(modifier);
         }
 
         let userRoll = parseInt(diceRoller(`${quantity}`, `${type}`, `${modifier}`, "finalResult"));
