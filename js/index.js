@@ -479,12 +479,14 @@ function rollPreset(data)
             for(let i = 0; i < accModifier.length; i++)
             {
                 let segment = accModifier[i];
-                
+                if(segment == "+" || ""){continue;}
+
                 try
                 {
                     if(isNaN(parseInt(segment)))
                     {
                         segment = parseInt(wholeChar[player][charName]["stats"][segment]);
+                        if(isNaN(segment)){alert(`Variable miss inputted, please check spelling or capitalization. Ask Vi for help, if none of the above. Variable is ${segment}.`); break;}
                         total += segment;
                     }
 
@@ -496,7 +498,7 @@ function rollPreset(data)
                 
                 catch (error)
                 {
-                    alert(`Variable miss inputted, please check spelling or capitalization. Ask Vi for help, if none of the above. Variable is ${segment}.`)
+                    alert(`Variable miss inputted, please check spelling or capitalization. Ask Vi for help, if none of the above. Variable is ${segment}.`);
                 }
             }
 
