@@ -474,7 +474,7 @@ function rollPreset(data)
 
         if(accModifier.length > 1)
         {
-            accModifier = toDecode(accModifier);
+            accModifier = decodeVariable(accModifier);
         }
 
         if(document.getElementById("adv").value != "Advantage/Disadvantage") //If needs to roll twice
@@ -523,13 +523,13 @@ function rollPreset(data)
         quantity = quantity.split("$");
         if(quantity.length > 1)
         {
-            quantity = toDecode(quantity);
+            quantity = decodeVariable(quantity);
         }
 
         modifier = quantity.split("$");
         if(modifier.length > 1)
         {
-            modifier = toDecode(quantity);
+            modifier = decodeVariable(quantity);
         }
 
         let userRoll = parseInt(diceRoller(`${quantity}`, `${type}`, `${modifier}`, "finalResult"));
