@@ -226,16 +226,66 @@ function createPreset(display, existingKey = null, data = null)
     form.appendChild(titleLabel);
     form.appendChild(titleInput);
 
+    // --- ACCURACY BLOCK WITH SKIP OPTION ---
+    const accContainer = document.createElement("div");
+    accContainer.style.marginBottom = "15px";
+
+    // Create the "Skip" Checkbox Row
+    const skipLabel = document.createElement("label");
+    skipLabel.style.cssText = "display: block; color: #aaa; margin-bottom: 6px; font-size: 13px; cursor: pointer;";
+    
+    const skipCheck = document.createElement("input");
+    skipCheck.type = "checkbox";
+    skipCheck.id = "presetSkipAccuracyCheck";
+    skipCheck.style.marginRight = "8px";
+    
+    skipLabel.appendChild(skipCheck);
+    skipLabel.appendChild(document.createTextNode("Skip Accuracy (Save Spell / Dynamic Effect)"));
+    accContainer.appendChild(skipLabel);
+
     const accLabel = document.createElement("label");
     accLabel.innerHTML = "Accuracy Modifier (1d20 + X):";
     accLabel.style.cssText = "display: block; color: white; margin-bottom: 4px;";
+    
     const accInput = document.createElement("input");
+    accInput.type = "text";
     accInput.id = "presetAccuracyField";
     accInput.placeholder = "Use a number +/-, or use $Strength$ or $proficiency$ to get a stat. It understands basic math.";
-    accInput.value = data ? data.accuracyBonus : "";
-    accInput.style.cssText = "width: 100%; margin-bottom: 15px; padding: 6px; background: #222; color: white; border: 1px solid #444;";
-    form.appendChild(accLabel);
-    form.appendChild(accInput);
+    accInput.style.cssText = "width: 100%; padding: 6px; background: #222; color: white; border: 1px solid #444;";
+    
+    // Hydrate existing data state checks
+    if (data && data.accuracyBonus === "save") 
+    {
+        skipCheck.checked = true;
+        accInput.disabled = true;
+        accInput.value = "";
+    } 
+    
+    else 
+    {
+        accInput.value = data ? data.accuracyBonus : "";
+    }
+
+    // Toggle behavior when box is checked/unchecked
+    skipCheck.onchange = function() 
+    {
+        if (this.checked) {
+            accInput.disabled = true;
+            accInput.style.opacity = "0.4";
+            accInput.value = "";
+        } 
+        
+        else 
+        {
+            accInput.disabled = false;
+            accInput.style.opacity = "1";
+            accInput.placeholder = "Use a number +/-, or use $Strength$ or $proficiency$ to get a stat. It understands basic math.";
+        }
+    };
+
+    accContainer.appendChild(accLabel);
+    accContainer.appendChild(accInput);
+    form.appendChild(accContainer);
 
     const matrixLabel = document.createElement("label");
     matrixLabel.innerHTML = "Damage Dice Configuration Pools:";
@@ -367,7 +417,8 @@ function appendDiceRow(parentWrapper, existingRollData = null)
 function savePreset(display, presetName = null)
 {
     let title = clenseInput(document.getElementById("presetTitleField").value.trim());
-    let accuracy = clenseInput(document.getElementById("presetAccuracyField").value || "+0");
+    let isSkipped = document.getElementById("presetSkipAccuracyCheck").checked;
+    let accuracy = isSkipped ? "save" : clenseInput(document.getElementById("presetAccuracyField").value || "+0");
 
     if(title == "")
     {
@@ -395,7 +446,6 @@ function savePreset(display, presetName = null)
     };
 
     setDoc(`playerChar/${player}/${charName}/presets/${title}`, data);
-    alert("Preset Saved.");
 
     display.innerHTML = ""; 
     renderPresetsMenu(display);
