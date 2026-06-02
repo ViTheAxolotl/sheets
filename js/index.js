@@ -532,6 +532,7 @@ function rollPreset(data)
             modifier = decodeVariable(modifier);
         }
 
+        modifier = parseInt(modifier);
         let userRoll = parseInt(diceRoller(`${quantity}`, `${type}`, `${modifier}`, "finalResult"));
 
         display += `${userRoll} (${userRoll-modifier}+${modifier}) ${damageType} damage, `;
