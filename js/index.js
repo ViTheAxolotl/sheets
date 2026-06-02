@@ -505,8 +505,8 @@ function rollPreset(data)
 
         if(document.getElementById("adv").value != "Advantage/Disadvantage") //If needs to roll twice
         { 
-            let take = parseInt(diceRoller(`${1}`, `${20}`, `${accmodifier}`, "finalResult"));
-            let take2 = parseInt(diceRoller(`${1}`, `${20}`, `${accmodifier}`, "finalResult"));
+            let take = parseInt(diceRoller(`${1}`, `${20}`, `${accModifier}`, "finalResult"));
+            let take2 = parseInt(diceRoller(`${1}`, `${20}`, `${accModifier}`, "finalResult"));
             let usersRoll;
 
             switch(document.getElementById("adv").value)
@@ -526,7 +526,7 @@ function rollPreset(data)
 
         else // Rolls once
         {
-            let accRoll = parseInt(diceRoller(`${1}`, `${20}`, `${accmodifier}`, "finalResult"));
+            let accRoll = parseInt(diceRoller(`${1}`, `${20}`, `${accModifier}`, "finalResult"));
 
             display = `${charName} rolled ${usersRoll} for accuracy does this hit the target? ("Ok" for yes, "Cancel" for no)`;
             hit = confirm(display);
