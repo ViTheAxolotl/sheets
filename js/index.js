@@ -513,10 +513,10 @@ function rollPreset(data)
 
     for(let roll of data.rolls)
     {
-        let damageType = data.rolls[roll]["damageType"];
-        let quantity = data.rolls[roll]["qty"];
-        let modifier = data.rolls[roll]["modifier"];
-        let type = data.rolls[roll]["type"];
+        let damageType = roll["damageType"];
+        let quantity = roll["qty"];
+        let modifier = roll["modifier"];
+        let type = roll["type"];
 
         type = type.slice(1);
 
