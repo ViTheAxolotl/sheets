@@ -430,7 +430,7 @@ function savePreset(display, presetName = null)
     const UIInputMatrixRows = document.querySelectorAll(".dice-input-matrix-row");
 
     UIInputMatrixRows.forEach(row => {
-        const qty = parseInt(row.querySelector(".row-qty").value) || 1;
+        const qty = row.querySelector(".row-qty").value || "1";
         const type = row.querySelector(".row-dice-type").value;
         const modifier = clenseInput(row.querySelector(".row-mod").value.trim()) || "0";
         const damageType = row.querySelector(".row-dmg-type").value;
