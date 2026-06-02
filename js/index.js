@@ -479,7 +479,7 @@ function rollPreset(data)
             for(let i = 0; i < accModifier.length; i++)
             {
                 let segment = accModifier[i];
-                if(segment == "+" || ""){continue;}
+                if(segment == "+" || segment == ""){continue;}
 
                 try
                 {
