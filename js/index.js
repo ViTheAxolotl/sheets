@@ -304,7 +304,7 @@ function createPreset(display, existingKey = null, data = null)
     addRowBtn.type = "button";
     addRowBtn.className = "gridButton";
     addRowBtn.innerHTML = "➕ Add Another Dice Roll";
-    addRowBtn.style.cssText = "margin: 10px 0; background: #388e3c; border: none; width: auto;";
+    addRowBtn.style.cssText = "margin: 10px 0; width: auto;";
     addRowBtn.onclick = () => appendDiceRow(rowsContainer);
     form.appendChild(addRowBtn);
 
@@ -464,7 +464,78 @@ function deletePreset(display, title)
 
 function rollPreset(data)
 {
+    let display = "";
+    let accModifier = data.accuracyBonus;
+    let hit;
 
+    if(accModifier != "save")
+    {
+        accModifier = accModifier.split("$");
+
+        if(accModifier.length > 1)
+        {
+            let total = 0;
+
+            for(let i = 0; i < accModifier.length; i++)
+            {
+                let segment = accModifier[i];
+                
+                try
+                {
+                    if(isNaN(parseInt(segment)))
+                    {
+                        segment = parseInt(wholeChar[player][charName]["stats"][segment]);
+                        total += segment;
+                    }
+
+                    else
+                    {
+                        total += parseInt(segment);
+                    }
+                }
+                
+                catch (error)
+                {
+                    alert(`Variable miss inputted, please check spelling or capitalization. Ask Vi for help, if none of the above. Variable is ${segment}.`)
+                }
+            }
+
+            accModifier = total;
+        }
+
+        if(document.getElementById("adv").value != "Advantage/Disadvantage") //If needs to roll twice
+        { 
+            let take = parseInt(diceRoller(`${1}`, `${20}`, `${accmodifier}`, "finalResult"));
+            let take2 = parseInt(diceRoller(`${1}`, `${20}`, `${accmodifier}`, "finalResult"));
+            let usersRoll;
+
+            switch(document.getElementById("adv").value)
+            {
+                case "Advantage":
+                    if(take > take2){usersRoll = take;} else {usersRoll = take2;}
+                    break;
+
+                case "Disadvantage":
+                    if(take < take2){usersRoll = take;} else {usersRoll = take2;}
+                    break;
+            }
+
+            display = `${charName} rolled ${usersRoll} for accuracy does this hit the target? ("Ok" for yes, "Cancel" for no) First Roll: ${take}, Second Roll: ${take2}.`;
+            hit = confirm(display);
+        }
+
+        else // Rolls once
+        {
+            let accRoll = parseInt(diceRoller(`${1}`, `${20}`, `${accmodifier}`, "finalResult"));
+
+            display = `${charName} rolled ${usersRoll} for accuracy does this hit the target? ("Ok" for yes, "Cancel" for no)`;
+            hit = confirm(display);
+        }
+
+        if(!hit){return;}
+    }
+
+    
 }
 
 function updateStat()
