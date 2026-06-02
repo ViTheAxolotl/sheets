@@ -526,7 +526,7 @@ function rollPreset(data)
             quantity = decodeVariable(quantity);
         }
 
-        modifier = quantity.split("$");
+        modifier = modifier.split("$");
         if(modifier.length > 1)
         {
             modifier = decodeVariable(modifier);
