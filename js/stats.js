@@ -10,8 +10,10 @@ let stats;
 let sheet; 
 let firstRun = true;
 let wholeSpells;
+let wholeActions;
 
 fetch('https://infused.axol-apps.com/src/spells.json').then(res => res.json()).then((json) => wholeSpells = json);
+fetch('https://infused.axol-apps.com/src/actions.json').then(res => res.json()).then((json) => wholeActions = json);
 
 const charRef = ref(database, 'playerChar/');
 onValue(charRef, (snapshot) => 
@@ -98,6 +100,53 @@ function init()
     document.getElementById("initLabel").oncontextmenu = function(e) {e.preventDefault(); handleRightClickRoll(e, "init");};
 
     document.getElementById("shareButton").onclick = function() {prompt(`Copy this link and give it out. Anyone with link can edit your sheet.`, `https://sheets.axol-apps.com/index.html?${sheet[0]}-${sheet[1].replaceAll(" ", "%20")}`);};
+
+    for (let i = 1; i <= 3; i++) {
+        let actionInput = document.getElementById(`actionName${i}`);
+        
+        if (actionInput) 
+        {
+            actionInput.oncontextmenu = function(e) 
+            {
+                let actionName = actionInput.value.trim();
+                
+                if (actionName) 
+                {
+                    e.preventDefault(); // Stop standard browser right-click menu
+                    handleActionRightClickRoll(actionName);
+                }
+            };
+        }
+    }
+}
+
+/**
+ * Intercepts action text names and searches against user presets or master action tables
+ * @param {string} searchName - The raw string name provided by the sheet inputs
+ */
+function handleActionRightClickRoll(name)
+{
+    let parentWin = window.top.parent;
+    let presets = wholeChar[sheet[0]][sheet[1]]["presets"];
+    let activeKey = null;
+
+    for(let key in presets)
+    {
+        if(name.toLowerCase() == key.toLowerCase() || name.replaceAll(" ", "").toLowerCase() == key.replaceAll(" ", "").toLowerCase())
+        {
+            activeKey = key;
+        }
+    }
+
+    if(activeKey)
+    {
+        parentWin.rollPreset(activeKey);
+    }
+
+    else
+    {
+        
+    }
 }
 
 function updateCheckboxes(level)
