@@ -162,13 +162,22 @@ function handleActionRightClickRoll(name)
         if(activeKey)
         {
             let preset = decryptSpellOrAction(weapons[activeKey]["description"]);
-            window.rollPreset(preset);
-            return;
+            
+            if(preset != null)
+            {
+                window.rollPreset(preset);
+                return;
+            }
+            
+            else
+            {
+                alert(`Spell/Action doesn't have the correct setup to auto-roll, please ask Vi to fix, ${activeKey}.`);
+            }
         }
 
         else
         {
-
+            alert(`Spell/Action doesn't have the correct setup to auto-roll, please ask Vi to fix, ${activeKey}.`);
         }
     }
 }
