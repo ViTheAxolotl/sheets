@@ -224,9 +224,9 @@ function decryptSpellOrAction(descText, name)
     }
 
     let damage = descText.match(/{@damage\s+([^}]+)}/);
-    if (dmgMatch) 
+    if (damage) 
     {
-        let rawFormula = dmgMatch[1]; // e.g. "1d8+$Strength$"
+        let rawFormula = damage[1]; // e.g. "1d8+$Strength$"
         if (rawFormula.includes("d")) 
         {
             let formulaParts = rawFormula.split("d");
