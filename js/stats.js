@@ -129,10 +129,12 @@ function handleActionRightClickRoll(name)
     let parentWin = window.top.parent;
     let presets = wholeChar[sheet[0]][sheet[1]]["presets"];
     let activeKey = null;
+    let name = name.trim().toLowerCase();
+    let filterName = removePlur(name);
 
     for(let key in presets)
     {
-        if(name.toLowerCase() == key.toLowerCase() || name.replaceAll(" ", "").toLowerCase() == key.replaceAll(" ", "").toLowerCase())
+        if(name == key.toLowerCase() || name.replaceAll(" ", "") == key.toLowerCase().replaceAll(" ", ""))
         {
             activeKey = key;
         }
@@ -146,13 +148,109 @@ function handleActionRightClickRoll(name)
 
     else
     {
+        let weapons = wholeActions["Weapons"];
+        let spells = wholeSpells;
 
+        for(let weapon in weapons)
+        {
+            if(filterName == weapon)
+            {
+                activeKey = weapon;
+            }
+        }
+
+        if(activeKey)
+        {
+            let preset = decryptSpellOrAction(weapons[activeKey]["description"]);
+            window.rollPreset(preset);
+            return;
+        }
+
+        else
+        {
+
+        }
     }
 }
 
-function decryptSpellOrAction(description)
+function removePlur(name)
 {
+    if(name.endsWith("s") && !name.endsWith("ss"))
+    {
+        if(name.endsWith("es") > name.length > 3)
+        {
+            return name.slice(0, -1);
+        }
 
+        return name.slice(0, -1);
+    }
+
+    return name;
+}
+
+function decryptSpellOrAction(descText)
+{
+    let preset = {"name": filterName, "accuracyBonus": "0", "rolls" : [{"damageType": "Weapon", "modifier": "+0", "qty": 1, "type": "d6"}]};
+
+    let toHit = descText.match(/{([^}]+)toHit}/);
+    if (toHit) 
+    {
+        preset.accuracyBonus = toHit[1].trim();
+    }
+
+    else
+    {
+        if(wholeChar[sheet[0]][sheet[1]]["stats"]["spellBonus"] != "")
+        {
+            preset.accuracyBonus = wholeChar[sheet[0]][sheet[1]]["stats"]["spellBonus"];
+            preset.damageType = "Magic";
+        }
+
+        else
+        {
+            preset.accuracyBonus = "+0";
+        }
+    }
+
+    let damage = descText.match(/{@damage\s+([^}]+)}/);
+    if (dmgMatch) 
+    {
+        let rawFormula = dmgMatch[1]; // e.g. "1d8+$Strength$"
+        if (rawFormula.includes("d")) 
+        {
+            let formulaParts = rawFormula.split("d");
+            preset["rolls"][0]["qty"] = formulaParts[0] || "1";
+            
+            if (formulaParts[1].includes("+")) //If Modifier is Positive
+            {
+                let subParts = formulaParts[1].split("+");
+                preset["rolls"][0]["type"] = "d" + subParts[0].replace(/[^0-9]/g, ""); //Gets the dice's size
+                preset["rolls"][0]["modifier"] = subParts.slice(1).join("+"); //Gets the modifier
+            } 
+            
+            else if (formulaParts[1].includes("-")) //If Modifier is Negative
+            {
+                let subParts = formulaParts[1].split("-");
+                preset["rolls"][0]["type"] = "d" + subParts[0].replace(/[^0-9]/g, "");
+                preset["rolls"][0]["modifier"] = "-" + subParts.slice(1).join("-");
+            } 
+            
+            else //If no Modifier
+            {
+                preset["rolls"][0]["type"] = "d" + formulaParts[1].replace(/[^0-9]/g, "");
+                preset["rolls"][0]["modifier"] = "0";
+            }
+
+            return preset;
+        }
+    }
+
+    else
+    {
+        return null;
+    }
+
+    return null;
 }
 
 function updateCheckboxes(level)
