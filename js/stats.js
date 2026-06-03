@@ -88,6 +88,8 @@ function init()
     for(let viewButton of viewButtons)
     {
         viewButton.onclick = showSpell;
+        viewButton.oncontextmenu = function(e) {e.preventDefault(); handleActionRightClickRoll(toTitleCase(document.getElementById(this.id.slice(0, this.id.length - 4)).value));};
+
         if(document.getElementById(viewButton.id.slice(0, viewButton.id.length - 4)).value == "")
         {
             viewButton.classList.add("invisible");
@@ -204,6 +206,11 @@ function handleActionRightClickRoll(name)
             alert(`Spell/Action doesn't have the correct setup to auto-roll, please ask Vi to fix, ${name}.`);
         }
     }
+}
+
+function handleRightClickSpellRoll(e, name)
+{
+
 }
 
 function removePlur(name)
