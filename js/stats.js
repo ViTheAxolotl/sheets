@@ -162,7 +162,7 @@ function handleActionRightClickRoll(name)
 
         if(activeKey)
         {
-            let preset = decryptSpellOrAction(weapons[activeKey]["description"]);
+            let preset = decryptSpellOrAction(weapons[activeKey]["description"], filterName);
             
             if(preset != null)
             {
@@ -198,9 +198,9 @@ function removePlur(name)
     return name;
 }
 
-function decryptSpellOrAction(descText)
+function decryptSpellOrAction(descText, name)
 {
-    let preset = {"name": filterName, "accuracyBonus": "0", "rolls" : [{"damageType": "Weapon", "modifier": "+0", "qty": 1, "type": "d6"}]};
+    let preset = {"name": name, "accuracyBonus": "0", "rolls" : [{"damageType": "Weapon", "modifier": "+0", "qty": 1, "type": "d6"}]};
     let damageTypes = ["Slashing", "Piercing", "Acid", "Bludgeoning", "Cold", "Fire", "Force", "Lightning", "Necrotic", "Poison", "Psychic", "Radiant", "Thunder"];
     
     let toHit = descText.match(/{([^}]+)toHit}/);
