@@ -177,7 +177,7 @@ function handleActionRightClickRoll(name)
 
         else
         {
-            alert(`Spell/Action doesn't have the correct setup to auto-roll, please ask Vi to fix, ${activeKey}.`);
+            alert(`Spell/Action doesn't have the correct setup to auto-roll, please ask Vi to fix, ${name}.`);
         }
     }
 }
