@@ -129,6 +129,7 @@ function handleActionRightClickRoll(name)
     let parentWin = window.top.parent;
     let presets = wholeChar[sheet[0]][sheet[1]]["presets"];
     let activeKey = null;
+    let type;
     
     let lowerName = name.trim().toLowerCase();
     let filterName = removePlur(name.trim());
@@ -156,13 +157,35 @@ function handleActionRightClickRoll(name)
         {
             if(filterName == weapon)
             {
-                activeKey = weapon;
+                activeKey = weapons[weapon];
+                type = "weapon";
             }
+        }
+
+        for(let levelKey in wholeSpells)
+        {
+            let levelCategory = wholeSpells[levelKey];
+        
+            for (let spKey in levelCategory) 
+            {
+                let spellItem = levelCategory[spKey];
+                let spellName = spellItem.name.trim();
+
+                if (spellName == filterName) 
+                {
+                    activeKey = spellItem;
+                    type = "spell"
+                    break;
+                }
+            }
+            
+            if (activeKey) break; // Stop scanning higher levels if match is found
         }
 
         if(activeKey)
         {
-            let preset = decryptSpellOrAction(weapons[activeKey]["description"], filterName);
+            let preset = null;
+            preset = decryptSpellOrAction(activeKey["description"], filterName);
             
             if(preset != null)
             {
@@ -226,7 +249,6 @@ function decryptSpellOrAction(descText, name)
         if(wholeChar[sheet[0]][sheet[1]]["stats"]["spellBonus"] != "")
         {
             preset.accuracyBonus = wholeChar[sheet[0]][sheet[1]]["stats"]["spellBonus"];
-            preset.damageType = "Magic";
         }
 
         else
