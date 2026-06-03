@@ -214,6 +214,8 @@ function decryptSpellOrAction(descText, name)
         descText = descText.replaceAll("&Proficiency)", "+$proficiency$");
     }
 
+    alert(descText);
+
     let toHit = descText.match(/{([^}]+)toHit}/);
     if (toHit) 
     {
