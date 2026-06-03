@@ -246,18 +246,29 @@ function decryptSpellOrAction(descText, name)
 
     else
     {
-        if(wholeChar[sheet[0]][sheet[1]]["stats"]["spellBonus"] != "")
+        if(!descText.includes("{@save"))
         {
-            preset.accuracyBonus = wholeChar[sheet[0]][sheet[1]]["stats"]["spellBonus"];
-        }
+            if(wholeChar[sheet[0]][sheet[1]]["stats"]["spellBonus"] != "")
+            {
+                preset.accuracyBonus = wholeChar[sheet[0]][sheet[1]]["stats"]["spellBonus"];
+            }
 
+            else
+            {
+                preset.accuracyBonus = "+0";
+            }
+        }
+        
         else
         {
-            preset.accuracyBonus = "+0";
+            preset.accuracyBonus = "save";
         }
     }
 
-    let damage = descText.match(/{@damage\s+([^}]+)}/);
+    let damage;
+    if(descText.includes("{@damage")){damage = descText.match(/{@damage\s+([^}]+)}/);} 
+    else if(descText.includes("{@save")){damage = descText.match(/{@save\s+([^}]+)}/);}
+
     if (damage) 
     {
         let rawFormula = damage[1]; // e.g. "1d8+$Strength$"
