@@ -215,8 +215,6 @@ function decryptSpellOrAction(descText, name)
         descText = descText.replaceAll("&Proficiency)", "+$proficiency$");
     }
 
-    alert(descText);
-
     let toHit = descText.match(/{([^}]+)toHit}/);
     if (toHit) 
     {
@@ -266,7 +264,7 @@ function decryptSpellOrAction(descText, name)
                 preset["rolls"][0]["modifier"] = "0";
             }
 
-            for(let damageType in damageTypes)
+            for(let damageType of damageTypes)
             {
                 if(descText.toLowerCase().includes(damageType.toLowerCase()))
                 {
