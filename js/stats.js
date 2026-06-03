@@ -203,6 +203,17 @@ function decryptSpellOrAction(descText, name)
     let preset = {"name": name, "accuracyBonus": "0", "rolls" : [{"damageType": "Weapon", "modifier": "+0", "qty": 1, "type": "d6"}]};
     let damageTypes = ["Slashing", "Piercing", "Acid", "Bludgeoning", "Cold", "Fire", "Force", "Lightning", "Necrotic", "Poison", "Psychic", "Radiant", "Thunder"];
     
+    if(descText.includes("DextarityOrStrength"))
+    {
+        descText.replaceAll("(DextarityOrStrength)", "$Dexterity$");
+        descText.replaceAll("(DextarityOrStrength", "$Dexterity$");
+    }
+
+    if(descText.includes("&Proficiency"))
+    {
+        descText.replaceAll("&Proficiency)", "+$proficiency$");
+    }
+
     let toHit = descText.match(/{([^}]+)toHit}/);
     if (toHit) 
     {
