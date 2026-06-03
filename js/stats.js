@@ -130,12 +130,12 @@ function handleActionRightClickRoll(name)
     let presets = wholeChar[sheet[0]][sheet[1]]["presets"];
     let activeKey = null;
     
-    name = name.trim().toLowerCase();
-    let filterName = removePlur(name);
+    let lowerName = name.trim().toLowerCase();
+    let filterName = removePlur(name.trim());
 
     for(let key in presets)
     {
-        if(name == key.toLowerCase() || name.replaceAll(" ", "") == key.toLowerCase().replaceAll(" ", ""))
+        if(lowerName == key.toLowerCase() || lowerName.replaceAll(" ", "") == key.toLowerCase().replaceAll(" ", ""))
         {
             activeKey = key;
         }
