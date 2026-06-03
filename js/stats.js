@@ -200,7 +200,8 @@ function removePlur(name)
 function decryptSpellOrAction(descText)
 {
     let preset = {"name": filterName, "accuracyBonus": "0", "rolls" : [{"damageType": "Weapon", "modifier": "+0", "qty": 1, "type": "d6"}]};
-
+    let damageTypes = ["Slashing", "Piercing", "Acid", "Bludgeoning", "Cold", "Fire", "Force", "Lightning", "Necrotic", "Poison", "Psychic", "Radiant", "Thunder"];
+    
     let toHit = descText.match(/{([^}]+)toHit}/);
     if (toHit) 
     {
@@ -248,6 +249,14 @@ function decryptSpellOrAction(descText)
             {
                 preset["rolls"][0]["type"] = "d" + formulaParts[1].replace(/[^0-9]/g, "");
                 preset["rolls"][0]["modifier"] = "0";
+            }
+
+            for(let damageType in damageTypes)
+            {
+                if(descText.toLowerCase().includes(damageType.toLowerCase()))
+                {
+                    preset["rolls"][0]["damageType"] = damageType;
+                }
             }
 
             return preset;
