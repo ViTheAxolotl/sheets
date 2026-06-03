@@ -166,7 +166,7 @@ function handleActionRightClickRoll(name)
             
             if(preset != null)
             {
-                window.rollPreset(preset);
+                parentWin.rollPreset(preset);
                 return;
             }
             
