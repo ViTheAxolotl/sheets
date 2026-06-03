@@ -140,12 +140,12 @@ function handleActionRightClickRoll(name)
 
     if(activeKey)
     {
-        parentWin.rollPreset(activeKey);
+        parentWin.rollPreset(presets[activeKey]);
     }
 
     else
     {
-        
+
     }
 }
 
