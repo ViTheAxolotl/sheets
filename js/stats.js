@@ -103,6 +103,8 @@ function init()
 
     document.getElementById("shareButton").onclick = function() {prompt(`Copy this link and give it out. Anyone with link can edit your sheet.`, `https://sheets.axol-apps.com/index.html?${sheet[0]}-${sheet[1].replaceAll(" ", "%20")}`);};
 
+    for(let element in document.getElementsByClassName("spells")){element.oncontextmenu = function(e) {e.preventDefault(); handleActionRightClickRoll(toTitleCase(this.value));};}
+
     for (let i = 1; i <= 3; i++) {
         let actionInput = document.getElementById(`actionName${i}`);
         
