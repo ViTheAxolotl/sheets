@@ -206,6 +206,7 @@ function decryptSpellOrAction(descText, name)
     if(descText.includes("DextarityOrStrength"))
     {
         descText = descText.replaceAll("(DextarityOrStrength)", "$Dexterity$");
+        descText = descText.replaceAll("(DexterityOrStrength)", "$Dexterity$");
         descText = descText.replaceAll("(DextarityOrStrength", "$Dexterity$");
     }
 
@@ -213,8 +214,6 @@ function decryptSpellOrAction(descText, name)
     {
         descText = descText.replaceAll("&Proficiency)", "+$proficiency$");
     }
-
-    alert(descText);
 
     let toHit = descText.match(/{([^}]+)toHit}/);
     if (toHit) 
