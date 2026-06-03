@@ -129,7 +129,8 @@ function handleActionRightClickRoll(name)
     let parentWin = window.top.parent;
     let presets = wholeChar[sheet[0]][sheet[1]]["presets"];
     let activeKey = null;
-    let name = name.trim().toLowerCase();
+    
+    name = name.trim().toLowerCase();
     let filterName = removePlur(name);
 
     for(let key in presets)
