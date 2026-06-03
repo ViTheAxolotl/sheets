@@ -494,7 +494,7 @@ function rollPreset(data)
                     break;
             }
 
-            display = `${charName} rolled ${usersRoll} (${usersRoll-accModifier}+${accModifier}) for accuracy does this hit the target? ("Ok" for yes, "Cancel" for no) First Roll: ${take}, Second Roll: ${take2}.`;
+            display = `${charName} rolled ${usersRoll} (${usersRoll-accModifier}+${accModifier}) for accuracy with ${data.name}, does this hit the target? ("Ok" for yes, "Cancel" for no) First Roll: ${take}, Second Roll: ${take2}.`;
             hit = confirm(display);
         }
 
@@ -502,7 +502,7 @@ function rollPreset(data)
         {
             let accRoll = parseInt(diceRoller(`${1}`, `${20}`, `${accModifier}`, "finalResult"));
 
-            display = `${charName} rolled ${accRoll} (${accRoll-accModifier}+${accModifier}) for accuracy does this hit the target? ("Ok" for yes, "Cancel" for no)`;
+            display = `${charName} rolled ${accRoll} (${accRoll-accModifier}+${accModifier}) for accuracy with ${data.name}, does this hit the target? ("Ok" for yes, "Cancel" for no)`;
             hit = confirm(display);
         }
 
@@ -538,7 +538,7 @@ function rollPreset(data)
         display += `${userRoll} (${userRoll-modifier}+${modifier}) ${damageType} damage, `;
     }
 
-    display += `to the target.`;
+    display += `to the target, with ${data.name},.`;
     alert(display);
 }
 

@@ -141,12 +141,18 @@ function handleActionRightClickRoll(name)
     if(activeKey)
     {
         parentWin.rollPreset(presets[activeKey]);
+        return;
     }
 
     else
     {
 
     }
+}
+
+function decryptSpellOrAction(description)
+{
+
 }
 
 function updateCheckboxes(level)
