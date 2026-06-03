@@ -542,7 +542,7 @@ function rollPreset(data)
     alert(display);
 }
 
-window.rollPreset = rollPreset(data);
+window.rollPreset = rollPreset;
 
 function decodeVariable(toDecode)
 {
