@@ -400,7 +400,7 @@ function setStats(stat)
             if(wholeChar[sheet[0]][sheet[1]]["stats"][`${exper}-expertise`]){modifier += parseInt(wholeChar[sheet[0]][sheet[1]]["stats"]["proficiency"]);}
         } 
         
-        else if(!stat.checked && parent.wholeChar[parent.player]["stats"]["class"].toLowerCase().includes("bard"))
+        else if(!stat.checked && wholeChar[sheet[0]][sheet[1]]["stats"]["class"].toLowerCase().includes("bard"))
         {
             modifier = parseInt(modifier) + Math.floor(parseInt(parent.wholeChar[parent.player]["stats"]["proficiency"]) / 2);
         }
