@@ -402,7 +402,7 @@ function setStats(stat)
         
         else if(!stat.checked && wholeChar[sheet[0]][sheet[1]]["stats"]["class"].toLowerCase().includes("bard"))
         {
-            modifier = parseInt(modifier) + Math.floor(parseInt(parent.wholeChar[parent.player]["stats"]["proficiency"]) / 2);
+            modifier = parseInt(modifier) + Math.floor(parseInt(wholeChar[sheet[0]][sheet[1]]["stats"]["proficiency"]) / 2);
         }
 
         modifier = statFormat(modifier);
