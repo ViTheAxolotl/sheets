@@ -122,6 +122,198 @@ function init()
             };
         }
     }
+
+    document.getElementById('add-hd').onclick = addNewHD;
+    document.getElementById('remove-hd').onclick = removeRecentHD;
+    loadMulticlassHitDice();
+}
+
+function createHD(hdStateArray)
+{
+    let totalBox = document.getElementById("hd-div");
+    let currentBox = document.getElementById("hd-current");
+
+    currentBox.innerHTML = "";
+    totalBox.innerHTML = "";
+
+    let maxGlobalLevel = wholeChar[sheet[0]][sheet[1]]["stats"]["lv"];
+    let standardDice = ['d4', 'd6', 'd8', 'd10', 'd12', 'd20'];
+
+    if(!hdStateArray || hdStateArray.length === 0) //If no multiclass
+    {
+        hdStateArray = [{ totalCount: maxGlobalLevel, dieSize: 'd8', currentCount: maxGlobalLevel }];
+    }
+
+    let allocatedLevels = 0;
+    hdStateArray.forEach((group) => 
+    {
+        allocatedLevels += parseInt(group.totalCount) || 0;
+    });
+
+    if (allocatedLevels > maxGlobalLevel) 
+    {
+        let pool = maxGlobalLevel;
+        hdStateArray.forEach((group) => 
+        {
+            group.totalCount = Math.min(group.totalCount, pool);
+            pool -= group.totalCount;
+            if (group.totalCount < 1 && pool === 0) group.totalCount = 0; // handle trailing entries safely
+            group.currentCount = Math.min(group.currentCount, group.totalCount);
+        });
+    }
+
+    // Pass 2: Draw components onto the page matching layout rules
+    let cumulativeUsed = 0;
+    hdStateArray.forEach((classGroup, index) => {
+        // Skip drawing rendering elements for fully dead tracking slots
+        if (index > 0 && classGroup.totalCount === 0 && hdStateArray.length > 1) return;
+
+        // Calculate maximum allowable selection for this row item without breaking overall character max limit
+        const otherRowsAllocated = hdStateArray.reduce((acc, g, i) => acc + (i !== index ? g.totalCount : 0), 0);
+        const maxRowAllocation = Math.max(1, maxGlobalLevel - otherRowsAllocated);
+
+        // --- Render Total Configurations Column Section ---
+        const totalRow = document.createElement('div');
+        totalRow.className = 'hd-total-row-item';
+        totalRow.style.margin = '4px 0';
+        totalRow.dataset.index = index;
+
+        let totalOptions = '';
+        for (let i = 1; i <= maxRowAllocation; i++) {
+            totalOptions += `<option value="${i}" ${classGroup.totalCount == i ? 'selected' : ''}>${i}</option>`;
+        }
+
+        let dieOptions = '';
+        standardDice.forEach(die => {
+            dieOptions += `<option value="${die}" ${classGroup.dieSize === die ? 'selected' : ''}>${die}</option>`;
+        });
+
+        totalRow.innerHTML = `
+            <select class="hd-total-select" style="width: 45px; text-align: center;">${totalOptions}</select>
+            <select class="hd-die-select" style="width: 55px; margin-left: 2px;">${dieOptions}</select>
+        `;
+        totalBox.appendChild(totalRow);
+
+        // --- Render Current Remaining Selector Column Section ---
+        const currentRow = document.createElement('div');
+        currentRow.className = 'hd-current-row-item';
+        currentRow.style.margin = '4px 0';
+        currentRow.style.display = "inline";
+        currentRow.dataset.index = index;
+
+        let currentOptions = '';
+        for (let i = classGroup.totalCount; i >= 0; i--) {
+            // Displays with custom dynamic text formatting (e.g., "6d8", "0d6") matching your setup design
+            currentOptions += `<option value="${i}" ${classGroup.currentCount == i ? 'selected' : ''}>${i}${classGroup.dieSize}</option>`;
+        }
+
+        currentRow.innerHTML = `
+            <select class="hd-current-select" style="width: 70px; text-align: center;">${currentOptions}</select>
+        `;
+        currentBox.appendChild(currentRow);
+
+        // --- Bind Listener Logic Rules ---
+        const totalSelect = totalRow.querySelector('.hd-total-select');
+        const dieSelect = totalRow.querySelector('.hd-die-select');
+        const currentSelect = currentRow.querySelector('.hd-current-select');
+
+        // Handle cascading structural changes across rows when levels are modified
+        totalSelect.onchange = function() {
+            classGroup.totalCount = parseInt(this.value);
+            classGroup.currentCount = Math.min(classGroup.currentCount, classGroup.totalCount);
+            // Re-evaluate entire stack array to apply updated calculations to neighboring elements
+            createHD(serializeHDInterface());
+            commitHDStateToDatabase();
+        };
+
+        // Re-draw dropdown labels immediately when the selected die format changes
+        dieSelect.onchange = function() {
+            classGroup.dieSize = this.value;
+            createHD(serializeHDInterface());
+            commitHDStateToDatabase();
+        };
+
+        currentSelect.onchange = function() {
+            commitHDStateToDatabase();
+        };
+    });
+}
+
+function addNewHD() 
+{
+    const dynamicStack = serializeHDInterface();
+    const maxAllowedLevel = wholeChar[sheet[0]][sheet[1]]["stats"]["lv"];
+    
+    let currentAllocatedSum = 0;
+    dynamicStack.forEach(g => currentAllocatedSum += g.totalCount);
+
+    // Stop adding rows if the level budget is already fully spent
+    if (currentAllocatedSum >= maxAllowedLevel) {
+        alert("Cannot add multiclass hit dice: Total combined levels already equal your character level.");
+        return;
+    }
+
+    dynamicStack.push({ totalCount: 1, dieSize: 'd6', currentCount: 1 });
+    createHD(dynamicStack);
+    commitHDStateToDatabase();
+}
+
+/**
+ * Triggers on Minus input click: Drops all modular blocks and fixes primary row back to player's level capacity
+ */
+function removeRecentHD() 
+{
+    const baseCap = wholeChar[sheet[0]][sheet[1]]["stats"]["lv"];
+    const baselineCollection = [{ totalCount: baseCap, dieSize: 'd6', currentCount: baseCap }];
+    createHD(baselineCollection);
+    commitHDStateToDatabase();
+}
+
+/**
+ * Traverses selector rows to serialize current option metrics out of the DOM elements
+ */
+function serializeHDInterface() 
+{
+    const totalRowElements = document.querySelectorAll('.hd-total-row-item');
+    const currentRowElements = document.querySelectorAll('.hd-current-row-item');
+    const stateOutputArray = [];
+    
+    totalRowElements.forEach((totalRow, idx) => {
+        const correspondingCurrentRow = currentRowElements[idx];
+        if (correspondingCurrentRow) {
+            stateOutputArray.push({
+                totalCount: parseInt(totalRow.querySelector('.hd-total-select').value) || 1,
+                dieSize: totalRow.querySelector('.hd-die-select').value || 'd8',
+                currentCount: parseInt(correspondingCurrentRow.querySelector('.hd-current-select').value) || 0
+            });
+        }
+    });
+    
+    return stateOutputArray;
+}
+
+/**
+ * Encapsulates data array back into your Firebase storage schema via setDoc
+ */
+function commitHDStateToDatabase() 
+{
+    const valuesPayload = serializeHDInterface();
+    // Formulates character reference node paths mirroring your standard setDoc setup
+    setDoc(`playerChar/${sheet[0]}/${sheet[1]}/stats/multiclassHitDice`, valuesPayload);
+}
+
+function loadMulticlassHitDice() 
+{
+    if (wholeChar[sheet[0]] && wholeChar[sheet[0]][sheet[1]]["stats"]) 
+    {
+        const cloudRecord = wholeChar[sheet[0]][sheet[1]]["stats"]["multiclassHitDice"];
+        createHD(cloudRecord);
+    } 
+    
+    else 
+    {
+        createHD(null);
+    }
 }
 
 /**

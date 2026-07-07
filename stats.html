@@ -132,8 +132,12 @@
                       </tr>
                       <tr>
                         <td>
-                          <p>Total:</p><select class="stat" id="totalHitDice"><option value = "d4">d4</option><option value = "d6">d6</option><option value = "d8">d8</option><option value = "d10">d10</option><option value = "d12">d12</option></select><br>
-                          <p>Current:</p><select class = "stat" id="currentHitDice"></select>
+                          <p>Total:</p>
+                            <input type="button" id="add-hd" value="+" style="width: 25px; height: 22px; padding: 0; line-height: 1; margin-left: 4px;" />
+                            <input type="button" id="remove-hd" value="Clear" style="width: 25px; height: 22px; padding: 0; line-height: 1; margin-left: 2px;" /><br>
+                            <div id="hd-div"></div>
+                            <p>Current:</p>
+                            <div id="hd-current"></div>
                         </td>
     
                         <td>
