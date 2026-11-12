@@ -824,7 +824,7 @@ function handleCreateNewSheet()
 
     display.innerHTML = 
     `
-        <h6 style="display: inline; margin: 5px;" class = "color-UP-yellow">Character's Name:</h6><input style="display: inline;" id="name"/>
+        <h6 style="display: inline; margin: 5px;" class = "text-brass">Character's Name:</h6><input style="display: inline;" id="name"/>
         <button id="done">Create!</button>
     `;
     document.getElementById("done").onclick = createNewSheet;
