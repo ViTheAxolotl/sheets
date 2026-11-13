@@ -1,3 +1,14 @@
+/**
+ * loginSite.js — log in, create an account, or reset a password (loginPage.html).
+ *
+ * Sheets uses real email accounts. Passwords shorter than 6 characters are padded with
+ * "." (Firebase's minimum), and both email and password are cleaned and title-cased the
+ * same way at sign-up and log-in so they always match.
+ *
+ * Pages that need a login send people here as loginPage.html?|<page to return to>;
+ * after logging in they're sent back to that page.
+ */
+
 "use strict";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js';
 import { toTitleCase, auth, clenseInput, reload, passwordReset } from '../js/viMethods.js';
@@ -7,6 +18,9 @@ let player;
 let username, password, backBtn, loginBtn;
 let mode = "login";
 
+/**
+ * Hooks up Enter, Back, Create New Account and Reset Password.
+ */
 function init()
 {
     username = document.getElementById("username");
@@ -21,6 +35,9 @@ function init()
     document.getElementById("resetPassword").onclick = handlePasswordReset;
 }
 
+/**
+ * Asks for the account's email (until it contains an @) and sends a reset link.
+ */
 async function handlePasswordReset()
 {
     let email = prompt("Please provide your email address to send the reset to:");
@@ -33,11 +50,16 @@ async function handlePasswordReset()
     passwordReset(email);
 }
 
+/**
+ * Enter. In login mode, logs in. In create mode, checks both passwords match and
+ * creates the account, then returns to the page they came from.
+ */
 function handleLoginBtn()
 {
     let user = username.value;
     let pass = password.value;
 
+    // Firebase needs at least 6 characters, so short passwords are padded with ".".
     if(pass.length < 6)
     {
         for(let i = pass.length; i < 6; i++)
@@ -80,6 +102,10 @@ function handleLoginBtn()
     }
 }
 
+/**
+ * "Create New Account": switches the form to sign-up mode by adding a Confirm Password
+ * row. Back now just reloads the login form.
+ */
 function handleCreateNew()
 {
     let confirm = [document.createElement("h5"), document.createElement("input")];
@@ -105,6 +131,10 @@ function handleCreateNew()
     document.getElementById("loginTable").appendChild(trRow);
 }
 
+/**
+ * Signs in with Firebase. On success goes back to the page they came from; on failure
+ * shows Firebase's error code.
+ */
 function login(email, password)
 {
     signInWithEmailAndPassword(auth, email, password).then((userCredential) => 
@@ -123,6 +153,9 @@ function login(email, password)
     });
 }
 
+/**
+ * Returns to the page saved after "?|" in this page's address.
+ */
 function handleBackBtn()
 {
     let url = window.location.href.split("?|");

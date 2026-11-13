@@ -1,3 +1,24 @@
+/**
+ * stats.js — the character sheet (stats.html), shown inside index.html once a sheet is opened.
+ *
+ * Unlike the campaign sites, this sheet opens its own database connection. Which sheet to
+ * show comes from the account's currentSheet value, "<Owner>-<Character>", which also lets
+ * someone open a sheet that was shared with them. Every saved field lives at
+ * playerChar/<Owner>/<Character>/stats/<id>.
+ *
+ * How the sheet is wired:
+ *   • Every saved field has class="stat" and an id matching its database key.
+ *   • Checkboxes ending in "-btn" are proficiencies; the bonus next to each is calculated.
+ *   • Ability scores have class "base6"; changing one recalculates its modifier.
+ *   • Spell boxes (can-1, lvl1-1, ...) have an eye icon (id + "-See") that opens the spell,
+ *     and spell slots draw clickable slot icons.
+ *   • Right-click a skill or Initiative to roll a d20 with that bonus.
+ *   • Right-click a spell, weapon or action name to roll it: a saved roll preset with that
+ *     name is used first; otherwise one is built from the site's spell/weapon lists
+ *     (decryptSpellOrAction) and rolled by index.js's rollPreset().
+ *   • Share gives a link that adds this sheet to someone else's Shared Sheets.
+ */
+
 "use strict";
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js';
 import { ref, onValue } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js';
@@ -40,6 +61,12 @@ onAuthStateChanged(auth, (user) =>
     } 
 });
 
+/**
+ * Fills every class="stat" field from the saved sheet. Calculated fields (spell attack bonus,
+ * spell save DC, proficiency bonus, hit dice) are worked out here and saved back.
+ * Also hooks up the eye icons, right-click rolls on skills / spells / actions, the Share
+ * button and the hit-dice buttons.
+ */
 function init()
 {
     let display = document.getElementById("story");
@@ -128,6 +155,12 @@ function init()
     loadMulticlassHitDice();
 }
 
+/**
+ * Draws the hit-dice rows. Each row is one class: how many levels (dice) of it, the die
+ * size (d4–d20), and how many of those dice are left. Rows can never add up to more than
+ * the character's level; if they do, later rows are trimmed. Changing any dropdown
+ * redraws the rows and saves them.
+ */
 function createHD(hdStateArray)
 {
     let totalBox = document.getElementById("hd-div");
@@ -239,6 +272,10 @@ function createHD(hdStateArray)
     });
 }
 
+/**
+ * "+" next to hit dice: adds another class row (1 level of d6) for multiclassing,
+ * unless the levels already add up to the character's level.
+ */
 function addNewHD() 
 {
     const dynamicStack = serializeHDInterface();
@@ -259,7 +296,7 @@ function addNewHD()
 }
 
 /**
- * Triggers on Minus input click: Drops all modular blocks and fixes primary row back to player's level capacity
+ * "-" next to hit dice: removes all multiclass rows, back to one row covering every level.
  */
 function removeRecentHD() 
 {
@@ -270,7 +307,8 @@ function removeRecentHD()
 }
 
 /**
- * Traverses selector rows to serialize current option metrics out of the DOM elements
+ * Reads the hit-dice rows back out of the page into a list of
+ * { totalCount, dieSize, currentCount } objects.
  */
 function serializeHDInterface() 
 {
@@ -293,7 +331,7 @@ function serializeHDInterface()
 }
 
 /**
- * Encapsulates data array back into your Firebase storage schema via setDoc
+ * Saves the current hit-dice rows to stats/multiclassHitDice.
  */
 function commitHDStateToDatabase() 
 {
@@ -302,6 +340,9 @@ function commitHDStateToDatabase()
     setDoc(`playerChar/${sheet[0]}/${sheet[1]}/stats/multiclassHitDice`, valuesPayload);
 }
 
+/**
+ * Draws the hit dice from what's saved (or one default row if nothing is saved yet).
+ */
 function loadMulticlassHitDice() 
 {
     if (wholeChar[sheet[0]] && wholeChar[sheet[0]][sheet[1]]["stats"]) 
@@ -317,8 +358,10 @@ function loadMulticlassHitDice()
 }
 
 /**
- * Intercepts action text names and searches against user presets or master action tables
- * @param {string} searchName - The raw string name provided by the sheet inputs
+ * Right-click roll for a spell, weapon or action by name. Uses the sheet's roll preset of
+ * that name if there is one; otherwise looks the name up in the weapons list, then the
+ * spell list (plural names like "Daggers" are made singular), builds a preset from its
+ * description and rolls it. Shows a message if it can't be rolled automatically.
  */
 function handleActionRightClickRoll(name)
 {
@@ -402,11 +445,17 @@ function handleActionRightClickRoll(name)
     }
 }
 
+/**
+ * Empty placeholder; not used.
+ */
 function handleRightClickSpellRoll(e, name)
 {
 
 }
 
+/**
+ * Makes a name singular for matching ("Daggers" -> "Dagger"), but leaves "...ss" alone.
+ */
 function removePlur(name)
 {
     if(name.endsWith("s") && !name.endsWith("ss"))
@@ -422,6 +471,13 @@ function removePlur(name)
     return name;
 }
 
+/**
+ * Builds a roll preset from a spell/weapon description written in the site's markup:
+ *   accuracy: from {+5toHit}, else the sheet's spell attack bonus, or "save" for {@save} spells
+ *   damage:   from {@damage 1d8+$Strength$} or {@save 2d6} -> count, die size, modifier
+ *   type:     the damage type named in the text (Fire, Slashing...)
+ * Returns null if there's no damage to roll.
+ */
 function decryptSpellOrAction(descText, name)
 {
     let preset = {"name": name, "accuracyBonus": "0", "rolls" : [{"damageType": "Weapon", "modifier": "+0", "qty": 1, "type": "d6"}]};
@@ -518,6 +574,11 @@ function decryptSpellOrAction(descText, name)
     return null;
 }
 
+/**
+ * Draws the spell-slot icons for one spell level: as many as the slot-count box says.
+ * Each is a hidden checkbox + a label showing the slot picture (CSS swaps in the "used"
+ * picture when checked). Each slot's used/unused state is saved on its own.
+ */
 function updateCheckboxes(level)
 {
     let input = document.getElementById(`level${level}-slot`);
@@ -559,6 +620,11 @@ function updateCheckboxes(level)
     }
 }
 
+/**
+ * Works out and shows the bonus for one skill or saving throw from its "-btn" checkbox:
+ * the ability modifier, + proficiency if ticked, + proficiency again with expertise.
+ * Bards add half proficiency to skills they aren't proficient in (Jack of All Trades).
+ */
 function setStats(stat)
 {
     if(stat.id.includes("-btn") && !stat.id.includes("lvl"))
@@ -604,6 +670,9 @@ function setStats(stat)
     }
 }
 
+/**
+ * Clicking a proficient skill's name toggles expertise for it, then redraws the sheet.
+ */
 function handleExpertise()
 {
     let stat = this.id;
@@ -625,6 +694,15 @@ function handleExpertise()
     }
 }
 
+/**
+ * Runs when any sheet field changes, and saves it. Special cases:
+ *   checkboxes        -> save true/false and recalculate that bonus
+ *   multi-line boxes  -> each line gets a "•" bullet
+ *   ability scores    -> recalculate and save the modifier
+ *   spell boxes       -> show or hide the eye icon
+ *   spell-slot counts -> redraw the slot icons
+ * Text boxes also grow to fit what was typed.
+ */
 function updateStat()
 {
     let setTo = this.value;
@@ -692,6 +770,10 @@ function updateStat()
     }
 }
 
+/**
+ * Eye icon next to a spell: if the spell is in the site's spell list, shows its details
+ * on a card; otherwise opens it on Roll20's compendium in a frame.
+ */
 function showSpell()
 {
     let spellName = toTitleCase(document.getElementById(this.id.slice(0, this.id.length - 4)).value);
@@ -733,11 +815,18 @@ function showSpell()
     }
 }
 
+/**
+ * Closes the spell popup.
+ */
 function handleExit()
 {
     document.getElementById("spellFrame").classList.add("invisible");
 }
 
+/**
+ * Right-click roll on a skill or Initiative: rolls a d20 plus the bonus shown and pops up
+ * the result.
+ */
 function handleRightClickRoll(e, type)
 {
     let clicked = e.currentTarget.id

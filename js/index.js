@@ -1,3 +1,19 @@
+/**
+ * index.js — the Sheets home page (index.html).
+ *
+ *   • Lists the account's character sheets and any sheets shared with it; click one to open it.
+ *   • + creates a new sheet; the trash icon switches to delete mode.
+ *   • Opening a sheet loads stats.html?<Character>-<Owner> in an iframe, with the character's
+ *     portrait (uploadable), sheet zoom buttons, and a dice roller.
+ *   • Opening index.html?<Owner>-<Character> (a Share link) adds that sheet to this
+ *     account's Shared Sheets and opens it.
+ *
+ * Dice roller: Basic (XdY+Z), Checks / Saves (d20 + a stat from the open sheet), and Preset:
+ * saved rolls made of an accuracy bonus plus one or more damage rows. Stat names wrapped in $
+ * ($Strength$, $proficiency$) are swapped for the open sheet's values when rolled.
+ * rollPreset is also put on `window` so stats.html can call it for right-click rolls.
+ */
+
 "use strict";
 import { ref, onValue } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js';
@@ -17,6 +33,8 @@ let rollDiceBtn;
 fetch('https://sheets.axol-apps.com/src/rolls.json').then(res => res.json()).then((json) => wholeRolls = json);
 
 
+// Everything starts once account data arrives. Later updates only re-apply the zoom
+// and rebuild the sheet list.
 const charRef = ref(database, 'playerChar/');
 onValue(charRef, (snapshot) => 
 {
@@ -33,16 +51,14 @@ onValue(charRef, (snapshot) =>
     {
         if(wholeChar[player]["zoomSheetLevel"] && document.getElementById("statSheet"))
         {
-            document.getElementById("statSheet").style.transform = `scale(${wholeChar[player]["zoomSheetLevel"]/100})`;
-            document.getElementById("statSheet").style.width = `${100/(wholeChar[player]["zoomSheetLevel"]/100)}%`;
-            document.getElementById("statSheet").style.marginBottom = `${((wholeChar[player]["zoomSheetLevel"]/100)-1)*70*9.4}px`;
-            document.getElementById("statSheet").style.height = `${((100/wholeChar[player]["zoomSheetLevel"]))*125}vh`;
+            applySheetZoom(wholeChar[player]["zoomSheetLevel"]);
         }
     }
 
     loadSheets();
 });
 
+// Not logged in -> go to the login page, which sends them back here afterwards.
 onAuthStateChanged(auth, (user) => 
 {
     if (!user) 
@@ -58,6 +74,9 @@ onAuthStateChanged(auth, (user) =>
     }
 });
 
+/**
+ * Rebuilds the list of the account's sheets and shared sheets, and shows the trash icon.
+ */
 function loadSheets()
 {
     document.getElementById("sheets").innerHTML = "";
@@ -71,6 +90,10 @@ function loadSheets()
     deleteBtn.onclick = handleDeleteBtn;
 }
 
+/**
+ * Switches the dice roller between Basic (three number boxes), Checks / Saves (a stat
+ * dropdown with its bonus) and Preset (the saved roll presets).
+ */
 function handleDiceSelect()
 {
     let selects = document.getElementsByClassName("diceSelect");
@@ -135,6 +158,10 @@ function handleDiceSelect()
     }
 }
 
+/**
+ * Lists the open character's roll presets, each with Roll, Edit and Delete icons, plus
+ * a Create New Preset button.
+ */
 function renderPresetsMenu(display)
 {
     display.innerHTML = "<h3>Custom Roll Presets</h3>";
@@ -207,6 +234,10 @@ function renderPresetsMenu(display)
     display.appendChild(createNew);
 }
 
+/**
+ * Shows the preset form: a title, an accuracy bonus (or "skip" for save-based spells), and
+ * one or more damage rows. Pre-filled when editing an existing preset.
+ */
 function createPreset(display, existingKey = null, data = null)
 {
     display.innerHTML = `<h3>${existingKey ? 'Edit' : 'Create'} Preset</h3>`;
@@ -339,6 +370,10 @@ function createPreset(display, existingKey = null, data = null)
     }
 }
 
+/**
+ * Adds one damage row to the preset form: how many dice, die size, modifier and damage
+ * type, with an × to remove the row.
+ */
 function appendDiceRow(parentWrapper, existingRollData = null) 
 {
     const rowWrapper = document.createElement("div");
@@ -416,6 +451,10 @@ function appendDiceRow(parentWrapper, existingRollData = null)
     parentWrapper.appendChild(rowWrapper);
 }   
 
+/**
+ * Reads the preset form (names and modifiers are cleaned) and saves it under the
+ * character's presets, then shows the preset list again.
+ */
 function savePreset(display, presetName = null)
 {
     let title = clenseInput(document.getElementById("presetTitleField").value.trim());
@@ -453,6 +492,9 @@ function savePreset(display, presetName = null)
     renderPresetsMenu(display);
 }
 
+/**
+ * Asks for confirmation, deletes the preset and shows the list again.
+ */
 function deletePreset(display, title)
 {
     if(!confirm("Are you sure you want to delete this preset?")){return;}
@@ -462,6 +504,11 @@ function deletePreset(display, title)
     renderPresetsMenu(display);
 }
 
+/**
+ * Rolls a preset. Unless it's a save, rolls to hit first (with advantage/disadvantage if
+ * chosen) and asks whether it hit; if it did, rolls every damage row and shows the total
+ * for each damage type.
+ */
 function rollPreset(data)
 {
     let display = "";
@@ -547,6 +594,10 @@ function rollPreset(data)
 
 window.rollPreset = rollPreset;
 
+/**
+ * Adds up a modifier written with stat names, already split on "$": numbers count as
+ * themselves and names are looked up on the open sheet (e.g. "+$Strength$+2").
+ */
 function decodeVariable(toDecode)
 {
     let total = 0;
@@ -580,6 +631,9 @@ function decodeVariable(toDecode)
     return total;
 }
 
+/**
+ * Dice roller: a stat was chosen; show its bonus from the open sheet.
+ */
 function updateStat()
 {
     let diceMod = document.getElementById("diceMod");
@@ -589,6 +643,11 @@ function updateStat()
     else{diceMod.innerHTML = `${toTitleCase(stat)}: +0`;}
 }
 
+/**
+ * Adds a button for each sheet the account owns, and for each shared sheet. In delete mode
+ * the buttons delete instead of open. Account-level keys (currentSheet, zoomSheetLevel,
+ * shared) aren't sheets and are skipped.
+ */
 function generateSheets(sheetLocation, sharedLocation, mode)
 {
     for(let sheet of Object.keys(wholeChar[player]))
@@ -633,6 +692,10 @@ function generateSheets(sheetLocation, sharedLocation, mode)
     }
 }
 
+/**
+ * Hooks up the + button, zoom buttons and dice roller. If the address has
+ * "?<Owner>-<Character>" (a Share link), saves that sheet to Shared Sheets and opens it.
+ */
 function init()
 {
     document.getElementById("addButton").onclick = handleCreateNewSheet;
@@ -657,7 +720,8 @@ function init()
 }
 
 /**
- * Once the roll dice button is clicked
+ * The Roll button: Basic rolls XdY+Z from the boxes; Checks / Saves roll a d20 plus the
+ * chosen stat. Advantage/Disadvantage rolls twice and keeps the higher/lower.
  */
 function handleDiceRoll()
 {
@@ -731,10 +795,7 @@ function handleDiceRoll()
 }
 
 /**
- * Rolls number of base dice with no modifier
- * @param {*} amount 
- * @param {*} dice 
- * @returns 
+ * Rolls `amount` dice with `dice` sides and returns each result in a list.
  */
 function basicRoll(amount, dice)
 {
@@ -751,12 +812,8 @@ function basicRoll(amount, dice)
 }
 
 /**
- * Rolls the amount of dice * d(dice) + modifier. If description is needed ifName is true
- * @param {*} amount 
- * @param {*} dice 
- * @param {*} modifier 
- * @param {*} ifName 
- * @returns 
+ * Rolls amountd(dice)+modifier and returns the worked-out message, or just the total
+ * when ifName is "finalResult".
  */
 function diceRoller(amount, dice, modifier, ifName)
 {
@@ -789,6 +846,9 @@ function diceRoller(amount, dice, modifier, ifName)
     return message;
 }
 
+/**
+ * Trash icon: lists every sheet again in delete mode (click one to delete it).
+ */
 function handleDeleteBtn()
 {
     let display = document.getElementById("createNew");
@@ -801,6 +861,9 @@ function handleDeleteBtn()
     generateSheets("createNew", "sharedDelete", "delete");
 }
 
+/**
+ * Deletes an owned sheet, or removes a sheet from Shared Sheets (the owner keeps it), then reloads.
+ */
 function deleteSheet(relation, charName)
 {
     switch(relation)
@@ -818,18 +881,24 @@ function deleteSheet(relation, charName)
     reload(0.5);
 }
 
+/**
+ * + button: shows a box for the new character's name and a Create! button.
+ */
 function handleCreateNewSheet()
 {
     let display = document.getElementById("createNew");
 
     display.innerHTML = 
     `
-        <h6 style="display: inline; margin: 5px;" class = "color-UP-yellow">Character's Name:</h6><input style="display: inline;" id="name"/>
+        <h6 style="display: inline; margin: 5px;" class = "text-brass">Character's Name:</h6><input style="display: inline;" id="name"/>
         <button id="done">Create!</button>
     `;
     document.getElementById("done").onclick = createNewSheet;
 }
 
+/**
+ * Creates a new sheet with just its name filled in.
+ */
 function createNewSheet()
 {
     let name = document.getElementById("name");
@@ -837,6 +906,10 @@ function createNewSheet()
     else{alert("Need to give a character name.");}
 }
 
+/**
+ * Portrait upload box changed: uploads the picture as this character's portrait.
+ * Put on `window` because the HTML calls it from onchange.
+ */
 function uploadFile(event)
 {
     let structure = `Bucket/${player}/${charName}-img`;
@@ -846,6 +919,10 @@ function uploadFile(event)
 
 window.uploadFile = uploadFile;
 
+/**
+ * Opens a sheet: remembers it as currentSheet, shows the dice roller and portrait
+ * upload, loads stats.html for it in the frame, and applies the saved zoom.
+ */
 function handleShowSheet(playerName, name)
 {
     let div = document.getElementById("sheet");
@@ -884,15 +961,38 @@ function handleShowSheet(playerName, name)
 
     if(wholeChar[player]["zoomSheetLevel"])
     {
-        document.getElementById("statSheet").style.transform = `scale(${wholeChar[player]["zoomSheetLevel"]/100})`;
-        document.getElementById("statSheet").style.width = `${100/(wholeChar[player]["zoomSheetLevel"]/100)}%`;
-        document.getElementById("statSheet").style.marginBottom = `${((wholeChar[player]["zoomSheetLevel"]/100)-1)*70*9.4}px`;
-        document.getElementById("statSheet").style.height = `${((100/wholeChar[player]["zoomSheetLevel"]))*125}vh`;
+        applySheetZoom(wholeChar[player]["zoomSheetLevel"]);
     }
 
     wholeStat = wholeChar[playerName][name];
 }
 
+/**
+ * Shows the sheet at `level`% zoom. The frame is scaled down from its top-left corner, so it
+ * is made wider and taller by 100/level to still fill the space once shrunk. Its layout box
+ * stays that big, so a negative bottom margin of exactly (layout height - shown height)
+ * pulls the content below back up. That keeps no blank gap under the sheet at any zoom.
+ */
+function applySheetZoom(level)
+{
+    let frame = document.getElementById("statSheet");
+    if(!frame || !level){return;}
+
+    let scale = level / 100;
+    let shown = 125;              //Height the sheet should take on screen, in vh
+    let layout = shown / scale;   //Height before scaling
+
+    frame.style.transformOrigin = "left top";
+    frame.style.transform = `scale(${scale})`;
+    frame.style.width = `${100 / scale}%`;
+    frame.style.height = `${layout}vh`;
+    frame.style.marginBottom = `-${layout - shown}vh`;
+}
+
+/**
+ * Sheet zoom +/-: changes the saved zoom (30%–100%) in steps of 10. The page applies it
+ * when the database updates.
+ */
 function handleButton()
 {
     let modifier = this.innerHTML;
