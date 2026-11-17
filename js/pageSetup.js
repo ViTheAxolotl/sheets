@@ -103,7 +103,8 @@ function navBarSetup()
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent"> 
             <ul class="navbar-nav me-auto my-2 my-lg-0 " style="--bs-scroll-height: 100px;"> 
-                <li class="nav-item"><a class="nav-link active" aria-current="page" href="${mainLocation}index.html">Sheets</a></li>    
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="${mainLocation}index.html">Sheets</a></li>
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="https://www.axol-apps.com">Axol-Apps</a></li>
                 ${log}
     </div>`;
 
