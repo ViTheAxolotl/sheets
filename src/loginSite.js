@@ -11,7 +11,7 @@
 
 "use strict";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js';
-import { toTitleCase, auth, clenseInput, reload, passwordReset } from '../js/viMethods.js';
+import { toTitleCase, auth, clenseInput, reload, passwordReset, popupAlert, popupPrompt } from '../js/viMethods.js';
 
 let url = window.location.href.split("/");
 let player;
@@ -40,11 +40,16 @@ function init()
  */
 async function handlePasswordReset()
 {
-    let email = prompt("Please provide your email address to send the reset to:");
+    let message = "Enter your account's email address and we'll send you a reset link.";
+    let email = "";
 
-    while(!email.includes("@"))
+    while(true)
     {
-        email = prompt("Enter a valid email address:")
+        email = await popupPrompt(message, {title: "Reset password", value: email, placeholder: "you@example.com", ok: "Send"});
+        if(email == null){return;} //Cancelled
+        email = email.trim();
+        if(email.includes("@")){break;}
+        message = "That doesn't look like an email address. Try again:";
     }
 
     passwordReset(email);
@@ -87,17 +92,17 @@ function handleLoginBtn()
         
         if(pass == conf)
         {
-            createUserWithEmailAndPassword(auth, toTitleCase(clenseInput(user)), toTitleCase(clenseInput(pass))).then((userCredential) => {alert("Success!"); handleBackBtn();}).catch((error) => 
+            createUserWithEmailAndPassword(auth, toTitleCase(clenseInput(user)), toTitleCase(clenseInput(pass))).then((userCredential) => {popupAlert("Your account is ready.", "Success").then(handleBackBtn);}).catch((error) => 
             {
                 const errorCode = error.code;
                 const errorMessage = error.message;
-                alert(`Account creation failed. Given Error ${errorCode}: ${errorMessage}..`);
+                popupAlert(`The account couldn't be created (${errorCode}): ${errorMessage}`, "Couldn't create account");
             });
         }
         
         else
         {
-            alert("Password and Confirm Password are not the same. Please retype carefully");
+            popupAlert("Password and Confirm Password don't match. Please retype them carefully.");
         }
     }
 }
@@ -149,7 +154,7 @@ function login(email, password)
     {
         const errorCode = error.code;
         const errorMessage = error.message;
-        alert(`Error! ${errorCode}: ${errorMessage}`);
+        popupAlert(`${errorCode}: ${errorMessage}`, "Couldn't log in");
     });
 }
 

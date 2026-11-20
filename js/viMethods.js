@@ -86,7 +86,7 @@ export async function handleImageUpload(event, structure, type, player, charName
         
         catch (error) 
         {
-            alert("Upload failed:", error);
+            popupAlert(`The upload didn't work: ${error?.message ?? error}`, "Upload failed");
         }
     }
 }
@@ -99,12 +99,12 @@ export async function passwordReset(email)
     try 
     {
         await sendPasswordResetEmail(auth, email);
-        alert("Email sent successfully, Check inbox & Spam for next steps!");
+        popupAlert("Email sent. Check your inbox (and spam folder) for the reset link.", "Reset email sent");
     } 
     
     catch (error) 
     {
-        alert(`Error: ${error.message}`);
+        popupAlert(error.message, "Couldn't send the email");
     }
 }
 
@@ -333,7 +333,7 @@ export function clenseInput(toClense)
     {
         if(toClense.includes(bad)) //If the input contains a bad char
         {
-            alert(`Bad char detected: ${bad}. Please remove the char and try again.`);
+            popupAlert(`"${bad}" can't be used here. Please remove it and try again.`);
             isOk = false;
         }
     }
@@ -393,4 +393,112 @@ export function createLabel(name)
     label.style.display = "inline";
     label.classList = "text-brass";
     return label;
+}
+/* ------------------------------------------------------------------------------------ *
+ *  Popups                                                                               *
+ *  The site's own popup box (instead of the browser's alert / confirm / prompt): a      *
+ *  framed box in the middle of a dimmed page, buttons at the bottom in the middle.      *
+ *  Clicking the dimmed area or pressing Esc closes it (as "no" / cancel). It's always   *
+ *  drawn on the top page, so a popup from the zoomed sheet frame isn't shrunk.          *
+ * ------------------------------------------------------------------------------------ */
+
+/**
+ * Shows a popup and resolves with the pressed button's value (or `dismissValue` when
+ * closed by clicking outside / Esc).
+ *   message: text (line breaks kept)      buttons: [{label, value, primary}]
+ *   input:   {value, placeholder}  adds a text box; its text is the result of a primary button
+ *   copy:    true adds a Copy button that copies the input's text
+ */
+export function showPopup({title = "", message = "", buttons = [{label: "Done", value: true, primary: true}], input = null, copy = false, dismissValue = null} = {})
+{
+    let doc = document;
+    try{if(window.top.document.body){doc = window.top.document;}}catch(e){} //Same site: draw on the top page
+
+    return new Promise((resolve) =>
+    {
+        let el = (tag, cls, text) => {let e = doc.createElement(tag); if(cls){e.className = cls;} if(text != undefined){e.textContent = text;} return e;};
+
+        let backdrop = el("div", "popupBackdrop");
+        let box = el("div", "popupBox");
+        box.setAttribute("role", "dialog");
+        if(title){box.appendChild(el("h3", "popupTitle", title));}
+        if(message){box.appendChild(el("p", "popupMessage", message));}
+
+        let field = null;
+        if(input)
+        {
+            let row = el("div", "popupInputRow");
+            field = el("input", "popupInput");
+            field.type = "text";
+            field.value = input.value ?? "";
+            field.placeholder = input.placeholder ?? "";
+            row.appendChild(field);
+
+            if(copy)
+            {
+                let copyBtn = el("button", "gridButton popupCopy", "Copy");
+                copyBtn.onclick = async () =>
+                {
+                    field.select();
+                    try{await navigator.clipboard.writeText(field.value);}catch(e){doc.execCommand?.("copy");}
+                    copyBtn.textContent = "Copied!";
+                };
+                row.appendChild(copyBtn);
+            }
+
+            box.appendChild(row);
+        }
+
+        let close = (value) =>
+        {
+            doc.removeEventListener("keydown", keys, true);
+            backdrop.remove();
+            resolve(value);
+        };
+
+        let keys = (e) =>
+        {
+            if(e.key == "Escape"){e.preventDefault(); close(dismissValue);}
+            else if(e.key == "Enter" && (doc.activeElement == field || !field))
+            {
+                let primary = buttons.find((b) => b.primary) ?? buttons[buttons.length - 1];
+                e.preventDefault();
+                close(field && primary.value !== false && primary.value !== null ? field.value : primary.value);
+            }
+        };
+
+        let row = el("div", "popupButtons");
+        for(let b of buttons)
+        {
+            let button = el("button", "gridButton" + (b.primary ? " popupPrimary" : ""), b.label);
+            button.onclick = () => close(field && b.primary ? field.value : b.value);
+            row.appendChild(button);
+        }
+        box.appendChild(row);
+
+        backdrop.onclick = (e) => {if(e.target == backdrop){close(dismissValue);}};
+        backdrop.appendChild(box);
+        doc.body.appendChild(backdrop);
+        doc.addEventListener("keydown", keys, true);
+        (field ?? row.querySelector(".popupPrimary") ?? row.lastChild)?.focus();
+        if(field && copy){field.select();}
+    });
+}
+
+/** A message with Done. */
+export function popupAlert(message, title = "")
+{
+    return showPopup({title, message, dismissValue: true});
+}
+
+/** A yes / no question: resolves true or false (closing it counts as no). */
+export function popupConfirm(message, {title = "", yes = "Yes", no = "No"} = {})
+{
+    return showPopup({title, message, dismissValue: false, buttons: [{label: no, value: false}, {label: yes, value: true, primary: true}]});
+}
+
+/** Asks for some text: resolves with it, or null when cancelled. */
+export function popupPrompt(message, {title = "", value = "", placeholder = "", ok = "OK"} = {})
+{
+    return showPopup({title, message, input: {value, placeholder}, buttons: [{label: "Cancel", value: null}, {label: ok, value: true, primary: true}]});
 }

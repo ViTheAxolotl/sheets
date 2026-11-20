@@ -11,7 +11,7 @@
 "use strict";
 import { ref, onValue } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js';
 import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js';
-import { toTitleCase, auth, database } from './viMethods.js';
+import { toTitleCase, auth, database, popupAlert } from './viMethods.js';
 
 let log;
 let isLoggedIn = false;
@@ -121,7 +121,7 @@ function logout()
         // Sign-out successful.
         location.reload();
     }).catch((error) => {
-        alert(error);
+        popupAlert(String(error?.message ?? error), "Couldn't log out");
     });
 }
 

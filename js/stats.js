@@ -23,7 +23,7 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js';
 import { ref, onValue } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js';
-import { toTitleCase, auth, database, setDoc, statFormat, skillDecrypt, reload, deleteDoc } from './viMethods.js';
+import { toTitleCase, auth, database, setDoc, statFormat, skillDecrypt, reload, deleteDoc, showPopup, popupAlert } from './viMethods.js';
 
 let player;
 let wholeChar = {};
@@ -33,16 +33,20 @@ let firstRun = true;
 let wholeSpells;
 let wholeActions;
 
-fetch('https://infused.axol-apps.com/src/spells.json').then(res => res.json()).then((json) => wholeSpells = json);
-fetch('https://infused.axol-apps.com/src/actions.json').then(res => res.json()).then((json) => wholeActions = json);
+fetch('https://dnd.axol-apps.com/src/spells.json').then(res => res.json()).then((json) => wholeSpells = json);
+fetch('https://dnd.axol-apps.com/src/actions.json').then(res => res.json()).then((json) => wholeActions = json);
 
 const charRef = ref(database, 'playerChar/');
 onValue(charRef, (snapshot) => 
 {
-    const data = snapshot.val();
-    wholeChar = data;
+    wholeChar = snapshot.val() ?? {};
+    startSheet();
+});
 
-    if(firstRun)
+// Starts the sheet once both the login and the data are known (either can come first)
+function startSheet()
+{
+    if(firstRun && player && wholeChar?.[player]?.["currentSheet"])
     {
         firstRun = false;
         sheet = wholeChar[player]["currentSheet"].split("-");
@@ -50,7 +54,7 @@ onValue(charRef, (snapshot) =>
         sheet[1] = toTitleCase(sheet[1]);
         init();
     }
-});
+}
 
 onAuthStateChanged(auth, (user) => 
 {
@@ -58,6 +62,7 @@ onAuthStateChanged(auth, (user) =>
     {
         player = auth.currentUser.email.split("@");
         player = toTitleCase(player[0]);
+        startSheet();
     } 
 });
 
@@ -74,6 +79,8 @@ function init()
     let viewButtons = document.getElementsByClassName("viewSpell");
     let exitBtn = document.getElementById("exitIframe");
     exitBtn.onclick = handleExit;
+    document.getElementById("spellBackdrop").onclick = handleExit; //Click outside the popup to close it
+    document.addEventListener("keydown", (e) => {if(e.key == "Escape"){handleExit();}});
 
     for(let stat of stats)
     {
@@ -128,7 +135,7 @@ function init()
     document.getElementById("Initiative").oncontextmenu = function(e) {e.preventDefault(); handleRightClickRoll(e, "init");};
     document.getElementById("initLabel").oncontextmenu = function(e) {e.preventDefault(); handleRightClickRoll(e, "init");};
 
-    document.getElementById("shareButton").onclick = function() {prompt(`Copy this link and give it out. Anyone with link can edit your sheet.`, `https://sheets.axol-apps.com/index.html?${sheet[0]}-${sheet[1].replaceAll(" ", "%20")}`);};
+    document.getElementById("shareButton").onclick = function() {showPopup({title: "Share this sheet", message: "Copy this link and give it out. Anyone with the link can edit your sheet.", input: {value: `https://sheets.axol-apps.com/index.html?${sheet[0]}-${sheet[1].replaceAll(" ", "%20")}`}, copy: true, buttons: [{label: "Done", value: true, primary: true}]});};
 
     for(let element of document.getElementsByClassName("spells")){element.oncontextmenu = function(e) {e.preventDefault(); handleActionRightClickRoll(toTitleCase(this.value));};}
 
@@ -286,7 +293,7 @@ function addNewHD()
 
     // Stop adding rows if the level budget is already fully spent
     if (currentAllocatedSum >= maxAllowedLevel) {
-        alert("Cannot add multiclass hit dice: Total combined levels already equal your character level.");
+        popupAlert("Can't add another hit dice row: the rows already add up to your character's level.");
         return;
     }
 
@@ -434,13 +441,13 @@ function handleActionRightClickRoll(name)
             
             else
             {
-                alert(`Spell/Action doesn't have the correct setup to auto-roll, please ask Vi to fix, ${activeKey}.`);
+                popupAlert(`${activeKey["name"] ?? name} isn't set up to roll automatically yet. Ask Vi to fix it.`);
             }
         }
 
         else
         {
-            alert(`Spell/Action doesn't have the correct setup to auto-roll, please ask Vi to fix, ${name}.`);
+            popupAlert(`${name} isn't set up to roll automatically yet. Ask Vi to fix it.`);
         }
     }
 }
@@ -658,7 +665,7 @@ function setStats(stat)
             if(wholeChar[sheet[0]][sheet[1]]["stats"][`${exper}-expertise`]){modifier += parseInt(wholeChar[sheet[0]][sheet[1]]["stats"]["proficiency"]);}
         } 
         
-        else if(!stat.checked && wholeChar[sheet[0]][sheet[1]]["stats"]["class"].toLowerCase().includes("bard"))
+        else if(!stat.checked && (wholeChar[sheet[0]][sheet[1]]["stats"]["class"] ?? "").toLowerCase().includes("bard"))
         {
             modifier = parseInt(modifier) + Math.floor(parseInt(wholeChar[sheet[0]][sheet[1]]["stats"]["proficiency"]) / 2);
         }
@@ -799,6 +806,7 @@ function showSpell()
 
             document.getElementById("frame").style.display = "none";
             document.getElementById("spellCard").style.display = "flex";
+            document.getElementById("spellFrame").classList.remove("lookupMode");
         }
 
         else
@@ -809,6 +817,7 @@ function showSpell()
 
             document.getElementById("spellCard").style.display = "none";
             document.getElementById("frame").style.display = "block";
+            document.getElementById("spellFrame").classList.add("lookupMode"); //A tall box for the web page
         }
         
         document.getElementById("spellFrame").classList.remove("invisible");
@@ -857,6 +866,6 @@ function handleRightClickRoll(e, type)
     let random = Math.random();
     let roll = Math.floor(random * (20) + 1) + mod; //Gives random roll
 
-    alert(`Rolled (${roll-mod})${modifier} = ${roll} for ${toTitleCase(clicked)}.`);
+    popupAlert(`Rolled (${roll-mod})${modifier} = ${roll} for ${toTitleCase(clicked)}.`, "Roll");
     return false;
 }

@@ -17,7 +17,7 @@
 "use strict";
 import { ref, onValue } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js';
-import { toTitleCase, auth, database, setDoc, reload, deleteDoc, handleImageUpload, clenseInput } from './viMethods.js';
+import { toTitleCase, auth, database, setDoc, reload, deleteDoc, handleImageUpload, clenseInput, popupAlert, popupConfirm } from './viMethods.js';
 
 let player;
 let wholeChar = {};
@@ -30,16 +30,24 @@ let htmlInfo = window.location.href;
 let wholeRolls = {};
 let rollDiceBtn;
 
-fetch('https://sheets.axol-apps.com/src/rolls.json').then(res => res.json()).then((json) => wholeRolls = json);
+fetch('src/rolls.json').then(res => res.json()).then((json) => wholeRolls = json);
 
 
 // Everything starts once account data arrives. Later updates only re-apply the zoom
 // and rebuild the sheet list.
 const charRef = ref(database, 'playerChar/');
+let dataArrived = false;
 onValue(charRef, (snapshot) => 
 {
-    const data = snapshot.val();
-    wholeChar = data;
+    wholeChar = snapshot.val() ?? {};
+    dataArrived = true;
+    applyData();
+});
+
+// Runs once both the login and the data are known (they can arrive in either order)
+function applyData()
+{
+    if(!player || !dataArrived){return;}
 
     if(firstRun)
     {
@@ -49,28 +57,28 @@ onValue(charRef, (snapshot) =>
 
     else
     {
-        if(wholeChar[player]["zoomSheetLevel"] && document.getElementById("statSheet"))
+        if(wholeChar[player]?.["zoomSheetLevel"] && document.getElementById("statSheet"))
         {
             applySheetZoom(wholeChar[player]["zoomSheetLevel"]);
         }
     }
 
     loadSheets();
-});
+}
 
 // Not logged in -> go to the login page, which sends them back here afterwards.
 onAuthStateChanged(auth, (user) => 
 {
     if (!user) 
     {
-        alert("You need to login before using this resource. Click Ok and be redirected");
-        window.location.href = `loginPage.html?|${htmlInfo}`; 
+        popupAlert("You need to log in to use Sheets. Press Done to go to the login page.", "Log in").then(() => {window.location.href = `loginPage.html?|${htmlInfo}`;});
     } 
 
     else
     {
         player = auth.currentUser.email.split("@");
         player = toTitleCase(player[0]);
+        applyData();
     }
 });
 
@@ -438,7 +446,7 @@ function appendDiceRow(parentWrapper, existingRollData = null)
         
         else 
         {
-            alert("Your preset string needs at least one dice component formula!");
+            popupAlert("A preset needs at least one dice row.");
         }
     };
 
@@ -463,7 +471,7 @@ function savePreset(display, presetName = null)
 
     if(title == "")
     {
-        alert("Title for Preset is required!");
+        popupAlert("Give the preset a title.");
         return;
     }
 
@@ -495,9 +503,9 @@ function savePreset(display, presetName = null)
 /**
  * Asks for confirmation, deletes the preset and shows the list again.
  */
-function deletePreset(display, title)
+async function deletePreset(display, title)
 {
-    if(!confirm("Are you sure you want to delete this preset?")){return;}
+    if(!await popupConfirm(`Delete the ${title} preset?`, {title: "Delete preset", yes: "Delete", no: "Keep"})){return;}
     deleteDoc(`playerChar/${player}/${charName}/presets/${title}`);
 
     display.innerHTML = ""; 
@@ -509,7 +517,7 @@ function deletePreset(display, title)
  * chosen) and asks whether it hit; if it did, rolls every damage row and shows the total
  * for each damage type.
  */
-function rollPreset(data)
+async function rollPreset(data)
 {
     let display = "";
     let accModifier = data.accuracyBonus;
@@ -541,18 +549,18 @@ function rollPreset(data)
                     break;
             }
 
-            display = `${charName} rolled ${usersRoll} (${usersRoll-accModifier}+${accModifier}) for accuracy for their ${data.name} attack, does this hit the target? ("Ok" for yes, "Cancel" for no) First Roll: ${take}, Second Roll: ${take2}.`;
+            display = `${charName} rolled ${usersRoll} (${usersRoll-accModifier}+${accModifier}) for accuracy for their ${data.name} attack. First Roll: ${take}, Second Roll: ${take2}.\n\nDoes this hit the target?`;
             display = display.replaceAll("++", "+");
-            hit = confirm(display);
+            hit = await popupConfirm(display, {title: `${data.name}: to hit`, yes: "Hit", no: "Miss"});
         }
 
         else // Rolls once
         {
             let accRoll = parseInt(diceRoller(`${1}`, `${20}`, `${accModifier}`, "finalResult"));
 
-            display = `${charName} rolled ${accRoll} (${accRoll-accModifier}+${accModifier}) for accuracy for their ${data.name} attack, does this hit the target? ("Ok" for yes, "Cancel" for no)`;
+            display = `${charName} rolled ${accRoll} (${accRoll-accModifier}+${accModifier}) for accuracy for their ${data.name} attack.\n\nDoes this hit the target?`;
             display = display.replaceAll("++", "+");
-            hit = confirm(display);
+            hit = await popupConfirm(display, {title: `${data.name}: to hit`, yes: "Hit", no: "Miss"});
         }
 
         if(!hit){return;}
@@ -589,7 +597,7 @@ function rollPreset(data)
 
     display += `to the target, using their ${data.name} attack.`;
     display = display.replaceAll("++", "+");
-    alert(display);
+    popupAlert(display, `${data.name}: damage`);
 }
 
 window.rollPreset = rollPreset;
@@ -612,7 +620,7 @@ function decodeVariable(toDecode)
             if(isNaN(parseInt(segment)))
             {
                 segment = parseInt(wholeChar[player][charName]["stats"][segment]);
-                if(isNaN(segment)){alert(`Variable miss inputted, please check spelling or capitalization. Ask Vi for help, if none of the above. Variable is ${segment}.`); break;}
+                if(isNaN(segment)){popupAlert(`A stat name in this roll wasn't found on the sheet: ${toDecode[i]}. Check its spelling and capitals, or ask Vi for help.`, "Unknown stat"); break;}
                 total += segment;
             }
 
@@ -624,7 +632,7 @@ function decodeVariable(toDecode)
         
         catch (error)
         {
-            alert(`Variable miss inputted, please check spelling or capitalization. Ask Vi for help, if none of the above. Variable is ${segment}.`);
+            popupAlert(`A stat name in this roll wasn't found on the sheet: ${segment}. Check its spelling and capitals, or ask Vi for help.`, "Unknown stat");
         }
     }
 
@@ -639,7 +647,7 @@ function updateStat()
     let diceMod = document.getElementById("diceMod");
     let stat = document.getElementById("statChoice").value;
     
-    if(!["deathSave", "Misc", "Saves", "Checks", "Basic"].includes(stat)){if(wholeStat){diceMod.innerHTML = `${toTitleCase(stat)}: ${wholeStat["stats"][stat]}`;} else {alert("Need to select Character first before rolling.");}}
+    if(!["deathSave", "Misc", "Saves", "Checks", "Basic"].includes(stat)){if(wholeStat){diceMod.innerHTML = `${toTitleCase(stat)}: ${wholeStat["stats"][stat]}`;} else {popupAlert("Open a character's sheet before rolling.");}}
     else{diceMod.innerHTML = `${toTitleCase(stat)}: +0`;}
 }
 
@@ -650,7 +658,7 @@ function updateStat()
  */
 function generateSheets(sheetLocation, sharedLocation, mode)
 {
-    for(let sheet of Object.keys(wholeChar[player]))
+    for(let sheet of Object.keys(wholeChar[player] ?? {})) //A new account has no sheets yet
     {
         if(["currentSheet", "zoomSheetLevel", "shared"].includes(sheet)){continue;}
         
@@ -759,13 +767,13 @@ function handleDiceRoll()
                             break;
                     }
 
-                    alert(`${window.name} rolled ${amount}d${dice}+${modifier}: (${parseInt(usersRoll)-modifier})+${modifier}= ${usersRoll}. First Roll: ${take}, Second Roll: ${take2}.`);
+                    popupAlert(`${window.name} rolled ${amount}d${dice}+${modifier}: (${parseInt(usersRoll)-modifier})+${modifier}= ${usersRoll}. First Roll: ${take}, Second Roll: ${take2}.`, "Roll");
                 }
 
-                else{alert(diceRoller(amount, dice, modifier, "discord"));}
+                else{popupAlert(diceRoller(amount, dice, modifier, "discord"), "Roll");}
             }
 
-            else{alert("Need input in all 3 inputs.");} //If one or more of the values are missed
+            else{popupAlert("Fill in all three boxes: how many dice, how many sides, and the modifier.");} //If one or more of the values are missed
         break;
     
         default:
@@ -786,10 +794,10 @@ function handleDiceRoll()
                         break;
                 }
 
-                alert(`${window.name} rolled 1d20+${modifier[1]}: (${parseInt(usersRoll)-modifier[1]})+${modifier[1]}= ${usersRoll} on their ${modifier[0]}. First Roll: ${take}, Second Roll: ${take2}.`);
+                popupAlert(`${window.name} rolled 1d20+${modifier[1]}: (${parseInt(usersRoll)-modifier[1]})+${modifier[1]}= ${usersRoll} on their ${modifier[0]}. First Roll: ${take}, Second Roll: ${take2}.`, "Roll");
             }
 
-            else{alert(`${diceRoller("1", "20", modifier[1], "discord")} on their ${modifier[0]}.`);}
+            else{popupAlert(`${diceRoller("1", "20", modifier[1], "discord")} on their ${modifier[0]}.`, "Roll");}
             break;
     }
 }
@@ -903,7 +911,7 @@ function createNewSheet()
 {
     let name = document.getElementById("name");
     if(name.value != ""){setDoc(`playerChar/${player}/${name.value}/stats`, {"name":name.value}); document.getElementById("createNew").innerHTML = "";}
-    else{alert("Need to give a character name.");}
+    else{popupAlert("Give the character a name.");}
 }
 
 /**
@@ -913,7 +921,7 @@ function createNewSheet()
 function uploadFile(event)
 {
     let structure = `Bucket/${player}/${charName}-img`;
-    alert("Images take a moment to upload, please don't refresh, the page will update on it's own.")
+    popupAlert("Pictures take a moment to upload. Please don't refresh; the page updates on its own.", "Uploading")
     handleImageUpload(event, structure, "portrait", player, charName);
 }
 
