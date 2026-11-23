@@ -117,6 +117,7 @@ function init()
         if(stat.id.includes("slot")){updateCheckboxes(stat.id.split("level")[1].charAt(0));}
 
         stat.onchange = updateStat;
+        if(stat.type != "checkbox"){stat.oninput = scheduleAutosave;} //Saves after a pause in typing
     }
 
     for(let viewButton of viewButtons)
@@ -712,6 +713,7 @@ function handleExpertise()
  */
 function updateStat()
 {
+    autosaveWaiting.delete(this); //Saved properly below
     let setTo = this.value;
 
     if(setTo == "on")
@@ -823,6 +825,42 @@ function showSpell()
         document.getElementById("spellFrame").classList.remove("invisible");
     }
 }
+
+/* ------------------------------------------------------------------------------------ *
+ *  Autosave                                                                             *
+ *  Typing saves on its own 1.5 seconds after the last key, and straight away if the     *
+ *  page is closed or hidden, so nothing is lost when someone closes the tab without     *
+ *  clicking out of a box. It saves exactly what's typed; the usual tidy-up (bullets,    *
+ *  recalculated modifiers) still happens when they click out of the box.                *
+ * ------------------------------------------------------------------------------------ */
+const AUTOSAVE_DELAY = 1500;
+let autosaveTimer = null;
+let autosaveWaiting = new Set(); //Boxes typed in since their last save
+
+function scheduleAutosave()
+{
+    autosaveWaiting.add(this);
+    clearTimeout(autosaveTimer);
+    autosaveTimer = setTimeout(autosaveNow, AUTOSAVE_DELAY);
+}
+
+function autosaveNow()
+{
+    clearTimeout(autosaveTimer);
+    if(!sheet?.[0] || !sheet?.[1]){autosaveWaiting.clear(); return;} //No sheet open
+
+    for(let box of autosaveWaiting)
+    {
+        setDoc(`playerChar/${sheet[0]}/${sheet[1]}/stats/${box.id}`, box.value);
+    }
+
+    autosaveWaiting.clear();
+}
+
+//Closing the tab, switching tabs or leaving the page: save whatever is waiting now
+window.addEventListener("pagehide", autosaveNow);
+document.addEventListener("visibilitychange", () => {if(document.visibilityState == "hidden"){autosaveNow();}});
+try{parent.addEventListener("pagehide", autosaveNow);}catch(e){}
 
 /**
  * Closes the spell popup.
