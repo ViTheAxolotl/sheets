@@ -1733,3 +1733,7 @@ body.embedded #siteList > #story
 #seForm .seCheck input { width: 20px; height: 20px; flex: none; }
 #seDesc { width: 100%; min-height: 220px; padding: 8px; resize: vertical; }
 .popupSpellEditor .seHelp .tagHelp { color: var(--parchment); max-height: 300px; overflow-y: auto; }
+
+/* Bullet lists ({@Choice}) in the spell card popup (spellText.js descriptionHtml) */
+.popupSpell .cardList { margin: 4px 0 4px 2.2em; padding: 0; }
+.popupSpell .cardList li { text-indent: 0; margin: 3px 0; padding-left: .3em; color: var(--ink); line-height: 1.6; }

@@ -263,3 +263,39 @@ export function parseAbilityText(raw)
     out.description = codeAbilityText(body.join("\n"));
     return out;
 }
+
+/* ------------------------------------------------------------------------------------ *
+ *  Showing a description (the spell cards on the sheets)                                *
+ * ------------------------------------------------------------------------------------ */
+
+/**
+ * A spell or ability description as card HTML, laid out like the dashboard's cards: each line
+ * its own paragraph, {@Choice} lines as a bullet list and {@enter} starting a new paragraph.
+ * Roll codes like {@damage 2d6} stay visible, as they do on the dashboard.
+ */
+export function descriptionHtml(description)
+{
+    let lines = String(description ?? "").replace(/\\n/g, "\n").split("\n");
+    let html = "";
+    let list = false;
+
+    for(let raw of lines)
+    {
+        let line = raw.trim();
+        if(line == ""){continue;}
+        let choice = line.match(/^(.*?)\{@Choice\}\s*(.*)$/i);
+
+        if(choice && choice[1].trim() == "")
+        {
+            if(!list){html += `<ul class="cardList">`; list = true;}
+            html += `<li>${choice[2]}</li>`;
+            continue;
+        }
+
+        if(list){html += "</ul>"; list = false;}
+        html += line.split(/\{@enter\}/i).map((part) => part.trim()).filter(Boolean).map((part) => `<p class="card-text">${part}</p>`).join("");
+    }
+
+    if(list){html += "</ul>";}
+    return html;
+}

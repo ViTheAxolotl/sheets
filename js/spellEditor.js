@@ -12,6 +12,8 @@
  *     onSave  async (values, ticked) => message. values = the entry plus level / tag; ticked = {id: true/false}.
  *             Throw an Error to show a problem instead.
  *
+ *   The popup only closes with its Close button (a click outside or Esc would lose what was typed).
+ *
  *   shareSpell(spell) / shareAbility(ability): save to the Worker's list, so both sites have it.
  */
 
@@ -58,7 +60,7 @@ export function openSpellEditor({kind = "spell", entry = null, group = "", title
     boxes += checks.map((c) => tick(c.id, c.label, c.checked)).join("");
     boxes += field("Description (with roll codes like {@damage 2d6} or {@save 3d8})", `<textarea id="seDesc"></textarea>`, true);
 
-    let popup = showPopup({boxClass: "popupSpellEditor", title: title || (entry?.description ? `Edit ${entry.name ?? thing}` : `New ${thing}`), dismissValue: null, buttons: [{label: "Close", value: null}], html:
+    let popup = showPopup({boxClass: "popupSpellEditor", title: title || (entry?.description ? `Edit ${entry.name ?? thing}` : `New ${thing}`), dismissValue: null, stayOpen: true, buttons: [{label: "Close", value: null}], html:
         `<details class="sePasteArea"${entry?.description ? "" : " open"}>
             <summary>Paste ${isSpell ? "a spell" : "an ability"} to fill the boxes</summary>
             <textarea id="sePaste" placeholder="Paste the whole ${thing} here, starting from its name…"></textarea>

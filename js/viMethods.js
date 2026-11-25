@@ -410,8 +410,9 @@ export function createLabel(name)
  *   copy:    true adds a Copy button that copies the input's text
  *   html:    trusted markup from the site's own data (e.g. a spell card)
  *   boxClass: extra class for the box (popupSpell, popupTall)
+ *   stayOpen: true means clicking outside or Esc doesn't close it (the spell editor)
  */
-export function showPopup({title = "", message = "", html = "", boxClass = "", buttons = [{label: "Done", value: true, primary: true}], input = null, copy = false, dismissValue = null} = {})
+export function showPopup({title = "", message = "", html = "", boxClass = "", buttons = [{label: "Done", value: true, primary: true}], input = null, copy = false, dismissValue = null, stayOpen = false} = {})
 {
     let doc = document;
     try{if(window.top.document.body){doc = window.top.document;}}catch(e){} //Same site: draw on the top page
@@ -461,7 +462,7 @@ export function showPopup({title = "", message = "", html = "", boxClass = "", b
 
         let keys = (e) =>
         {
-            if(e.key == "Escape"){e.preventDefault(); close(dismissValue);}
+            if(e.key == "Escape" && !stayOpen){e.preventDefault(); close(dismissValue);}
             else if(e.key == "Enter" && (doc.activeElement == field || !field))
             {
                 let primary = buttons.find((b) => b.primary) ?? buttons[buttons.length - 1];
@@ -479,7 +480,7 @@ export function showPopup({title = "", message = "", html = "", boxClass = "", b
         }
         box.appendChild(row);
 
-        backdrop.onclick = (e) => {if(e.target == backdrop){close(dismissValue);}};
+        backdrop.onclick = (e) => {if(e.target == backdrop && !stayOpen){close(dismissValue);}}; //stayOpen: only its own buttons close it
         backdrop.appendChild(box);
         doc.body.appendChild(backdrop);
         doc.addEventListener("keydown", keys, true);

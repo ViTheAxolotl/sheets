@@ -25,6 +25,7 @@ import { ref, onValue } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js';
 import { toTitleCase, auth, database, setDoc, statFormat, skillDecrypt, reload, deleteDoc, showPopup, popupAlert } from './viMethods.js';
 import { openSpellEditor, shareSpell } from './spellEditor.js';
+import { descriptionHtml } from './spellText.js';
 
 let player;
 let wholeChar = {};
@@ -880,7 +881,7 @@ async function showSpell()
                 ${line("Components", spell["components"])}
                 ${line("Duration", spell["duration"])}
                 ${spell["concentration"] == "true" ? `<p class="card-text">Concentration</p>` : ""}
-                <p class="card-text">${spell["description"]}</p>
+                ${descriptionHtml(spell["description"])}
             </div>`});
         if(choice == "edit"){editSharedSpell(spell, found.level, slot);}
     }
