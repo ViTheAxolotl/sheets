@@ -33,7 +33,12 @@ let firstRun = true;
 let wholeSpells;
 let wholeActions;
 
-fetch('https://dnd.axol-apps.com/src/spells.json').then(res => res.json()).then((json) => wholeSpells = json);
+fetch('https://dnd.axol-apps.com/src/spells.json').then(res => res.json()).then((json) =>
+{
+    wholeSpells = json;
+    //Plus the spells the Worker has added from Open5e (shared with the D&D site)
+    return fetch(`${SPELL_SERVICE}/spells`).then(res => res.ok ? res.json() : {}).then((extra) => mergeSpells(wholeSpells, extra)).catch(() => {});
+});
 fetch('https://dnd.axol-apps.com/src/actions.json').then(res => res.json()).then((json) => wholeActions = json);
 
 const charRef = ref(database, 'playerChar/');
@@ -779,26 +784,80 @@ function updateStat()
     }
 }
 
-/**
- * Eye icon next to a spell: if the spell is in the site's spell list, shows its details on a
- * parchment card; otherwise opens it on Roll20's compendium in a tall box. Both are drawn on
- * the main page (not inside this zoomed sheet), so they show full size.
- */
-function showSpell()
+/* ------------------------------------------------------------------------------------ *
+ *  Spells missing from the D&D site's spells.json                                       *
+ *  The Cloudflare Worker looks a missing spell up on Open5e, converts it to the sites'  *
+ *  format and keeps it, so this site and the D&D site both have it from then on.        *
+ * ------------------------------------------------------------------------------------ */
+const SPELL_SERVICE = "https://statblock.vitheaxolotl.workers.dev";
+
+/** The spell with this name (any level, any capitalisation): {level, key, spell} or null. */
+function findSpellIn(spells, name)
 {
-    let spellName = toTitleCase(document.getElementById(this.id.slice(0, this.id.length - 4)).value);
-    let spellLevel = this.id;
+    let target = String(name ?? "").replace(/\s+/g, " ").trim().toLowerCase();
+    if(!target){return null;}
 
-    if(spellLevel.includes("can")){spellLevel = "0";}
-    else{spellLevel = spellLevel.slice(3, 4);}
+    for(let [level, list] of Object.entries(spells ?? {}))
+    {
+        for(let [key, spell] of Object.entries(list ?? {}))
+        {
+            if(key != "hold" && (key.toLowerCase() == target || String(spell?.["name"] ?? "").toLowerCase() == target)){return {level, key, spell};}
+        }
+    }
+    return null;
+}
 
+/** Adds spells ({level: {Name: spell}}) that aren't in `target` yet. */
+function mergeSpells(target, extra)
+{
+    for(let [level, list] of Object.entries(extra ?? {}))
+    {
+        for(let [name, spell] of Object.entries(list ?? {}))
+        {
+            if(!findSpellIn(target, name)){(target[level] ??= {})[name] = spell;}
+        }
+    }
+}
+
+/** Finds a spell in the list, or through the Worker (which adds it for next time). */
+async function findSpell(name)
+{
+    let have = findSpellIn(wholeSpells, name);
+    if(have){return have;}
+
+    try
+    {
+        let response = await fetch(`${SPELL_SERVICE}/spell?name=${encodeURIComponent(String(name).trim())}`);
+        if(!response.ok){return null;}
+        let data = await response.json();
+        if(!data?.spell){return null;}
+        if(wholeSpells){(wholeSpells[data.level] ??= {})[data.spell.name] = data.spell;}
+        return {level: data.level, key: data.spell.name, spell: data.spell};
+    }
+    catch(error)
+    {
+        console.error("Spell lookup failed:", error);
+        return null;
+    }
+}
+
+/**
+ * Eye icon next to a spell: shows its card on a parchment popup (any capitalisation, any level).
+ * A spell that isn't in the list is looked up on Open5e through the Worker and added for next
+ * time; one Open5e doesn't have either opens on Roll20 in a tall box. Both are drawn on the
+ * main page (not inside this zoomed sheet), so they show full size.
+ */
+async function showSpell()
+{
+    let spellName = document.getElementById(this.id.slice(0, this.id.length - 4)).value.trim();
     if(spellName == ""){return;}
 
-    let spell = wholeSpells?.[spellLevel]?.[spellName];
+    let found = await findSpell(spellName);
 
-    if(spell)
+    if(found)
     {
-        let line = (label, value) => `<p class="card-text">${label}: ${value}</p>`;
+        let spell = found.spell;
+        let line = (label, value) => `<p class="card-text">${label}: ${value ?? ""}</p>`;
         showPopup({boxClass: "popupSpell", dismissValue: true, html:
             `<div class="card-body notes">
                 <h5 class="card-title">${spell["name"]}</h5>
@@ -813,9 +872,9 @@ function showSpell()
 
     else
     {
-        //Not in the site's spell list: open it on Roll20 in a tall box
-        let link = `https://roll20.net/compendium/dnd5e/${encodeURIComponent(spellName)}`;
-        showPopup({boxClass: "popupTall", title: spellName, dismissValue: true, html: `<iframe class="popupFrame" src="${link}" title="${spellName}"></iframe>`});
+        let title = toTitleCase(spellName);
+        let link = `https://roll20.net/compendium/dnd5e/${encodeURIComponent(title)}`;
+        showPopup({boxClass: "popupTall", title, dismissValue: true, html: `<iframe class="popupFrame" src="${link}" title="${title}"></iframe>`});
     }
 }
 
