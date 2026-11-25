@@ -1717,17 +1717,19 @@ body.embedded #siteList > #story
 .popupTall .popupBody { flex: 1; min-height: 0; }
 .popupFrame { width: 100%; height: 100%; border: 1px solid var(--brass-dim); background: #fff; }
 
-/* "+ New Spell" on the sheet (stats.js handleNewSpell): drawn full size on the main page */
-.popupBox.popupNewSpell { width: min(860px, 100%); text-align: left; }
-.popupNewSpell .popupTitle { text-align: center; }
-.popupNewSpell .popupMessage { max-width: none; text-indent: 0; }
-.popupNewSpell .popupMessage.error { color: #ff8a80; }
-#nsPaste { width: 100%; min-height: 140px; padding: 8px; resize: vertical; }
-#nsForm { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; margin-top: 14px; }
-#nsForm .spellField { display: flex; flex-direction: column; gap: 3px; margin: 0; }
-#nsForm .spellField input, #nsForm .spellField select { width: 100%; padding: 5px; }
-#nsForm .spellCheck { display: flex; align-items: center; gap: 8px; margin: 0; }
-#nsForm .spellCheck input { width: 20px; height: 20px; }
-#nsForm .spellField:last-child { grid-column: 1 / -1; }
-#nsDesc { width: 100%; min-height: 200px; padding: 8px; resize: vertical; }
-#newSpellBtn { width: auto; margin: 0; padding: 6px 18px; }
+/* ---- Spell / ability editor popup (js/spellEditor.js): drawn full size on the main page ---- */
+.popupBox.popupSpellEditor { width: min(880px, 100%); text-align: left; }
+.popupSpellEditor .popupTitle { text-align: center; }
+.popupSpellEditor .popupMessage { max-width: none; text-indent: 0; }
+.popupSpellEditor .popupMessage.error { color: #ff8a80; }
+.popupSpellEditor details { margin: 0 0 12px; }
+.popupSpellEditor summary { cursor: pointer; color: #e6c77e; margin-bottom: 8px; }
+#sePaste { width: 100%; min-height: 140px; padding: 8px; resize: vertical; }
+#seForm { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; }
+#seForm .seField { display: flex; flex-direction: column; gap: 3px; margin: 0; }
+#seForm .seField input, #seForm .seField select { width: 100%; padding: 5px; }
+#seForm .seWide { grid-column: 1 / -1; }
+#seForm .seCheck { display: flex; align-items: center; gap: 8px; margin: 0; }
+#seForm .seCheck input { width: 20px; height: 20px; flex: none; }
+#seDesc { width: 100%; min-height: 220px; padding: 8px; resize: vertical; }
+.popupSpellEditor .seHelp .tagHelp { color: var(--parchment); max-height: 300px; overflow-y: auto; }

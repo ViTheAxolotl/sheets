@@ -1,13 +1,15 @@
 /**
- * spellText.js — turns a pasted spell (from a book, D&D Beyond or similar) into the sites'
- * spell format, with the dashboard's roll codes added. Used by the sheet's "+ New Spell".
- * The same converter as the D&D site's src/statBlock.js (keep the two in step).
+ * spellText.js — turns a pasted spell or ability (from a book, D&D Beyond or similar) into the
+ * sites' format, with the dashboard's roll codes added. Used by spellEditor.js.
+ * The same file is used on the D&D and Sheets sites: keep the two copies the same.
  */
+
+const CLASSES = ["Artificer", "Barbarian", "Bard", "Cleric", "Druid", "Fighter", "Monk", "Paladin", "Ranger", "Rogue", "Sorcerer", "Warlock", "Witch", "Wizard"];
 
 /* ------------------------------------------------------------------------------------ *
  *  Pasted spells: text copied from a book, D&D Beyond or similar -> the sites' spell    *
  *  format (castTime, range, components, duration, concentration, description), with    *
- *  the dashboard's roll codes added. Used by "+ New Spell" on the sheet.            *
+ *  the dashboard's roll codes added. Used by the spell editor (spellEditor.js).         *
  * ------------------------------------------------------------------------------------ */
 
 const SPELL_LABELS = {
@@ -155,5 +157,109 @@ export function parseSpellText(raw)
     out.castTime = castTimeText(out.castTime);
     out.components = componentsText(out.components);
     out.description = codeSpellText(body.join("\n"), higher, out.level);
+    return out;
+}
+
+/* ------------------------------------------------------------------------------------ *
+ *  Pasted abilities (class features, feats, homebrew): name, tag (the class, or Misc    *
+ *  for feats) and description with roll codes.                                          *
+ * ------------------------------------------------------------------------------------ */
+
+/**
+ * Roll codes for an ability, the way the hand-written ones use them:
+ *   "+5 to hit ... 7 (1d8 + 3) damage"         -> "{+5toHit} to hit ... {@damage 1d8+3} damage"
+ *   "DC 13 Dexterity saving throw ... 2d6 fire" -> "{DC13} Dexterity saving throw ... {@save 2d6} fire"
+ *   "regain hit points equal to 1d10 + ..."     -> "{@sDice 1d10}"
+ */
+export function codeAbilityText(desc)
+{
+    let out = String(desc ?? "");
+    let dice = /(?:\d+\s*\()?(\d+d\d+(?:\s*[+-]\s*\d+)?)\)?/;
+    let tight = (d) => d.replace(/\s+/g, "");
+    let toHit = out.match(/([+-]\d+)\s+to hit/i);
+
+    if(toHit)
+    {
+        out = out.replace(toHit[0], `{${toHit[1]}toHit} to hit`);
+        return out.replace(dice, (whole, d) => `{@damage ${tight(d)}}`);
+    }
+
+    if(/saving throw/i.test(out))
+    {
+        let dc = out.match(/\bDC\s*(\d+)\b/);
+        if(dc){out = out.replace(dc[0], `{DC${dc[1]}}`);}
+        if(dice.test(out)){return out.replace(dice, (whole, d) => `{@save ${tight(d)}}`);}
+        return out.replace(/saving throws?\b/i, (words) => `${words} {@save}`);
+    }
+
+    if(/regains?\b[^.]*hit points/i.test(out) && dice.test(out))
+    {
+        return out.replace(dice, (whole, d) => `{@sDice ${tight(d)}}`);
+    }
+
+    return out;
+}
+
+/**
+ * Sorts a pasted ability. The first line is its name ("Level 2: Action Surge" and
+ * "Action Surge (Fighter)" both work); a line like "2nd-level Fighter feature" or
+ * "Fighter Feature" gives the tag, and a feat ("Prerequisite: ...", "General Feat") goes
+ * under Misc. Returns {name, tag, description}.
+ */
+export function parseAbilityText(raw)
+{
+    let lines = cleanPasted(raw).split("\n").map((l) => l.trim());
+    let out = {name: "", tag: "", description: ""};
+    let body = [];
+    let i = 0;
+    let findClass = (text) => CLASSES.find((c) => new RegExp(`\\b${c}\\b`, "i").test(text)) ?? "";
+
+    while(i < lines.length && lines[i] == ""){i++;}
+
+    if(i < lines.length)
+    {
+        let first = lines[i++];
+        let named = first.match(/^(?:level\s*\d+\s*:\s*|\d+(?:st|nd|rd|th)[- ]level\s*:?\s*)?(.*?)(?:\s*\(([^)]*)\))?\s*$/i);
+        let name = (named?.[1] ?? first).replace(/[.:]$/, "").trim();
+        let bracket = named?.[2]?.trim() ?? "";
+
+        //"(Fighter)" is its class and "(Arcane Guardian)" its own tag, but "(Recharge 5-6)" or "(2/Day)" is part of the name
+        if(bracket && findClass(bracket)){out.tag = findClass(bracket);}
+        else if(bracket && !/recharge|\/\s*(day|rest)|uses?|costs?|level|\d/i.test(bracket) && bracket.length <= 40){out.tag = bracket;}
+        else if(bracket){name = `${name} (${bracket})`;}
+        out.name = name;
+    }
+
+    for(; i < lines.length; i++)
+    {
+        let line = lines[i];
+        if(SPELL_END.test(line)){break;}
+        if(line == ""){continue;}
+
+        //"2nd-level Fighter feature", "Fighter Feature", "Level 3 Barbarian feature": the tag, not the text
+        if(body.length == 0 && /\bfeature\b/i.test(line) && line.length < 60)
+        {
+            out.tag ||= findClass(line);
+            continue;
+        }
+
+        //Feats
+        if(body.length == 0 && /^(general|origin|fighting style|epic boon|feat)\b.*\bfeat\b|^feat$/i.test(line))
+        {
+            out.tag ||= "Misc";
+            let needs = line.match(/prerequisites?\s*:?\s*([^)]*)/i); //"General Feat (Prerequisite: Level 4+)"
+            if(needs){body.push(`Prerequisite: ${needs[1].trim()}`);}
+            continue;
+        }
+        if(/^prerequisites?\s*:/i.test(line)){out.tag ||= "Misc"; body.push(line); continue;}
+
+        //Bullets and table rows become {@Choice} bullet points
+        if(/^[•\-–*]\s+/.test(line)){body.push(`{@Choice} ${line.replace(/^[•\-–*]\s+/, "")}`); continue;}
+        if(line.includes("\t")){body.push(`{@Choice} ${line.split("\t").map((c) => c.trim()).filter(Boolean).join(" | ")}`); continue;}
+
+        body.push(line);
+    }
+
+    out.description = codeAbilityText(body.join("\n"));
     return out;
 }
