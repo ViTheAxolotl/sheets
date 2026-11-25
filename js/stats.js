@@ -24,6 +24,7 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.15.0/firebas
 import { ref, onValue } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js';
 import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js';
 import { toTitleCase, auth, database, setDoc, statFormat, skillDecrypt, reload, deleteDoc, showPopup, popupAlert } from './viMethods.js';
+import { parseSpellText } from './spellText.js';
 
 let player;
 let wholeChar = {};
@@ -31,11 +32,13 @@ let stats;
 let sheet; 
 let firstRun = true;
 let wholeSpells;
+let baseSpells = {}; //spells.json on its own (see handleNewSpell)
 let wholeActions;
 
 fetch('https://dnd.axol-apps.com/src/spells.json').then(res => res.json()).then((json) =>
 {
     wholeSpells = json;
+    baseSpells = JSON.parse(JSON.stringify(json)); //spells.json alone, before the Worker's are added
     //Plus the spells the Worker has added from Open5e (shared with the D&D site)
     return fetch(`${SPELL_SERVICE}/spells`).then(res => res.ok ? res.json() : {}).then((extra) => mergeSpells(wholeSpells, extra)).catch(() => {});
 });
@@ -124,6 +127,9 @@ function init()
         stat.onchange = updateStat;
         if(stat.type != "checkbox"){stat.oninput = scheduleAutosave;} //Saves after a pause in typing
     }
+
+    let newSpellBtn = document.getElementById("newSpellBtn");
+    if(newSpellBtn){newSpellBtn.onclick = handleNewSpell;}
 
     for(let viewButton of viewButtons)
     {
@@ -876,6 +882,127 @@ async function showSpell()
         let link = `https://roll20.net/compendium/dnd5e/${encodeURIComponent(title)}`;
         showPopup({boxClass: "popupTall", title, dismissValue: true, html: `<iframe class="popupFrame" src="${link}" title="${title}"></iframe>`});
     }
+}
+
+/* ------------------------------------------------------------------------------------ *
+ *  "+ New Spell": paste a spell (or write one) that isn't in the list yet. It's sorted   *
+ *  into the spell fields with the roll codes added, then saved to the Worker's list, so  *
+ *  this site and the D&D site both have it. It can also go straight into a free slot.    *
+ * ------------------------------------------------------------------------------------ */
+function handleNewSpell()
+{
+    let field = (id, label, input) => `<label class="spellField"><span>${label}</span>${input}</label>`;
+    let levels = Array.from({length: 10}, (v, lv) => `<option value="${lv}">${lv == 0 ? "Cantrip" : `Level ${lv}`}</option>`).join("");
+
+    showPopup({boxClass: "popupNewSpell", title: "New spell", dismissValue: null, buttons: [{label: "Close", value: null}], html:
+        `<p class="popupMessage">Paste a spell and press <b>Sort it</b>, or fill the boxes in yourself.</p>
+        <textarea id="nsPaste" placeholder="Paste the whole spell here, starting from its name…"></textarea>
+        <div class="popupButtons"><button id="nsSort" class="gridButton">Sort it</button></div>
+        <div id="nsForm">
+            ${field("nsName", "Name", `<input id="nsName">`)}
+            ${field("nsLevel", "Level", `<select id="nsLevel">${levels}</select>`)}
+            ${field("nsCast", "Casting Time", `<input id="nsCast" placeholder="1 Action">`)}
+            ${field("nsRange", "Range", `<input id="nsRange" placeholder="60 feet">`)}
+            ${field("nsComp", "Components", `<input id="nsComp" placeholder="v, s, m: a pinch of sand">`)}
+            ${field("nsDur", "Duration", `<input id="nsDur" placeholder="Instantaneous">`)}
+            <label class="spellCheck"><input type="checkbox" id="nsConc"> Concentration</label>
+            <label class="spellCheck"><input type="checkbox" id="nsAdd" checked> Put it in a free slot on this sheet</label>
+            ${field("nsDesc", "Description (with roll codes like {@damage 2d6} or {@save 3d8})", `<textarea id="nsDesc"></textarea>`)}
+        </div>
+        <p id="nsStatus" class="popupMessage"></p>
+        <div class="popupButtons"><button id="nsSave" class="gridButton popupPrimary">Save spell</button></div>`});
+
+    //The popup is drawn on the main page
+    let doc = document;
+    try{if(window.top.document.getElementById("nsPaste")){doc = window.top.document;}}catch(e){}
+    let $ = (id) => doc.getElementById(id);
+    let status = (text, isError) => {$("nsStatus").textContent = text; $("nsStatus").classList.toggle("error", !!isError);};
+
+    $("nsSort").onclick = () =>
+    {
+        let spell = parseSpellText($("nsPaste").value);
+        if(!spell.name || !spell.description){status("Couldn't find a name and description. Paste the whole spell, starting from its name.", true); return;}
+
+        $("nsName").value = spell.name;
+        $("nsLevel").value = spell.level === "" ? "1" : spell.level;
+        $("nsCast").value = spell.castTime;
+        $("nsRange").value = spell.range;
+        $("nsComp").value = spell.components;
+        $("nsDur").value = spell.duration;
+        $("nsConc").checked = spell.concentration == "true";
+        $("nsDesc").value = spell.description;
+
+        let missing = [];
+        if(spell.level === ""){missing.push("level");}
+        for(let [key, label] of [["castTime", "casting time"], ["range", "range"], ["components", "components"], ["duration", "duration"]]){if(!spell[key]){missing.push(label);}}
+        status(missing.length ? `Sorted. Couldn't find the ${missing.join(", ")}: fill those in.` : "Sorted. Check the boxes, then save.", missing.length > 0);
+    };
+
+    $("nsSave").onclick = async () =>
+    {
+        let spell = {
+            name: $("nsName").value.trim(),
+            level: $("nsLevel").value,
+            castTime: $("nsCast").value.trim(),
+            range: $("nsRange").value.trim(),
+            components: $("nsComp").value.trim(),
+            duration: $("nsDur").value.trim(),
+            concentration: $("nsConc").checked ? "true" : "false",
+            description: $("nsDesc").value.trim(),
+        };
+        if(!spell.name || !spell.description){status("It needs at least a name and a description.", true); return;}
+
+        let builtIn = findSpellIn(baseSpells, spell.name); //spells.json's own copy always wins, so don't save over it
+        if(builtIn)
+        {
+            status(`There's already a ${builtIn.key} in the spell list. Give yours a different name.`, true);
+            return;
+        }
+
+        $("nsSave").disabled = true;
+        status("Saving…");
+
+        try
+        {
+            let response = await fetch(`${SPELL_SERVICE}/spell`, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({spell})});
+            let data = await response.json().catch(() => ({}));
+            if(!response.ok){throw new Error(data.error ?? `the Worker answered ${response.status}`);}
+
+            //Use it here straight away (replacing an older copy with the same name)
+            for(let list of Object.values(wholeSpells ?? {})){for(let key of Object.keys(list ?? {})){if(key.toLowerCase() == data.spell.name.toLowerCase()){delete list[key];}}}
+            ((wholeSpells ??= {})[data.level] ??= {})[data.spell.name] = data.spell;
+
+            let note = `Saved ${data.spell.name}. It's in the spell list on this site and the D&D site.`;
+            if($("nsAdd").checked)
+            {
+                let slot = freeSpellSlot(data.level);
+                if(slot){slot.value = data.spell.name; updateStat.call(slot); note += ` Added to your ${data.level == "0" ? "cantrips" : `level ${data.level} spells`}.`;}
+                else{note += ` There's no free ${data.level == "0" ? "cantrip" : `level ${data.level}`} slot on this sheet, so add it yourself.`;}
+            }
+            status(note);
+        }
+
+        catch(error)
+        {
+            console.error(error);
+            status(`Couldn't save it: ${error.message}`, true);
+        }
+
+        finally{$("nsSave").disabled = false;}
+    };
+}
+
+/** The first empty spell box for a level on this sheet (can-1… for cantrips, lvl3-1… for level 3), or null. */
+function freeSpellSlot(level)
+{
+    let prefix = level == "0" ? "can-" : `lvl${level}-`;
+    for(let n = 1; n <= 30; n++)
+    {
+        let box = document.getElementById(`${prefix}${n}`);
+        if(!box){break;}
+        if(box.value.trim() == ""){return box;}
+    }
+    return null;
 }
 
 /* ------------------------------------------------------------------------------------ *

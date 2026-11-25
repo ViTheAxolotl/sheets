@@ -1716,3 +1716,18 @@ body.embedded #siteList > #story
 .popupBox.popupTall { width: min(1000px, 100%); height: calc(100vh - 40px); display: flex; flex-direction: column; }
 .popupTall .popupBody { flex: 1; min-height: 0; }
 .popupFrame { width: 100%; height: 100%; border: 1px solid var(--brass-dim); background: #fff; }
+
+/* "+ New Spell" on the sheet (stats.js handleNewSpell): drawn full size on the main page */
+.popupBox.popupNewSpell { width: min(860px, 100%); text-align: left; }
+.popupNewSpell .popupTitle { text-align: center; }
+.popupNewSpell .popupMessage { max-width: none; text-indent: 0; }
+.popupNewSpell .popupMessage.error { color: #ff8a80; }
+#nsPaste { width: 100%; min-height: 140px; padding: 8px; resize: vertical; }
+#nsForm { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; margin-top: 14px; }
+#nsForm .spellField { display: flex; flex-direction: column; gap: 3px; margin: 0; }
+#nsForm .spellField input, #nsForm .spellField select { width: 100%; padding: 5px; }
+#nsForm .spellCheck { display: flex; align-items: center; gap: 8px; margin: 0; }
+#nsForm .spellCheck input { width: 20px; height: 20px; }
+#nsForm .spellField:last-child { grid-column: 1 / -1; }
+#nsDesc { width: 100%; min-height: 200px; padding: 8px; resize: vertical; }
+#newSpellBtn { width: auto; margin: 0; padding: 6px 18px; }
