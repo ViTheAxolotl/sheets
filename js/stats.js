@@ -780,49 +780,42 @@ function updateStat()
 }
 
 /**
- * Eye icon next to a spell: if the spell is in the site's spell list, shows its details
- * on a card; otherwise opens it on Roll20's compendium in a frame.
+ * Eye icon next to a spell: if the spell is in the site's spell list, shows its details on a
+ * parchment card; otherwise opens it on Roll20's compendium in a tall box. Both are drawn on
+ * the main page (not inside this zoomed sheet), so they show full size.
  */
 function showSpell()
 {
     let spellName = toTitleCase(document.getElementById(this.id.slice(0, this.id.length - 4)).value);
-    let link;
     let spellLevel = this.id;
 
     if(spellLevel.includes("can")){spellLevel = "0";}
     else{spellLevel = spellLevel.slice(3, 4);}
 
-    if(spellName != "")
+    if(spellName == ""){return;}
+
+    let spell = wholeSpells?.[spellLevel]?.[spellName];
+
+    if(spell)
     {
-        if(wholeSpells[spellLevel][spellName])
-        {
-            let spell = wholeSpells[spellLevel][spellName];
-            document.getElementById("spellTitle").innerHTML = spell["name"];
-            document.getElementById("CT").innerHTML = `Cast Time: ${spell["castTime"]}`;
-            document.getElementById("R").innerHTML = `Range: ${spell["range"]}`;
-            document.getElementById("C").innerHTML = `Components: ${spell["components"]}`;
-            document.getElementById("D").innerHTML = `Duration: ${spell["duration"]}`;
-            if(spell["concentration"] == "true"){document.getElementById("concentration").style.display = "block";}
-            else{document.getElementById("concentration").style.display = "none";}
-            document.getElementById("spellText").innerHTML = spell["description"];
+        let line = (label, value) => `<p class="card-text">${label}: ${value}</p>`;
+        showPopup({boxClass: "popupSpell", dismissValue: true, html:
+            `<div class="card-body notes">
+                <h5 class="card-title">${spell["name"]}</h5>
+                ${line("Cast Time", spell["castTime"])}
+                ${line("Range", spell["range"])}
+                ${line("Components", spell["components"])}
+                ${line("Duration", spell["duration"])}
+                ${spell["concentration"] == "true" ? `<p class="card-text">Concentration</p>` : ""}
+                <p class="card-text">${spell["description"]}</p>
+            </div>`});
+    }
 
-            document.getElementById("frame").style.display = "none";
-            document.getElementById("spellCard").style.display = "flex";
-            document.getElementById("spellFrame").classList.remove("lookupMode");
-        }
-
-        else
-        {
-            spellName.replaceAll(" ", "%20");
-            link = `https://roll20.net/compendium/dnd5e/${spellName}`;
-            document.getElementById("spellLookup").src = link;
-
-            document.getElementById("spellCard").style.display = "none";
-            document.getElementById("frame").style.display = "block";
-            document.getElementById("spellFrame").classList.add("lookupMode"); //A tall box for the web page
-        }
-        
-        document.getElementById("spellFrame").classList.remove("invisible");
+    else
+    {
+        //Not in the site's spell list: open it on Roll20 in a tall box
+        let link = `https://roll20.net/compendium/dnd5e/${encodeURIComponent(spellName)}`;
+        showPopup({boxClass: "popupTall", title: spellName, dismissValue: true, html: `<iframe class="popupFrame" src="${link}" title="${spellName}"></iframe>`});
     }
 }
 

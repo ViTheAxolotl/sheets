@@ -408,8 +408,10 @@ export function createLabel(name)
  *   message: text (line breaks kept)      buttons: [{label, value, primary}]
  *   input:   {value, placeholder}  adds a text box; its text is the result of a primary button
  *   copy:    true adds a Copy button that copies the input's text
+ *   html:    trusted markup from the site's own data (e.g. a spell card)
+ *   boxClass: extra class for the box (popupSpell, popupTall)
  */
-export function showPopup({title = "", message = "", buttons = [{label: "Done", value: true, primary: true}], input = null, copy = false, dismissValue = null} = {})
+export function showPopup({title = "", message = "", html = "", boxClass = "", buttons = [{label: "Done", value: true, primary: true}], input = null, copy = false, dismissValue = null} = {})
 {
     let doc = document;
     try{if(window.top.document.body){doc = window.top.document;}}catch(e){} //Same site: draw on the top page
@@ -419,10 +421,11 @@ export function showPopup({title = "", message = "", buttons = [{label: "Done", 
         let el = (tag, cls, text) => {let e = doc.createElement(tag); if(cls){e.className = cls;} if(text != undefined){e.textContent = text;} return e;};
 
         let backdrop = el("div", "popupBackdrop");
-        let box = el("div", "popupBox");
+        let box = el("div", ("popupBox " + boxClass).trim());
         box.setAttribute("role", "dialog");
         if(title){box.appendChild(el("h3", "popupTitle", title));}
         if(message){box.appendChild(el("p", "popupMessage", message));}
+        if(html){let body = el("div", "popupBody"); body.innerHTML = html; box.appendChild(body);}
 
         let field = null;
         if(input)
